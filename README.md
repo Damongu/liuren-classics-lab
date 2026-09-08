@@ -213,15 +213,23 @@ Markdown 文本文件，任何文件同步方案都能带得动。按你的设�
 **为什么最适合你**：你这个工作区天生就是「笔记 + 代码」混装，Git 一条线把两样
 都同步了；而且笔记有完整版本history，改错能回滚，考据结论的演变过程本身就是资产。
 
+**包里已经初始化好了**：`.gitignore` 写好了，而且已有一个基线提交
+（`git log` 能看到 `六壬伴读工作区 v1`）。所以你**不用 `git init`**，直接接远端：
+
 1. 在 GitHub（或 Gitee，国内快）建一个 **private** 仓库，比如 `liuren-study`。
-2. 顶层执行（`.gitignore` 已经给你写好了）：
+2. 顶层执行：
 
    ```bash
    cd 六壬agent工作区
-   git init && git add . && git commit -m "六壬伴读工作区 v1"
    git remote add origin git@github.com:<你的账号>/liuren-study.git
-   git push -u origin main
+   git push -u origin master        # 想叫 main：git branch -M main 后再 push
    ```
+
+   `.gitignore` 的两处口径，用之前先知道：
+   - **`sources/` 的原书不入库**（体积大）。所以换台机器 clone 下来 `sources/` 是空的，
+     `./一键部署.sh` 会跳过所有书 —— 但 `六壬vault/` 里已构建好的 838 条条目照常同步，
+     **读书和训练完全不受影响**。要在新机器上重建才需要手工拷 `sources/`。
+   - **`.trae/rules/` 入库**（agent 规则必须跟着走），`.trae/` 下其他本地状态不入库。
 
 3. **电脑端**：Trae 自带 Git，直接用；Obsidian 装 `Obsidian Git` 插件，设置里开
    `Auto commit-and-sync every 10 minutes` + `Pull on startup`，基本无感。
