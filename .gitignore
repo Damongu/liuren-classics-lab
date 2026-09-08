@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Obsidian：多端同步的主要冲突源，本地界面状态不必入库
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# 编辑器本地状态
+# 注意：.trae/rules/ 是项目规则（指向 AGENTS.md），必须入库，
+#      否则换台机器 clone 下来 agent 就不认这套规矩了。
+.trae/*
+!.trae/rules/
+.vscode/
+.idea/
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 原书体积大，不入 git。zip 包里是**带**的。
+#
+# 后果：如果你把本工作区 push 到 git，再在另一台机器 clone，
+#      sources/ 会是空的，`./一键部署.sh` 会跳过所有书。
+#      但 六壬vault/ 已构建好的条目**照常同步**，读书不受影响。
+#      需要在新机器上重建时，把 sources/ 手工拷过去即可。
+sources/*.pdf
+sources/*.doc
+sources/*.docx
+sources/*.txt
+
+# 根目录散落的底本 PDF
+/*.pdf
