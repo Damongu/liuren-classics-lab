@@ -95,7 +95,7 @@ def split_fm(raw: str):
 
 def check_skeleton(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[1/6] 目录骨架")
+        print("\n[1/7] 目录骨架")
     missing = [d for d in EXPECTED_DIRS if not (vault / d).is_dir()]
     if missing:
         r.err(f"缺目录：{'、'.join(missing)}")
@@ -105,7 +105,7 @@ def check_skeleton(vault: Path, r: Report):
 
 def check_key_files(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[2/6] 关键文件")
+        print("\n[2/7] 关键文件")
     missing = [f for f in KEY_FILES if not (vault / f).is_file()]
     if missing:
         r.err(f"缺关键文件：{'、'.join(missing)}")
@@ -115,7 +115,7 @@ def check_key_files(vault: Path, r: Report):
 
 def check_books(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[3/6] 七部唐宋层书")
+        print("\n[3/7] 七部唐宋层书")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         r.err("找不到 10-底本/唐宋层，底本未导入")
@@ -149,7 +149,7 @@ def check_books(vault: Path, r: Report):
 
 def check_frontmatter(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[4/6] 底本条目 frontmatter")
+        print("\n[4/7] 底本条目 frontmatter")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         return
@@ -175,7 +175,7 @@ def check_frontmatter(vault: Path, r: Report):
 
 def check_pollution(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[5/6] 污染标记")
+        print("\n[5/7] 污染标记")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         return
@@ -222,7 +222,7 @@ def check_pollution(vault: Path, r: Report):
 
 def check_links(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[6/6] 双链完整性")
+        print("\n[6/7] 双链完整性")
     # 收集所有 note 名（不含扩展名）
     names = set()
     for p in vault.rglob("*.md"):
@@ -250,6 +250,74 @@ def check_links(vault: Path, r: Report):
         r.ok("无断链")
 
 
+DV_KEYWORDS = {
+    "TABLE", "LIST", "TASK", "CALENDAR", "WITHOUT", "ID", "FROM", "WHERE", "SORT",
+    "GROUP", "BY", "FLATTEN", "LIMIT", "AS", "AND", "OR", "NOT", "ASC", "DESC",
+    "NULL", "TRUE", "FALSE",
+}
+DV_FUNCS = {
+    "date", "today", "now", "dur", "contains", "econtains", "icontains", "any", "all",
+    "none", "reverse", "sort", "length", "sum", "min", "max", "round", "number",
+    "string", "striptime", "choice", "default", "filter", "map", "link", "elink",
+    "rows", "file", "meta", "dateformat", "durationformat", "regexmatch",
+}
+DV_IMPLICIT = {"file", "tags", "tag", "aliases", "rows"}
+DV_BLOCK = re.compile(r"```dataview\s*\n(.*?)```", re.S)
+
+
+def dv_field_refs(block: str):
+    """抽出 dataview 查询里真正处于「字段位置」的标识符。
+
+    要排除：字符串字面量、FROM 后的 tag/路径、as 后的显示别名、file.xxx、关键字与函数名。
+    否则会把 #概念卡 这种 tag 名和 as 到期 这种别名误报成字段。
+    """
+    s = re.sub(r'"[^"]*"', ' "" ', block)
+    s = re.sub(r"\bFROM\b.*?(?=\b(?:WHERE|SORT|GROUP|FLATTEN|LIMIT)\b|$)", " ", s,
+               flags=re.S | re.I)
+    s = re.sub(r"\b[Aa][Ss]\s+[A-Za-z_\u4e00-\u9fff][\w\u4e00-\u9fff]*", " ", s)
+    s = re.sub(r"\bfile\.\w+", " ", s)
+    s = re.sub(r"^\s*(?:TABLE|LIST|TASK|CALENDAR)(?:\s+WITHOUT\s+ID)?", " ", s, flags=re.I)
+    out = []
+    for tok in re.findall(r"[A-Za-z_\u4e00-\u9fff][A-Za-z0-9_\u4e00-\u9fff]*", s):
+        if tok.upper() in DV_KEYWORDS or tok in DV_FUNCS or tok in DV_IMPLICIT:
+            continue
+        out.append(tok)
+    return out
+
+
+def check_dataview(vault: Path, r: Report):
+    """Dataview 查询引用的字段必须真实存在于某条笔记的 frontmatter。
+
+    字段名写错时 Dataview 不报错，只会渲染出一张空表 —— 属于静默失败，必须机器兜住。
+    """
+    if not r.quiet:
+        print("\n[7/7] Dataview 字段一致性")
+    present = set()
+    for md in vault.rglob("*.md"):
+        fm, _ = split_fm(md.read_text("utf-8"))
+        if not fm:
+            continue
+        for line in fm:
+            m = re.match(r"^([^\s:#][^:]*):", line)
+            if m:
+                present.add(m.group(1).strip())
+    bad = {}
+    nblk = 0
+    for md in sorted(vault.rglob("*.md")):
+        rel = md.relative_to(vault).as_posix()
+        for blk in DV_BLOCK.findall(md.read_text("utf-8")):
+            nblk += 1
+            for f in dv_field_refs(blk):
+                if f not in present:
+                    bad.setdefault(f, set()).add(rel)
+    if bad:
+        for f, files in sorted(bad.items()):
+            r.err(f"Dataview 字段 `{f}` 在任何笔记里都不存在（查询会永远为空）→ "
+                  + ", ".join(sorted(files)))
+    else:
+        r.ok(f"{nblk} 个 dataview 查询引用的字段全部存在")
+
+
 def main():
     ap = argparse.ArgumentParser(description="六壬 vault 自检")
     ap.add_argument("--vault", default="六壬vault")
@@ -270,6 +338,7 @@ def main():
     check_frontmatter(vault, r)
     check_pollution(vault, r)
     check_links(vault, r)
+    check_dataview(vault, r)
 
     # 汇总
     print("\n" + "=" * 56)
