@@ -899,7 +899,8 @@ def main(argv=None):
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
     ap.add_argument("--topic", choices=LEVEL1_TOPICS,
                     help="关卡 1 单项练习：寄宫、旬空或遁干")
-    ap.add_argument("--n", type=int, default=10, help="本轮题量（默认 10）")
+    ap.add_argument("--n", type=int, default=PASS_WINDOW,
+                    help=f"本轮题量（默认 {PASS_WINDOW}，与达标窗口对齐：一轮跑完即可判定）")
     ap.add_argument("--review", action="store_true", help="只做到期错题（跨关卡，重问原题）")
     ap.add_argument("--weak", choices=ERROR_REASONS,
                     help="按已归因的错误原因做 3-5 道变式训练")

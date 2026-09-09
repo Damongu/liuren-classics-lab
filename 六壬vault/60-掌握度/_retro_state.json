@@ -5,7 +5,7 @@
       "key": "R9|10|12",
       "rule": "R9",
       "title": "配置冲突：默认题量 10 与统计窗口 12 不一致",
-      "status": "草案·待确认",
+      "status": "已批准、已实施",
       "created": "2026-09-09",
       "evidence": [
         "`tutor.py --n` 默认 10 题；达标判定读最近 12 题、要求 11 题正确。",
@@ -15,9 +15,9 @@
       "benefit": "一轮结束点与达标判定对齐，成绩可解释。",
       "risk": "改窗口会影响历史成绩的可比性。",
       "rollback": "旧 hist 数据不动，只改判定参数；无效即改回。",
-      "decided": null,
-      "decided_at": null,
-      "note": ""
+      "decided": "已批准、已实施",
+      "decided_at": "2026-09-09",
+      "note": "tutor.py --n 默认值改为引用 PASS_WINDOW（现值 12），R9 同步支持符号写法并补 4 个边界用例；README/关卡表/复盘页同步"
     }
   ],
   "last_brief": "2026-09-09 02:03",

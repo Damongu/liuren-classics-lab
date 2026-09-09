@@ -151,12 +151,32 @@ def t_r7():
 
 # ------------------------------------------------------------------ R9/R10/R11
 def t_r9():
-    got = retro.rule_R9(st(), sig())
-    src = (ROOT / "tools" / "tutor.py").read_text("utf-8")
-    import re
-    m = re.search(r'"--n".{0,80}?default=(\d+)', src, re.S)
-    want = 0 if (m and int(m.group(1)) == tutor.PASS_WINDOW) else 1
-    check("R9 与 tutor.py 实际配置一致", len(got), want)
+    """R9 要同时认「写死数字」和「引用 PASS_WINDOW」两种默认值写法。
+
+    P-007 实施后 `--n` 的默认值改成了符号 `PASS_WINDOW`。如果规则只会解析数字，
+    它从此永远不命中——等于把这条配置守卫悄悄拆掉了。所以这里用替身源码把两种
+    写法都过一遍，不去动真实的 tutor.py。
+    """
+    check("R9 现网配置（默认题量 = 达标窗口）→ 不命中",
+          len(retro.rule_R9(st(), sig())), 0)
+
+    W = tutor.PASS_WINDOW
+    cases = (
+        ("R9 默认写死 10、窗口 12 → 命中", "default=10", 1),
+        (f"R9 默认写死 {W}（与窗口相同）→ 不命中", f"default={W}", 0),
+        ("R9 默认引用 PASS_WINDOW → 不命中", "default=PASS_WINDOW", 0),
+        ("R9 默认引用取不到值的符号 → 不猜，不命中", "default=SOME_UNKNOWN", 0),
+    )
+    orig = retro.Path.read_text
+    for name, frag, want in cases:
+        fake = f'    ap.add_argument("--n", type=int, {frag}, help="x")\n'
+        retro.Path.read_text = (
+            lambda self, *a, _f=fake, **k:
+            _f if self.name == "tutor.py" else orig(self, *a, **k))
+        try:
+            check(name, len(retro.rule_R9(st(), sig())), want)
+        finally:
+            retro.Path.read_text = orig
 
 
 def t_r10():

@@ -248,7 +248,7 @@ python3 tools/guide.py --entry 涉害法 --receipt pass --minutes 4
 ## 二、交互训练（程序判分，agent 讲解）
 
 ```bash
-python3 tools/tutor.py              # 自动选当前该练的关，10 题
+python3 tools/tutor.py              # 自动选当前该练的关，12 题（＝达标窗口，一轮跑完即可判定）
 python3 tools/tutor.py -l 5 --n 20  # 指定关卡与题量
 python3 tools/tutor.py --review     # 错题复现：跨关卡，重问原题
 python3 tools/tutor.py --status     # 进度条
@@ -324,6 +324,10 @@ python3 tools/retro.py --check      # 只跑规则看结果，不写盘
 | R12 | 单节 `导读不足` ≥ 2 条 | 该档导读模板不够用，改模板而不是多讲一遍 |
 | R13 | 连续 2 节回执 `fail` | 节太大或档位判错，降档或拆节 |
 | R14 | 同一档导读连续 3 节超时 | 压件数或调该档预算，二选一 |
+
+R9 说明：P-007 落地后 `--n` 的默认值直接引用达标窗口常量（现值 12），两者结构上不可能
+再失配；R9 也同时认「写死数字」和「引用常量」两种写法，谁要是改回写死的数字且和窗口
+不一致，它照样抓得到。
 
 **③ 提案：它成稿，你批准**
 

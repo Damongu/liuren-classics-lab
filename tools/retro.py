@@ -287,12 +287,24 @@ def rule_R7(ts, sig):
 
 
 def rule_R9(ts, sig):
-    """配置一致性：默认题量必须与统计窗口对齐（P-002 当年就是这里出问题）。"""
+    """配置一致性：默认题量必须与统计窗口对齐（P-002 当年就是这里出问题）。
+
+    P-007 实施后 `--n` 的默认值写成了符号 `PASS_WINDOW`，两者从此不可能失配；
+    但规则不能因此形同虚设——若以后有人改回写死的数字，这里照样要抓出来。
+    """
     src = (ROOT / "tools" / "tutor.py").read_text("utf-8")
-    m = re.search(r'"--n".{0,80}?default=(\d+)', src, re.S)
+    m = re.search(r'"--n".{0,120}?default=(\w+)', src, re.S)
     if not m:
         return []
-    default_n = int(m.group(1))
+    raw = m.group(1)
+    if not raw.isdigit():
+        # 默认值写成符号：能取到值就按值比，取不到就不猜（宁可漏报也不误报）
+        val = getattr(tutor, raw.split(".")[-1], None)
+        if not isinstance(val, int) or val == tutor.PASS_WINDOW:
+            return []
+        default_n = val
+    else:
+        default_n = int(raw)
     if default_n == tutor.PASS_WINDOW:
         return []
     return [dict(
