@@ -9,6 +9,16 @@
       "note": "PowerShell PATH 中找不到 bash，一键部署脚本首次启动失败",
       "resolved": true,
       "resolution": "已处理"
+    },
+    {
+      "ts": "2026-09-09 12:04",
+      "date": "2026-09-09",
+      "session": "2026-09-09#4",
+      "type": "操作摩擦",
+      "topic": "Git同步",
+      "note": "GitHub SSH 公钥认证失败，改用已可用的 HTTPS 凭据完成首次推送",
+      "resolved": true,
+      "resolution": "已处理"
     }
   ],
   "sessions": [
@@ -36,9 +46,9 @@
     {
       "id": "2026-09-09#4",
       "start": "2026-09-09 12:02",
-      "end": null,
+      "end": "2026-09-09 12:04",
       "topic": "Git同步",
-      "minutes": null
+      "minutes": 2
     }
   ]
 }
