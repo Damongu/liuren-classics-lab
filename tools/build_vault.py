@@ -95,10 +95,22 @@ def pdftext(path: Path) -> list:
         ["pdftotext", "-enc", "UTF-8", str(path), "-"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     if r.returncode != 0:
         raise RuntimeError(f"pdftotext 失败：{path.name}\n{r.stderr[:300]}")
-    return r.stdout.split("\n")
+    text = r.stdout
+    cjk_count = sum("\u4e00" <= ch <= "\u9fff" for ch in text)
+    if cjk_count < 100 or "Unknown CMap" in r.stderr:
+        try:
+            import pymupdf
+        except ImportError as e:
+            raise RuntimeError(
+                f"pdftotext 无法正确解码 {path.name}，且未安装 PyMuPDF"
+            ) from e
+        text = "\n".join(page.get_text() for page in pymupdf.open(path))
+    return text.split("\n")
 
 
 def strip_running(lines, *marks):
@@ -137,8 +149,11 @@ def pack(entries, book):
 def h_taibai(path: Path):
     """太白阴经：只取卷十「玄女式」及其下诸法（卷一—卷九为兵书正文，不入库）"""
     lines = strip_running(pdftext(path), "神机制敌太白阴经")
-    # 定位正文卷十（目录里也有「卷十」，取最后一个）
-    idx = [i for i, l in enumerate(lines) if l.strip() == "卷十"]
+    # 定位正文卷十（目录里也有「卷十 杂式」，取最后一个）
+    idx = [
+        i for i, l in enumerate(lines)
+        if re.match(r"^卷\s*十(?:\s|$)", l.strip())
+    ]
     start = idx[-1]
     # 六壬部分止于「△察情胜败篇」
     end = next(
@@ -166,7 +181,7 @@ def h_zhanshi(path: Path):
     # 跳过目录：正文第一个「第1章」之后
     body_start = 0
     for i, l in enumerate(lines):
-        if re.match(r"^第\s*1\s*章$", l.strip()):
+        if re.match(r"^第\s*1\s*章(?:\s+\S.*)?$", l.strip()):
             body_start = i
             break
     seg = clean(lines[body_start:])
@@ -175,15 +190,18 @@ def h_zhanshi(path: Path):
     i = 0
     while i < len(seg):
         s = seg[i]
-        m = re.match(r"^第\s*(\d+)\s*章$", s)
+        m = re.match(r"^第\s*(\d+)\s*章(?:\s+(.+))?$", s)
         if m:
             if title:
                 entries.append((title, body))
-            # 章名在下一个非空行（clean 后空行仍以 "" 保留，须跳过）
-            j = i + 1
-            while j < len(seg) and not seg[j].strip():
-                j += 1
-            name = seg[j].strip() if j < len(seg) else ""
+            name = (m.group(2) or "").strip()
+            j = i
+            if not name:
+                # 旧版 PDF 把章号与章名拆行。
+                j = i + 1
+                while j < len(seg) and not seg[j].strip():
+                    j += 1
+                name = seg[j].strip() if j < len(seg) else ""
             title = f"第{m.group(1)}章 {name}".strip()
             body = []
             i = j + 1

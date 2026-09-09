@@ -3,7 +3,7 @@
 # 六壬知识库 · 一键部署
 #
 # 做四件事：
-#   1. 装依赖（opencc / python-docx）
+#   1. 装依赖（opencc / python-docx / olefile / PyMuPDF）
 #   2. 从 sources/ 七部原书重建 vault
 #   3. 扫清校污染
 #   4. 自检 + 跑排盘器测试
@@ -18,6 +18,7 @@
 
 set -uo pipefail
 cd "$(dirname "$0")"
+export PYTHONUTF8=1
 
 BOLD=$'\033[1m'; DIM=$'\033[2m'; RED=$'\033[31m'
 GRN=$'\033[32m'; YEL=$'\033[33m'; RST=$'\033[0m'
@@ -72,6 +73,8 @@ step "检查依赖"
 need_install=()
 $PY -c 'import opencc' 2>/dev/null && ok "opencc 已装" || need_install+=(opencc)
 $PY -c 'import docx'   2>/dev/null && ok "python-docx 已装" || need_install+=(python-docx)
+$PY -c 'import olefile' 2>/dev/null && ok "olefile 已装" || need_install+=(olefile)
+$PY -c 'import pymupdf' 2>/dev/null && ok "PyMuPDF 已装" || need_install+=(PyMuPDF)
 
 if [ ${#need_install[@]} -gt 0 ]; then
   warn "缺 ${need_install[*]}，正在装…"
@@ -84,6 +87,10 @@ if [ ${#need_install[@]} -gt 0 ]; then
     || warn "opencc 仍缺失 —— 繁简转换会跳过，条目保留繁体（可用，但检索不便）"
   $PY -c 'import docx' 2>/dev/null && ok "python-docx" \
     || warn "python-docx 仍缺失 —— 《景祐六壬神定经》(.docx) 无法导入"
+  $PY -c 'import olefile' 2>/dev/null && ok "olefile" \
+    || warn "olefile 仍缺失 —— 《壬归》(.doc) 无法导入"
+  $PY -c 'import pymupdf' 2>/dev/null && ok "PyMuPDF" \
+    || warn "PyMuPDF 仍缺失 —— 部分中文 PDF 无法回退抽取"
 fi
 
 # ---------------------------------------------------------------- 3. 源文件
@@ -140,6 +147,14 @@ else
   warn "训练器自测未通过（不影响读书，但 tutor.py 可能出不了题）"
 fi
 
+# ---------------------------------------------------------------- 6c. 复盘引擎
+step "复盘引擎自测（十条规则的边界用例）"
+if $PY tools/retro_selftest.py >/dev/null 2>&1; then
+  ok "复盘规则边界正常（signal_log.py / retro.py 可用）"
+else
+  warn "复盘引擎自测未通过：自我迭代会退回「靠 agent 自觉」，请跑 $PY tools/retro_selftest.py 看详情"
+fi
+
 # ---------------------------------------------------------------- 7. 自检
 step "自检"
 $PY tools/selfcheck.py --quiet
@@ -158,6 +173,10 @@ ${BOLD}部署完成。${RST}
 
 主工作面：${BOLD}50-校读笔记/对校矩阵-五个判别点.md${RST}
 ${DIM}读书时随手记问题 → 70-待查/待查清单.md${RST}
+
+${BOLD}每节课两道闸门${RST}（agent 自己会跑，你只需知道它该跑）：
+  开场 ${BOLD}$PY tools/retro.py --brief${RST}　收尾 ${BOLD}$PY tools/retro.py --close${RST}
+${DIM}它凭什么会自己改进：README「二·五、它怎么自己发现问题」${RST}
 
 EOF
 exit $rc

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""六壬交互式教学器 —— 关卡制训练 + 确定性判分 + 掌握度回写。
+"""六壬交互式训练器 —— 关卡制练习 + 确定性判分 + 掌握度回写。
 
 设计要点：
   1. 出题与判分**完全不经过 LLM**。题目从 720 课穷举里采样，标准答案由排盘器给出，
@@ -13,8 +13,10 @@
 用法：
     python3 tools/tutor.py                # 按当前进度自动选关
     python3 tools/tutor.py --level 4      # 指定关卡
+    python3 tools/tutor.py -l 1 --topic 遁干  # 只练关卡 1 的一个概念
     python3 tools/tutor.py --n 20         # 本轮题量
     python3 tools/tutor.py --review       # 只做错题复现
+    python3 tools/tutor.py --teachback-pass 1  # agent 验收复述后记录
     python3 tools/tutor.py --status        # 看进度，不答题
     python3 tools/tutor.py --list         # 列关卡
 """
@@ -42,8 +44,13 @@ RECORD = VAULT / "60-掌握度" / "训练记录.md"
 WRONGQ = VAULT / "60-掌握度" / "错题队列.md"
 MARK_B, MARK_E = "<!-- tutor:begin -->", "<!-- tutor:end -->"
 
-INTERVALS = [1, 3, 7, 21]        # 间隔重复节奏（天）
-PASS_WINDOW, PASS_RATE = 12, 0.85  # 通关：近 12 题正确率 ≥ 85%
+INTERVALS = [1, 3, 7, 21]          # 间隔重复节奏（天）
+PASS_WINDOW, PASS_CORRECT = 12, 11  # 12 题至少答对 11 题
+PASS_RATE = PASS_CORRECT / PASS_WINDOW
+ERROR_REASONS = (
+    "待归因", "概念缺失", "步骤遗漏", "辨析错误", "计算失误",
+    "输入失误", "另一口径", "教学前基线", "题目失效", "重复过量",
+)
 
 _ALL = None
 
@@ -97,9 +104,9 @@ def head(gz, shi, jiang, daynight=None):
 
 # ---------------------------------------------------------------- 各关出题
 
-def g_jigong(rng):
+def g_jigong(rng, topic=None):
     """L1 地基：寄宫 / 旬空 / 遁干。"""
-    kind = rng.choice(["寄宫", "旬空", "遁干"])
+    kind = topic or rng.choice(["寄宫", "旬空", "遁干"])
     if kind == "寄宫":
         g = GAN[rng.randrange(10)]
         return dict(q=f"{g} 的寄宫在哪一宫？", ans=[JIGONG[g]],
@@ -275,6 +282,13 @@ LEVELS = [
 ]
 LV = {l["id"]: l for l in LEVELS}
 
+LEVEL1_TOPICS = ("寄宫", "旬空", "遁干")
+LEVEL1_BRIEF = {
+    "寄宫": "十干按六壬寄宫表落到地支宫；这是固定表，不按日旬变化。",
+    "旬空": "先定六甲旬首；从旬首支起配甲至癸，十干配完后余下两支为空亡。",
+    "遁干": "先定六甲旬首；在旬首支起甲，干支同步顺行，十干配完即止，空亡支答「无」。",
+}
+
 
 # ---------------------------------------------------------------- 错题重建
 
@@ -376,10 +390,20 @@ def replay(spec):
 def load_state():
     if STATE.exists():
         try:
-            return json.loads(STATE.read_text("utf-8"))
+            state = json.loads(STATE.read_text("utf-8"))
+            state.setdefault("wrong_archive", [])
+            state.setdefault("weak_groups", {})
+            for w in state.setdefault("wrong", []):
+                w.setdefault("reasons", ["待归因"])
+                w.setdefault("diagnosis", "")
+                w.setdefault("baseline_pending", False)
+            return state
         except Exception:
             pass
-    return {"levels": {}, "wrong": [], "sessions": []}
+    return {
+        "levels": {}, "wrong": [], "wrong_archive": [],
+        "weak_groups": {}, "sessions": [],
+    }
 
 
 def save_state(st):
@@ -388,7 +412,24 @@ def save_state(st):
 
 
 def lv_state(st, lid):
-    return st["levels"].setdefault(str(lid), {"hist": [], "passed": False})
+    state = st["levels"].setdefault(
+        str(lid), {"hist": [], "teachback": False, "passed": False}
+    )
+    state.setdefault("teachback", False)
+    state.setdefault("passed", False)
+    if lid == 1:
+        state.setdefault("topics", {})
+        state.setdefault("mixed", {"hist": []})
+    return state
+
+
+def topic_state(s, topic):
+    state = s["topics"].setdefault(
+        topic, {"hist": [], "teachback": False, "passed": False}
+    )
+    state.setdefault("teachback", False)
+    state.setdefault("passed", False)
+    return state
 
 
 def rate(hist, n=PASS_WINDOW):
@@ -396,10 +437,31 @@ def rate(hist, n=PASS_WINDOW):
     return (sum(w) / len(w)) if w else 0.0
 
 
+def score_ready(s):
+    h = s.get("hist", [])
+    return len(h) >= PASS_WINDOW and sum(h[-PASS_WINDOW:]) >= PASS_CORRECT
+
+
+def topic_passed(s, topic):
+    ts = topic_state(s, topic)
+    return score_ready(ts) and bool(ts.get("teachback"))
+
+
+def practice_ready(s, lid=None):
+    if lid == 1:
+        return (all(topic_passed(s, topic) for topic in LEVEL1_TOPICS)
+                and score_ready(s["mixed"]))
+    return score_ready(s)
+
+
+def final_passed(s, lid=None):
+    return practice_ready(s, lid) and bool(s.get("teachback"))
+
+
 def pick_level(st):
     for l in LEVELS:
         s = lv_state(st, l["id"])
-        if not (len(s["hist"]) >= PASS_WINDOW and rate(s["hist"]) >= PASS_RATE):
+        if not final_passed(s, l["id"]):
             return l["id"]
     return LEVELS[-1]["id"]
 
@@ -438,7 +500,25 @@ def ask(item, no_input=False):
         return "__quit__"
 
 
-def judge(item, lid, st, card):
+def record_result(st, lid, score, topic=None):
+    state = lv_state(st, lid)
+    state["hist"].append(score)  # 保留关卡总历史，兼容旧记录。
+    if lid == 1:
+        bucket = topic_state(state, topic) if topic else state["mixed"]
+        bucket["hist"].append(score)
+        if score == 0:
+            if topic:
+                bucket["teachback"] = False
+                bucket["passed"] = False
+            state["teachback"] = False
+            state["passed"] = False
+    elif score == 0:
+        state["teachback"] = False
+        state["passed"] = False
+
+
+def judge(item, lid, st, card, topic=None, count_practice=True,
+          track_queue=True):
     """问一题、判分、讲解。返回 (得分 0/1, 是否退出)。"""
     p = item.get("plate")
     while True:
@@ -453,8 +533,10 @@ def judge(item, lid, st, card):
     alt = item.get("alt") or {}
     if ok(a, item["ans"]):
         print("✅ 对")
-        lv_state(st, lid)["hist"].append(1)
-        _dequeue(st, lid, item)
+        if count_practice:
+            record_result(st, lid, 1, topic)
+        if track_queue:
+            _dequeue(st, lid, item)
         score = 1
     elif norm(a) in alt:
         dv = alt[norm(a)]
@@ -462,27 +544,68 @@ def judge(item, lid, st, card):
               f"   排盘器默认取 {dv['本盘取']}（{dv['依据']}）\n"
               f"   你答的 {dv['另一说']}（{dv['另说依据']}）\n"
               f"   这条不算你错，但要记住它是分歧点。")
-        lv_state(st, lid)["hist"].append(1)
+        if count_practice:
+            record_result(st, lid, 1, topic)
+        if track_queue:
+            _archive_by_item(st, item, "另一口径", ["另一口径"])
         score = 1
     else:
         print(f"❌ 错。正确答案：{item['ans'][0]}")
-        lv_state(st, lid)["hist"].append(0)
-        _enqueue(st, lid, item, a)
+        if count_practice:
+            record_result(st, lid, 0, topic)
+        if track_queue:
+            _enqueue(st, lid, item, a)
         score = 0
     print(explain(item, p))
     return score, False
 
 
-def run(lid, n, st, rng):
+def learning_gate(lid, topic=None, assume_learned=False):
+    """练习前置闸门：训练器不替代 agent 的四拍教学。"""
     lvl = LV[lid]
+    print("\n训练前检查")
+    print("  正确顺序：agent 解释与佐证 → 你复述 → 质疑来源 → Terminal 练习")
+    if lid == 1:
+        topics = [topic] if topic else list(LEVEL1_TOPICS)
+        for name in topics:
+            print(f"  {name}：{LEVEL1_BRIEF[name]}")
+        if topic is None:
+            print("  本关默认混合三类题；首次学习请加 --topic 逐项练。")
+    print(f"  参考：六壬vault/{lvl['card']}")
+    if assume_learned:
+        return True
+    try:
+        a = input("已完成上述概念的四拍教学？按 Enter 开始，输入 q 退出 > ")
+    except (EOFError, KeyboardInterrupt):
+        return False
+    return norm(a) not in ("q", "quit", "退出")
+
+
+def run(lid, n, st, rng, topic=None, assume_learned=False):
+    lvl = LV[lid]
+    if lid == 1:
+        n = PASS_WINDOW
+        state = lv_state(st, lid)
+        if topic is None:
+            missing = [name for name in LEVEL1_TOPICS
+                       if not topic_passed(state, name)]
+            if missing:
+                print("关卡 1 混合验收尚未开放。先完成专项练习与白话复述："
+                      + "、".join(missing))
+                return 0, 0
     print(f"\n{'=' * 62}\n关卡 {lid}｜{lvl['name']}　（阶段 {lvl['stage']}）")
-    print(f"参考：六壬vault/{lvl['card']}")
-    print(f"{'=' * 62}\n答「?」看提示、「q」退出。")
+    if topic:
+        print(f"单项：{topic}")
+    print("=" * 62)
+    if not learning_gate(lid, topic, assume_learned):
+        print("\n未开始练习，训练记录不变。")
+        return 0, 0
+    print("\n答「?」看提示、「q」退出。")
 
     right = asked = 0
     for _ in range(n):
-        item = lvl["gen"](rng)
-        s, quit_ = judge(item, lid, st, lvl["card"])
+        item = lvl["gen"](rng, topic) if lid == 1 else lvl["gen"](rng)
+        s, quit_ = judge(item, lid, st, lvl["card"], topic=topic)
         if quit_:
             print("\n中断。已答部分照常计入。")
             break
@@ -515,11 +638,12 @@ def run_review(n, st, force=False):
             item = replay(w["key"].split("|") if "spec" not in w else w["spec"])
         except Exception as e:
             print(f"（跳过一条无法重建的旧错题：{type(e).__name__} {e}）")
-            st["wrong"].remove(w)
+            archive_wrong(st, w, "题目失效", ["题目失效"])
             continue
         lid = w["level"]
         print(f"\n[关{lid}｜首错 {w['first']}｜已连对 {w.get('streak', 0)}]")
-        s, quit_ = judge(item, lid, st, LV[lid]["card"])
+        s, quit_ = judge(item, lid, st, LV[lid]["card"],
+                         count_practice=False)
         if quit_:
             print("\n中断。已答部分照常计入。")
             break
@@ -539,6 +663,14 @@ def _enqueue(st, lid, item, given):
         if w["key"] == k:
             w["streak"] = 0
             w["due"] = (date.today() + timedelta(days=1)).isoformat()
+            if w.get("baseline_pending"):
+                w["baseline_pending"] = False
+                w["reasons"] = [
+                    r for r in w.get("reasons", []) if r != "教学前基线"
+                ] or ["待归因"]
+                w["diagnosis"] = (
+                    w.get("diagnosis", "") + "；教学后复现仍错，转为正式薄弱项"
+                ).strip("；")
             return
     st["wrong"].append({
         "key": k, "spec": list(item["spec"]), "level": lid,
@@ -546,7 +678,32 @@ def _enqueue(st, lid, item, given):
         "ans": item["ans"][0], "given": norm(given)[:20],
         "first": date.today().isoformat(), "streak": 0,
         "due": (date.today() + timedelta(days=1)).isoformat(),
+        "reasons": ["待归因"], "diagnosis": "", "baseline_pending": False,
     })
+
+
+def archive_wrong(st, wrong, exit_reason, add_reasons=None):
+    """退出活跃队列但保留完整审计记录。"""
+    if wrong not in st["wrong"]:
+        return
+    archived = dict(wrong)
+    reasons = list(archived.get("reasons", ["待归因"]))
+    for reason in add_reasons or []:
+        if reason not in reasons:
+            reasons.append(reason)
+    archived["reasons"] = reasons
+    archived["archived"] = date.today().isoformat()
+    archived["exit_reason"] = exit_reason
+    st["wrong"].remove(wrong)
+    st.setdefault("wrong_archive", []).append(archived)
+
+
+def _archive_by_item(st, item, exit_reason, add_reasons=None):
+    k = _key(item)
+    for w in list(st["wrong"]):
+        if w["key"] == k:
+            archive_wrong(st, w, exit_reason, add_reasons)
+            return
 
 
 def _dequeue(st, lid, item):
@@ -554,12 +711,71 @@ def _dequeue(st, lid, item):
     for w in list(st["wrong"]):
         if w["key"] == k:
             w["streak"] = w.get("streak", 0) + 1
-            if w["streak"] >= 2:
-                st["wrong"].remove(w)
+            if w.get("baseline_pending"):
+                archive_wrong(st, w, "教学后首次复现答对，基线题退出")
+            elif w["streak"] >= 2:
+                archive_wrong(st, w, "连续两次答对，完成复现")
             else:
                 d = INTERVALS[min(w["streak"], len(INTERVALS) - 1)]
                 w["due"] = (date.today() + timedelta(days=d)).isoformat()
             return
+
+
+def classify_wrong(st, index, reasons, diagnosis="", archive=False):
+    if not 1 <= index <= len(st["wrong"]):
+        raise ValueError(f"错题编号应在 1..{len(st['wrong'])} 之间")
+    w = st["wrong"][index - 1]
+    w["reasons"] = list(dict.fromkeys(reasons))
+    w["diagnosis"] = diagnosis
+    w["baseline_pending"] = "教学前基线" in reasons
+    if archive:
+        archive_wrong(st, w, "人工归档")
+
+
+def weak_items(st, reason):
+    return [w for w in st["wrong"] if reason in w.get("reasons", [])]
+
+
+def weak_variant(w, rng):
+    kind = w.get("spec", [""])[0]
+    if w.get("level") == 1 and kind in LEVEL1_TOPICS:
+        return g_jigong(rng, kind)
+    return LV[w["level"]]["gen"](rng)
+
+
+def run_weak(reason, n, st, rng):
+    pool = weak_items(st, reason)
+    if not pool:
+        print(f"没有标记为「{reason}」的活跃错题。")
+        return 0, 0
+    n = max(3, min(5, n))
+    print(f"\n{'=' * 62}\n薄弱训练｜{reason}　最多 {n} 题\n{'=' * 62}")
+    right = asked = streak = 0
+    for _ in range(n):
+        source = rng.choice(pool)
+        item = weak_variant(source, rng)
+        lid = source["level"]
+        s, quit_ = judge(
+            item, lid, st, LV[lid]["card"], count_practice=False,
+            track_queue=False,
+        )
+        if quit_:
+            break
+        right += s
+        asked += 1
+        streak = streak + 1 if s else 0
+        print(f"　　进度 {right}/{asked}　连续答对 {streak}")
+        if asked >= 3 and streak >= 2:
+            print("已连续答对两题，停止即时加题；原错题仍按计划复现。")
+            break
+    group = st.setdefault("weak_groups", {}).setdefault(
+        reason, {"sessions": [], "last": None}
+    )
+    group["sessions"].append({
+        "date": date.today().isoformat(), "right": right, "n": asked,
+    })
+    group["last"] = date.today().isoformat()
+    return right, asked
 
 
 # ---------------------------------------------------------------- 回写
@@ -569,16 +785,40 @@ def write_back(st):
              "# 训练记录", "",
              "> 本文件由 `tools/tutor.py` 自动生成，不要手改。",
              f"> 最后更新：{datetime.now():%Y-%m-%d %H:%M}", "",
-             "| 关卡 | 名称 | 阶段 | 已答 | 近 12 题正确率 | 状态 |",
-             "| :---: | :--- | :---: | :---: | :---: | :---: |"]
+             "| 关卡 | 名称 | 阶段 | 已答 | 近 12 题正确率 | 白话复述 | 状态 |",
+             "| :---: | :--- | :---: | :---: | :---: | :---: | :---: |"]
     for l in LEVELS:
         s = lv_state(st, l["id"])
         h = s["hist"]
         r = rate(h)
-        done = len(h) >= PASS_WINDOW and r >= PASS_RATE
-        badge = "✅ 通关" if done else ("🔸 在练" if h else "⬜ 未开")
+        ready = practice_ready(s, l["id"])
+        done = final_passed(s, l["id"])
+        teachback = "✅" if s.get("teachback") else "—"
+        badge = ("✅ 过关" if done else
+                 "🗣 待复述" if ready else
+                 "🔸 在练" if h else "⬜ 未开")
+        score_text = "见专项" if l["id"] == 1 else f"{r * 100:.0f}%"
         lines.append(f"| {l['id']} | {l['name']} | {l['stage']} | {len(h)} | "
-                     f"{r * 100:.0f}% | {badge} |")
+                     f"{score_text} | {teachback} | {badge} |")
+    l1 = lv_state(st, 1)
+    lines += ["", "## 关卡 1 专项", "",
+              "| 专项 | 最近一轮 | 白话复述 | 状态 |",
+              "| :--- | :---: | :---: | :---: |"]
+    for topic in LEVEL1_TOPICS:
+        ts = topic_state(l1, topic)
+        h = ts["hist"]
+        score = f"{sum(h[-PASS_WINDOW:])}/{PASS_WINDOW}" if len(h) >= PASS_WINDOW \
+            else f"{len(h)}/{PASS_WINDOW} 题"
+        done = topic_passed(l1, topic)
+        status = "✅ 通过" if done else ("🗣 待复述" if score_ready(ts)
+                                      else "🔸 在练" if h else "⬜ 未开")
+        lines.append(f"| {topic} | {score} | "
+                     f"{'✅' if ts.get('teachback') else '—'} | {status} |")
+    mh = l1["mixed"]["hist"]
+    mixed_score = f"{sum(mh[-PASS_WINDOW:])}/{PASS_WINDOW}" if len(mh) >= PASS_WINDOW \
+        else f"{len(mh)}/{PASS_WINDOW} 题"
+    lines.append(f"| 混合验收 | {mixed_score} | — | "
+                 f"{'✅ 达标' if score_ready(l1['mixed']) else '🔒 未开放' if not all(topic_passed(l1, t) for t in LEVEL1_TOPICS) else '🔸 待练'} |")
     tot = sum(len(lv_state(st, l['id'])['hist']) for l in LEVELS)
     lines += ["", f"累计答题 **{tot}** 题　待复现错题 **{len(st['wrong'])}** 条", "",
               "## 下一步", "",
@@ -588,13 +828,25 @@ def write_back(st):
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text("\n".join(lines), "utf-8")
 
-    rows = ["| 题目 | 你答 | 正解 | 首错日 | 下次复现 | 连对 |",
-            "| :--- | :---: | :---: | :---: | :---: | :---: |"]
-    for w in sorted(st["wrong"], key=lambda x: x.get("due", "")):
-        rows.append(f"| 关{w['level']}｜{w['q']} | {w['given']} | {w['ans']} | "
-                    f"{w['first']} | {w['due']} | {w.get('streak', 0)} |")
+    rows = ["| 编号 | 题目 | 原因 | 诊断 | 下次复现 | 连对 |",
+            "| ---: | :--- | :--- | :--- | :---: | :---: |"]
+    for i, w in enumerate(st["wrong"], 1):
+        reasons = "＋".join(w.get("reasons", ["待归因"]))
+        diagnosis = w.get("diagnosis") or "待 agent 归因"
+        rows.append(f"| {i} | 关{w['level']}｜{w['q']}（答 `{w['given']}`，"
+                    f"正解 `{w['ans']}`） | {reasons} | {diagnosis} | "
+                    f"{w['due']} | {w.get('streak', 0)} |")
+    archive_rows = ["| 题目 | 原因 | 退出原因 | 归档日 |",
+                    "| :--- | :--- | :--- | :---: |"]
+    for w in reversed(st.get("wrong_archive", [])):
+        archive_rows.append(
+            f"| 关{w['level']}｜{w['q']} | "
+            f"{'＋'.join(w.get('reasons', []))} | "
+            f"{w.get('exit_reason', '')} | {w.get('archived', '')} |"
+        )
     block = f"{MARK_B}\n\n### 机器判分错题（tutor 自动维护）\n\n" + \
-            "\n".join(rows) + f"\n\n{MARK_E}"
+            "\n".join(rows) + "\n\n### 已归档（保留审计记录）\n\n" + \
+            "\n".join(archive_rows) + f"\n\n{MARK_E}"
     old = WRONGQ.read_text("utf-8") if WRONGQ.exists() else \
         "---\ntags: [掌握度/错题]\n---\n\n# 错题队列\n"
     if MARK_B in old and MARK_E in old:
@@ -612,25 +864,61 @@ def show_status(st):
         s = lv_state(st, l["id"])
         h = s["hist"]
         r = rate(h)
-        done = len(h) >= PASS_WINDOW and r >= PASS_RATE
-        bar = "█" * int(r * 10) + "·" * (10 - int(r * 10)) if h else "·" * 10
-        print(f"  {l['id']}. {pad(l['name'], 26)} {bar} {r * 100:3.0f}%  "
-              f"{len(h):>3}题  {'✅' if done else ''}")
+        ready = practice_ready(s, l["id"])
+        done = final_passed(s, l["id"])
+        if l["id"] == 1:
+            summary = "　".join(
+                f"{name}:{sum(topic_state(s, name)['hist'][-PASS_WINDOW:])}/12"
+                if len(topic_state(s, name)["hist"]) >= PASS_WINDOW
+                else f"{name}:{len(topic_state(s, name)['hist'])}/12题"
+                for name in LEVEL1_TOPICS
+            )
+            print(f"  1. {pad(l['name'], 26)} 旧制{len(h)}题｜{summary}")
+        else:
+            bar = "█" * int(r * 10) + "·" * (10 - int(r * 10)) if h else "·" * 10
+            print(f"  {l['id']}. {pad(l['name'], 26)} {bar} {r * 100:3.0f}%  "
+                  f"{len(h):>3}题  "
+                  f"{'✅ 过关' if done else '🗣 待复述' if ready else ''}")
     due = [w for w in st["wrong"] if w.get("due", "") <= date.today().isoformat()]
     print("─" * 62)
     print(f"  待复现错题 {len(due)} / {len(st['wrong'])} 条")
     print(f"  建议下一关：{pick_level(st)}\n")
 
 
+def show_wrong_list(st):
+    print("\n活跃错题")
+    print("─" * 62)
+    for i, w in enumerate(st["wrong"], 1):
+        reasons = "＋".join(w.get("reasons", ["待归因"]))
+        print(f"  {i}. [{reasons}] 关{w['level']} {w['q']}")
+    print(f"归档 {len(st.get('wrong_archive', []))} 条")
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="六壬交互式教学器")
+    ap = argparse.ArgumentParser(description="六壬交互式训练器（先教学，后练习）")
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
+    ap.add_argument("--topic", choices=LEVEL1_TOPICS,
+                    help="关卡 1 单项练习：寄宫、旬空或遁干")
     ap.add_argument("--n", type=int, default=10, help="本轮题量（默认 10）")
     ap.add_argument("--review", action="store_true", help="只做到期错题（跨关卡，重问原题）")
+    ap.add_argument("--weak", choices=ERROR_REASONS,
+                    help="按已归因的错误原因做 3-5 道变式训练")
+    ap.add_argument("--wrong-list", action="store_true", help="列出活跃错题及编号")
+    ap.add_argument("--classify-wrong", type=int, metavar="N",
+                    help="按编号给错题归因（配合 --reason）")
+    ap.add_argument("--archive-wrong", type=int, metavar="N",
+                    help="按编号归档错题（保留审计记录）")
+    ap.add_argument("--reason", action="append", choices=ERROR_REASONS,
+                    help="错误原因，可重复指定")
+    ap.add_argument("--note", default="", help="错误诊断或归档说明")
+    ap.add_argument("--teachback-pass", type=int, metavar="LEVEL",
+                    help="仅供 agent：白话复述验收通过后记录")
     ap.add_argument("--force", action="store_true", help="配合 --review：不管到期日全刷")
     ap.add_argument("--status", action="store_true", help="看进度")
     ap.add_argument("--list", action="store_true", help="列关卡")
     ap.add_argument("--seed", type=int, help="固定随机种子（复现题目）")
+    ap.add_argument("--yes", action="store_true",
+                    help="确认已完成教学，跳过训练前交互确认")
     a = ap.parse_args(argv)
 
     st = load_state()
@@ -641,17 +929,71 @@ def main(argv=None):
     if a.status:
         show_status(st)
         return 0
+    if a.wrong_list:
+        show_wrong_list(st)
+        return 0
+    if a.classify_wrong is not None or a.archive_wrong is not None:
+        index = a.classify_wrong if a.classify_wrong is not None else a.archive_wrong
+        reasons = a.reason or ["待归因"]
+        try:
+            classify_wrong(
+                st, index, reasons, a.note, archive=a.archive_wrong is not None
+            )
+        except ValueError as e:
+            print(e)
+            return 2
+        save_state(st)
+        write_back(st)
+        print(f"错题 {index} 已{'归档' if a.archive_wrong is not None else '归因'}。")
+        return 0
+    if a.teachback_pass is not None:
+        lid = a.teachback_pass
+        if lid not in LV:
+            print(f"没有关卡 {lid}。用 --list 看。")
+            return 2
+        s = lv_state(st, lid)
+        if a.topic:
+            if lid != 1:
+                print("--topic 目前只用于关卡 1。")
+                return 2
+            ts = topic_state(s, a.topic)
+            if not score_ready(ts):
+                print(f"关卡 1「{a.topic}」专项尚未达到 "
+                      f"{PASS_CORRECT}/{PASS_WINDOW}，不能记录复述通过。")
+                return 2
+            ts["teachback"] = True
+            ts["passed"] = True
+            msg = f"关卡 1「{a.topic}」：专项练习 + 白话复述通过。"
+        else:
+            if not practice_ready(s, lid):
+                print(f"关卡 {lid} 的练习尚未达标，不能记录整关复述通过。")
+                return 2
+            s["teachback"] = True
+            s["passed"] = True
+            msg = f"关卡 {lid}：练习达标 + 白话复述验收通过，最终过关。"
+        save_state(st)
+        write_back(st)
+        print(msg)
+        return 0
 
-    if a.review:
+    if a.weak:
+        rng = random.Random(a.seed)
         lid = None
-        r, n = run_review(a.n, st, force=a.force)
+        r, n = run_weak(a.weak, a.n or 5, st, rng)
+    elif a.review:
+        lid = None
+        r, n = run_review(a.n or 10, st, force=a.force)
     else:
         rng = random.Random(a.seed)
         lid = a.level or pick_level(st)
         if lid not in LV:
             print(f"没有关卡 {lid}。用 --list 看。")
             return 2
-        r, n = run(lid, a.n, st, rng)
+        if a.topic and lid != 1:
+            print("--topic 目前只用于关卡 1。")
+            return 2
+        r, n = run(lid, a.n or 10, st, rng, topic=a.topic,
+                   assume_learned=a.yes)
 
     if n:
         st["sessions"].append({"date": date.today().isoformat(),
@@ -659,9 +1001,17 @@ def main(argv=None):
         print(f"\n{'=' * 62}\n本轮 {r}/{n}　正确率 {r / n * 100:.0f}%")
         if lid:
             s = lv_state(st, lid)
-            if len(s["hist"]) >= PASS_WINDOW and rate(s["hist"]) >= PASS_RATE:
-                print(f"🎉 关卡 {lid} 达标（近 {PASS_WINDOW} 题 "
-                      f"{rate(s['hist']) * 100:.0f}%）。下一关：{pick_level(st)}")
+            if lid == 1 and a.topic:
+                ts = topic_state(s, a.topic)
+                if score_ready(ts):
+                    print(f"「{a.topic}」专项达标（至少 "
+                          f"{PASS_CORRECT}/{PASS_WINDOW}），回到 agent 做该专项白话复述。")
+                else:
+                    print(f"「{a.topic}」专项未达标；先回到 agent 讲解错题，"
+                          "不要继续机械刷题。")
+            elif practice_ready(s, lid):
+                print(f"关卡 {lid} 练习达标，但尚未最终过关。")
+                print("回到 agent 做整关白话复述验收。")
             else:
                 print(f"关卡 {lid} 近 {PASS_WINDOW} 题正确率 "
                       f"{rate(s['hist']) * 100:.0f}%，达标线 {PASS_RATE * 100:.0f}%。")

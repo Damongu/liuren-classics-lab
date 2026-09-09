@@ -19,6 +19,42 @@ ROUNDS = 40   # 每关轮数
 
 def main() -> int:
     bad = []
+    gate = {"hist": [1] * tutor.PASS_WINDOW, "teachback": False}
+    if not tutor.practice_ready(gate) or tutor.final_passed(gate):
+        bad.append("练习达标不应直接等于最终过关")
+    gate["teachback"] = True
+    if not tutor.final_passed(gate):
+        bad.append("练习达标且白话复述通过后应最终过关")
+    for topic in tutor.LEVEL1_TOPICS:
+        for s in range(ROUNDS):
+            item = tutor.g_jigong(random.Random(s), topic)
+            if item["spec"][0] != topic:
+                bad.append(f"关1单项 {topic} 混入题型：{item['spec'][0]}")
+    l1 = {"hist": [], "teachback": False, "topics": {}, "mixed": {"hist": []}}
+    for topic in tutor.LEVEL1_TOPICS:
+        ts = tutor.topic_state(l1, topic)
+        ts["hist"] = [1] * tutor.PASS_CORRECT + [0]
+        ts["teachback"] = True
+    l1["mixed"]["hist"] = [1] * tutor.PASS_CORRECT + [0]
+    if not tutor.practice_ready(l1, 1) or tutor.final_passed(l1, 1):
+        bad.append("关1各专项和混合达标后应待整关复述，不应直接最终过关")
+    l1["teachback"] = True
+    if not tutor.final_passed(l1, 1):
+        bad.append("关1专项、混合及整关复述均通过后应最终过关")
+    sample_state = {
+        "levels": {}, "wrong": [], "wrong_archive": [],
+        "weak_groups": {}, "sessions": [],
+    }
+    sample = tutor.g_jigong(random.Random(7), "遁干")
+    tutor._enqueue(sample_state, 1, sample, "错答")
+    tutor.classify_wrong(
+        sample_state, 1, ["教学前基线", "步骤遗漏"], "自测"
+    )
+    if not sample_state["wrong"][0].get("baseline_pending"):
+        bad.append("教学前基线归因后未设置一次复现标记")
+    tutor._dequeue(sample_state, 1, sample)
+    if sample_state["wrong"] or len(sample_state["wrong_archive"]) != 1:
+        bad.append("教学前基线答对后未退出活跃队列并保留归档")
     for lvl in tutor.LEVELS:
         for s in range(ROUNDS):
             rng = random.Random(s * 131 + lvl["id"])
