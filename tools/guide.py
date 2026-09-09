@@ -192,7 +192,8 @@ def course_position(e):
         span = STAGE_COURSE.get(stage)
         if span:
             return (f"按阶段 {stage} 归入{span}（该条未单列于零基础课序表）",
-                    "见该课序表上一行")
+                    f"程序无法定位（该条未单列于课序表）→ 由 agent 在导读里点明："
+                    f"本阶段紧接的上一节内容是什么")
         return f"未列入零基础课序（frontmatter 阶段 {stage}）", "——"
     cur = f"第 {rows[idx][0]} 课「{rows[idx][1]}」"
     prev = f"第 {rows[idx - 1][0]} 课「{rows[idx - 1][1]}」" if idx else "无（本条即第一课）"
