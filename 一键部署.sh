@@ -148,11 +148,20 @@ else
 fi
 
 # ---------------------------------------------------------------- 6c. 复盘引擎
-step "复盘引擎自测（十条规则的边界用例）"
+step "复盘引擎自测（十三条规则的边界用例，含导读 R12–R14）"
 if $PY tools/retro_selftest.py >/dev/null 2>&1; then
   ok "复盘规则边界正常（signal_log.py / retro.py 可用）"
 else
   warn "复盘引擎自测未通过：自我迭代会退回「靠 agent 自觉」，请跑 $PY tools/retro_selftest.py 看详情"
+fi
+
+# ---------------------------------------------------------------- 6d. 导读器
+step "导读器自检（档位判定与导读卡状态）"
+if $PY tools/guide.py --grades >/dev/null 2>&1; then
+  ok "导读器可用（$PY tools/guide.py --entry 条目 生成导读卡）"
+  $PY tools/guide.py --list 2>/dev/null | sed -n '2,6p'
+else
+  warn "导读器不可用：读原文前的导读七件套会退回临场决定，请跑 $PY tools/guide.py --grades 看报错"
 fi
 
 # ---------------------------------------------------------------- 7. 自检
@@ -174,8 +183,10 @@ ${BOLD}部署完成。${RST}
 主工作面：${BOLD}50-校读笔记/对校矩阵-五个判别点.md${RST}
 ${DIM}读书时随手记问题 → 70-待查/待查清单.md${RST}
 
-${BOLD}每节课两道闸门${RST}（agent 自己会跑，你只需知道它该跑）：
-  开场 ${BOLD}$PY tools/retro.py --brief${RST}　收尾 ${BOLD}$PY tools/retro.py --close${RST}
+${BOLD}每节课三道闸门${RST}（agent 自己会跑，你只需知道它该跑）：
+  开场 ${BOLD}$PY tools/retro.py --brief${RST}
+  读原文前 ${BOLD}$PY tools/guide.py --entry 本节条目 --check${RST}（导读七件套＋两句回执）
+  收尾 ${BOLD}$PY tools/retro.py --close${RST}
 ${DIM}它凭什么会自己改进：README「二·五、它怎么自己发现问题」${RST}
 
 EOF

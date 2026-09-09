@@ -179,6 +179,99 @@ def t_r11():
           hit(retro.rule_R11, st(levels=passed, wrong=[base]), sig()), 0)
 
 
+# ------------------------------------------------------------------ R12–R14 导读
+class _FakeGuide:
+    """替身导读模块：只提供 R13／R14 需要的两个接口，避免自测读写真实 vault。"""
+
+    LIMITS = {"A": 5, "B": 10, "C": 15}
+
+    def __init__(self, cards=None):
+        self._cards = cards or {}
+
+    def grade_limit(self, g):
+        return self.LIMITS.get(g, 10), 0
+
+    def load_state(self):
+        return dict(cards=self._cards)
+
+
+def _with_guide(receipts, cards=None):
+    """把 retro._guide_receipts 换成构造数据，返回恢复函数。"""
+    orig = retro._guide_receipts
+    fake = _FakeGuide(cards)
+    retro._guide_receipts = lambda: (list(receipts), fake)
+    return orig
+
+
+def _restore_guide(orig):
+    retro._guide_receipts = orig
+
+
+def rcpt(entry, grade, result, minutes, day=0):
+    return dict(entry=f"10-底本/六壬大全/01-第一册 起例/{entry}", grade=grade,
+                result=result, minutes=minutes, at=f"{d(day)} 10:00")
+
+
+def t_r12():
+    orig = _with_guide([], {"x": dict(name="涉害法", grade="A")})
+    try:
+        one = sig([dict(type="导读不足", topic="涉害法")])
+        two = sig([dict(type="导读不足", topic="涉害法"),
+                   dict(type="导读不足", topic="涉害法")])
+        split = sig([dict(type="导读不足", topic="涉害法", session="S1"),
+                     dict(type="导读不足", topic="元首课", session="S2")])
+        done = sig([dict(type="导读不足", topic="涉害法", resolved=True),
+                    dict(type="导读不足", topic="涉害法", resolved=True)])
+        check("R12 单节 1 次导读不足 → 不命中", hit(retro.rule_R12, st(), one), 0)
+        check("R12 单节 2 次导读不足 → 命中", hit(retro.rule_R12, st(), two), 1)
+        check("R12 分散在两节各 1 次 → 不命中", hit(retro.rule_R12, st(), split), 0)
+        check("R12 已处理信号不计入", hit(retro.rule_R12, st(), done), 0)
+        check("R12 卡顿不误判为导读不足",
+              hit(retro.rule_R12, st(), sig([dict(type="卡顿"), dict(type="卡顿")])), 0)
+    finally:
+        _restore_guide(orig)
+
+
+def t_r13():
+    cases = [
+        ("R13 连续两节 fail → 命中",
+         [rcpt("005-涉害法", "A", "fail", 6, 2), rcpt("002-十干寄宫", "A", "fail", 7, 1)], 1),
+        ("R13 末节 pass → 不命中",
+         [rcpt("005-涉害法", "A", "fail", 6, 2), rcpt("002-十干寄宫", "A", "pass", 4, 1)], 0),
+        ("R13 只有一节 fail → 不命中", [rcpt("005-涉害法", "A", "fail", 6, 1)], 0),
+        ("R13 无回执 → 不命中", [], 0),
+    ]
+    for name, rs, want in cases:
+        orig = _with_guide(rs)
+        try:
+            check(name, hit(retro.rule_R13, st(), sig()), want)
+        finally:
+            _restore_guide(orig)
+
+
+def t_r14():
+    over = [rcpt("a", "A", "pass", 9, 3), rcpt("b", "A", "pass", 8, 2),
+            rcpt("c", "A", "pass", 7, 1)]                       # A 档上限 5，连超 3 节
+    two = over[1:]                                              # 只连超 2 节
+    mixed = [rcpt("a", "A", "pass", 9, 3), rcpt("b", "A", "pass", 4, 2),
+             rcpt("c", "A", "pass", 8, 1)]                      # 中间一节没超
+    other = [rcpt("a", "B", "pass", 9, 3), rcpt("b", "B", "pass", 8, 2),
+             rcpt("c", "B", "pass", 9, 1)]                      # B 档上限 10，都没超
+    nomin = [dict(rcpt("a", "A", "pass", 9, 3), minutes=None),
+             rcpt("b", "A", "pass", 8, 2), rcpt("c", "A", "pass", 7, 1)]
+    for name, rs, want in (
+            ("R14 A 档连超 3 节 → 命中", over, 1),
+            ("R14 只连超 2 节 → 不命中", two, 0),
+            ("R14 中间一节未超 → 不命中", mixed, 0),
+            ("R14 B 档均未超上限 → 不命中", other, 0),
+            ("R14 缺用时的回执不计入，剩 2 节 → 不命中", nomin, 0)):
+        orig = _with_guide(rs)
+        try:
+            check(name, hit(retro.rule_R14, st(), sig()), want)
+        finally:
+            _restore_guide(orig)
+
+
 # ------------------------------------------------------------------ 红线与去重
 def t_redline():
     fake = dict(rule="X", key="X|1", title="建议降低证据等级要求以加快进度",
@@ -206,7 +299,8 @@ def main():
     print("\n复盘引擎自测")
     print("─" * 62)
     for fn in (t_r1, t_r2, t_r3, t_r4, t_r5, t_r6, t_r7,
-               t_r9, t_r10, t_r11, t_redline, t_dedup):
+               t_r9, t_r10, t_r11, t_r12, t_r13, t_r14,
+               t_redline, t_dedup):
         fn()
     print("─" * 62)
     if FAILS:

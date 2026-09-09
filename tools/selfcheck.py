@@ -22,6 +22,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from collections import defaultdict
 from pathlib import Path
 
@@ -29,6 +30,7 @@ from pathlib import Path
 EXPECTED_DIRS = [
     "00-索引",
     "10-底本",
+    "15-导读",
     "20-概念卡",
     "30-课例",
     "40-考据卡",
@@ -58,6 +60,7 @@ KEY_FILES = [
     "00-索引/佐证层书目分级.md",
     "00-索引/证据面板.md",
     "00-索引/唐宋层导入指南.md",
+    "00-索引/导读流程-方案.md",
 ]
 
 WIKILINK = re.compile(r"\[\[([^\]|#\\]+)(?:\\?[|#][^\]]*)?\]\]")
@@ -95,7 +98,7 @@ def split_fm(raw: str):
 
 def check_skeleton(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[1/7] 目录骨架")
+        print("\n[1/8] 目录骨架")
     missing = [d for d in EXPECTED_DIRS if not (vault / d).is_dir()]
     if missing:
         r.err(f"缺目录：{'、'.join(missing)}")
@@ -105,7 +108,7 @@ def check_skeleton(vault: Path, r: Report):
 
 def check_key_files(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[2/7] 关键文件")
+        print("\n[2/8] 关键文件")
     missing = [f for f in KEY_FILES if not (vault / f).is_file()]
     if missing:
         r.err(f"缺关键文件：{'、'.join(missing)}")
@@ -115,7 +118,7 @@ def check_key_files(vault: Path, r: Report):
 
 def check_books(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[3/7] 七部唐宋层书")
+        print("\n[3/8] 七部唐宋层书")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         r.err("找不到 10-底本/唐宋层，底本未导入")
@@ -149,7 +152,7 @@ def check_books(vault: Path, r: Report):
 
 def check_frontmatter(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[4/7] 底本条目 frontmatter")
+        print("\n[4/8] 底本条目 frontmatter")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         return
@@ -175,7 +178,7 @@ def check_frontmatter(vault: Path, r: Report):
 
 def check_pollution(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[5/7] 污染标记")
+        print("\n[5/8] 污染标记")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         return
@@ -222,7 +225,7 @@ def check_pollution(vault: Path, r: Report):
 
 def check_links(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[6/7] 双链完整性")
+        print("\n[6/8] 双链完整性")
     # 收集所有 note 名（不含扩展名）
     names = set()
     for p in vault.rglob("*.md"):
@@ -291,7 +294,7 @@ def check_dataview(vault: Path, r: Report):
     字段名写错时 Dataview 不报错，只会渲染出一张空表 —— 属于静默失败，必须机器兜住。
     """
     if not r.quiet:
-        print("\n[7/7] Dataview 字段一致性")
+        print("\n[7/8] Dataview 字段一致性")
     present = set()
     for md in vault.rglob("*.md"):
         fm, _ = split_fm(md.read_text("utf-8"))
@@ -318,6 +321,56 @@ def check_dataview(vault: Path, r: Report):
         r.ok(f"{nblk} 个 dataview 查询引用的字段全部存在")
 
 
+def check_guides(vault: Path, r: Report):
+    """导读卡：底本在不在、占位填没填、有没有被底本改动甩过期。
+
+    这三件都是静默失败：卡还在、能打开、看着像导读，但内容已经不对应当前底本，
+    或者根本还是骨架。所以宁可多报警告，也不让骨架冒充导读。
+    """
+    if not r.quiet:
+        print("\n[8/8] 导读卡")
+    gdir = vault / "15-导读"
+    state_p = vault / "60-掌握度" / "_guide_state.json"
+    cards = sorted(p for p in gdir.rglob("*-导读.md")) if gdir.is_dir() else []
+    if not cards:
+        r.ok("尚无导读卡（按节生成，不批量预生成）")
+        return
+    state = {}
+    if state_p.is_file():
+        try:
+            state = json.loads(state_p.read_text("utf-8")).get("cards", {})
+        except json.JSONDecodeError:
+            r.err("_guide_state.json 解析失败，导读进度已损坏 → 删掉后按节重生成")
+    n_todo = n_stale = n_orphan = 0
+    for cp in cards:
+        raw = cp.read_text("utf-8")
+        rel = cp.relative_to(vault).as_posix()
+        m = re.search(r"^底本: (.+)$", raw, re.M)
+        src = vault / ((m.group(1).strip() if m else "") + ".md")
+        if not m or not src.is_file():
+            n_orphan += 1
+            r.err(f"导读卡找不到对应底本条目：{rel}")
+            continue
+        if raw.count("TODO(agent)"):
+            n_todo += 1
+            r.warn(f"导读卡仍是骨架，未填第 3／5 件：{rel}"
+                   f"（{raw.count('TODO(agent)')} 处占位，骨架不能当导读用）")
+        rec = state.get(m.group(1).strip(), {})
+        mt = datetime.fromtimestamp(src.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+        if rec.get("source_mtime") and rec["source_mtime"] < mt:
+            n_stale += 1
+            r.warn(f"导读卡已过期，底本更新于 {mt}：{rel}"
+                   f"　→ python3 tools/guide.py --entry {cp.stem[:-3]} --force")
+    idx = vault / "00-索引" / "导读进度.md"
+    if not idx.is_file():
+        r.warn("缺 00-索引/导读进度.md → python3 tools/guide.py --index")
+    elif state and len(state) != len(cards):
+        r.warn(f"导读卡 {len(cards)} 张与进度记录 {len(state)} 条不一致 → "
+               "python3 tools/guide.py --index")
+    if not (n_todo or n_stale or n_orphan):
+        r.ok(f"{len(cards)} 张导读卡：底本齐、占位已填、与底本同步")
+
+
 def main():
     ap = argparse.ArgumentParser(description="六壬 vault 自检")
     ap.add_argument("--vault", default="六壬vault")
@@ -339,6 +392,7 @@ def main():
     check_pollution(vault, r)
     check_links(vault, r)
     check_dataview(vault, r)
+    check_guides(vault, r)
 
     # 汇总
     print("\n" + "=" * 56)

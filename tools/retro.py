@@ -66,6 +66,9 @@ TH = dict(
     overdue_days=2,       # R7 复现逾期天数
     stale_days=7,         # R8 提案挂着未决的天数
     session_minutes=110,  # R10 单节时长上限
+    guide_gap_per_session=2,   # R12 单节「导读不足」条数
+    receipt_fail_streak=2,     # R13 连续回执未通过节数
+    guide_over_streak=3,       # R14 同档导读连续超时节数
 )
 
 # 红线关键词：命中即不允许生成提案（防止「教学优化」侵蚀考据标准）
@@ -348,8 +351,108 @@ def rule_R11(ts, sig):
     return out
 
 
+def _guide_receipts():
+    """按时间排序的导读回执，附档位；导读模块不可用时返回空。"""
+    try:
+        import guide
+        return guide.receipts_all(guide.load_state()), guide
+    except Exception:                                          # pragma: no cover
+        return [], None
+
+
+def rule_R12(ts, sig):
+    """单节多次「导读不足」→ 该档导读模板不够用，要改模板而不是多讲一遍。
+
+    病因和 R4／R5 不同：R4／R5 是讲解阶段的依赖与讲法问题，这里坏在导读本身的
+    定位、切分、文本身份交代，所以单独开药方。
+    """
+    out = []
+    per = {}
+    for x in _fresh_signals(sig):
+        if x["type"] == "导读不足":
+            per.setdefault(x.get("session", "?"), []).append(x)
+    _r, gmod = _guide_receipts()
+    cards = {}
+    if gmod:
+        cards = {c.get("name", ""): c.get("grade", "?")
+                 for c in gmod.load_state()["cards"].values()}
+    for sid, items in per.items():
+        if len(items) < TH["guide_gap_per_session"]:
+            continue
+        topics = sorted({x["topic"] for x in items if x["topic"]})
+        grades = sorted({cards.get(t, "?") for t in topics}) or ["?"]
+        out.append(dict(
+            rule="R12", key=f"R12|{sid}",
+            title=f"会话 {sid} 出现 {len(items)} 次导读不足，建议修订 "
+                  f"{'／'.join(grades)} 档导读模板",
+            evidence=[f"涉及条目：{'、'.join(topics) or '未标注'}"]
+                     + [f"{x['ts']} {x['note']}" for x in items[:4]],
+            suggestion="改 `tools/guide.py` 里该档模板的措辞与件序：把本节答不出的那一件"
+                       "（多为第 1 件坐标或第 3 件切块）提到最前，并在模板里写死它必须"
+                       "回答的问题；不要靠临场多讲一遍补救。",
+            benefit="同一档次的后续条目一次性受益，导读缺口不再逐节复发。",
+            risk="模板越改越长，可能把导读挤成第二次讲解。",
+            rollback="模板改动只加不超过两行；无效即回滚到上一版模板文本。"))
+    return out
+
+
+def rule_R13(ts, sig):
+    """连续两节回执未通过 → 节的粒度或档位判错，应降档或拆节。"""
+    rs, gmod = _guide_receipts()
+    if len(rs) < TH["receipt_fail_streak"]:
+        return []
+    tail = rs[-TH["receipt_fail_streak"]:]
+    if any(r.get("result") != "fail" for r in tail):
+        return []
+    names = "、".join(dict.fromkeys(r["entry"].split("/")[-1] for r in tail))
+    return [dict(
+        rule="R13", key="R13|" + tail[-1].get("at", ""),
+        title=f"连续 {len(tail)} 节导读回执未通过（{names}），建议降档或拆节",
+        evidence=[f"{r.get('at')}｜{r['entry'].split('/')[-1]}｜{r.get('grade')} 档｜"
+                  f"用时 {r.get('minutes') or '未记'} 分钟" for r in tail],
+        suggestion="把这两条按「一节只处理一组规则」重新拆节，或把档位下调一级"
+                   "（净字数临界时按低档处理），拆完再各自重生成导读卡。",
+        benefit="回执问题的根源多是节太大，拆节比反复加导读更省时间。",
+        risk="拆节会让总节数变多，进度看起来变慢。",
+        rollback="拆节只在这两条上试行；无效即按原节合回，导读卡 --force 重生成。")]
+
+
+def rule_R14(ts, sig):
+    """某档导读连续超时 → 该档预算或件数不合实际。"""
+    rs, gmod = _guide_receipts()
+    if not gmod:
+        return []
+    per = {}
+    for r in rs:
+        if not r.get("minutes"):
+            continue
+        g = r.get("grade", "?")
+        lim = gmod.grade_limit(g)[0] if g in ("A", "B", "C") else 10 ** 9
+        per.setdefault(g, []).append((r, r["minutes"] > lim, lim))
+    out = []
+    need = TH["guide_over_streak"]
+    for g, items in per.items():
+        tail = items[-need:]
+        if len(tail) < need or not all(flag for _r, flag, _l in tail):
+            continue
+        lim = tail[-1][2]
+        out.append(dict(
+            rule="R14", key=f"R14|{g}|{tail[-1][0].get('at', '')}",
+            title=f"{g} 档导读连续 {need} 节超时（上限 {lim} 分钟），建议压件数或调预算",
+            evidence=[f"{r.get('at')}｜{r['entry'].split('/')[-1]}｜"
+                      f"用时 {r['minutes']} 分钟 > 上限 {l}" for r, _f, l in tail],
+            suggestion=f"二选一：① 把 {g} 档的第 2、6、7 件压成一行（只留净字数、"
+                       f"一条冲突线索、时间上限）；② 把 {g} 档上限上调到实际中位用时并"
+                       f"同步改 `GRADES`。选定后写进方案，不要两头都放宽。",
+            benefit="导读时间回到可预期区间，不再侵占四拍的时间。",
+            risk="压件数可能漏掉冲突预警；放宽上限会让整节变长。",
+            rollback="两项改动都只动一处参数或一档模板，无效即改回原值。"))
+    return out
+
+
 RULES = (rule_R1, rule_R2, rule_R3, rule_R4, rule_R5,
-         rule_R6, rule_R7, rule_R9, rule_R10, rule_R11)
+         rule_R6, rule_R7, rule_R9, rule_R10, rule_R11,
+         rule_R12, rule_R13, rule_R14)
 
 
 def run_rules(ts, sig):
