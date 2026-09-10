@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+liuren-paipan/.training-results.jsonl
 
 # Obsidian：多端同步的主要冲突源，本地界面状态不必入库
 # 注意要用 ** 前缀：vault 在 六壬vault/ 下，不带 ** 的写法只匹配仓库根目录

@@ -127,9 +127,10 @@ def g_ju(rng):
     """L2 起局与天盘。"""
     gz, shi, jiang, p = rnd_case(rng)
     if rng.random() < 0.5:
-        return dict(q=f"{head(gz, shi, jiang)}\n问：这是第几局？（月将加占时，顺行位移）",
-                    ans=[str(p.k)], plate=p, src="20-概念卡/天地盘",
-                    spec=("局", gz, shi, jiang))
+        return dict(q=f"{head(gz, shi, jiang)}\n"
+                      f"问：天盘 {jiang} 应放在哪个地盘宫？",
+                    ans=[shi], plate=p, src="20-概念卡/天地盘",
+                    spec=("加时", gz, shi, jiang))
     z = ZHI[rng.randrange(12)]
     return dict(q=f"{head(gz, shi, jiang)}\n问：地盘 {z} 宫上的天盘支是什么？",
                 ans=[p.tian[z]], plate=p, src="20-概念卡/天地盘",
@@ -154,6 +155,19 @@ def g_keshi(rng):
                 ans=[p.keshi, p.keshi + "课", p.keshi + "法"], plate=p,
                 src="第一册 003~011 入手法诸诀｜第六册 课经一",
                 spec=("课体", gz, shi, jiang))
+
+
+def g_zeike(rng):
+    """L4 贼克专项：只练元首、重审及发用上神。"""
+    ks = rng.choice(["元首", "重审"])
+    gz, shi, jiang, p = rnd_case(rng, keshi=ks)
+    return dict(q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按贼克法，此课是元首还是重审？初传取谁？"
+                  "（如「重审 辰」）",
+                ans=[p.keshi + p.chuan[0], p.keshi + "课" + p.chuan[0]],
+                plate=p,
+                src="第一册 003-贼克法｜《占事略决》第一、二章",
+                spec=("贼克", gz, shi, jiang))
 
 
 def g_chuan(rng):
@@ -283,6 +297,8 @@ LEVELS = [
 LV = {l["id"]: l for l in LEVELS}
 
 LEVEL1_TOPICS = ("寄宫", "旬空", "遁干")
+LEVEL4_TOPICS = ("贼克",)
+TOPIC_CHOICES = LEVEL1_TOPICS + LEVEL4_TOPICS
 LEVEL1_BRIEF = {
     "寄宫": "十干按六壬寄宫表落到地支宫；这是固定表，不按日旬变化。",
     "旬空": "先定六甲旬首；从旬首支起配甲至癸，十干配完后余下两支为空亡。",
@@ -309,14 +325,15 @@ def replay(spec):
         return dict(q=f"{gz}日，{z} 上遁得何干？（本旬不含则答「无」）",
                     ans=[d] if d else ["无", "None", "空"],
                     src="第一册 起例·遁干", spec=tuple(spec))
-    if kind in ("局", "天盘", "四课", "课体", "三传", "涉害"):
+    if kind in ("局", "加时", "天盘", "四课", "课体", "贼克", "三传", "涉害"):
         gz, shi, jiang = spec[1], spec[2], spec[3]
         p = from_ganzhi(gz, shi, jiang)
         base = dict(plate=p, spec=tuple(spec))
-        if kind == "局":
+        if kind in ("局", "加时"):
             return base | dict(
-                q=f"{head(gz, shi, jiang)}\n问：这是第几局？（月将加占时，顺行位移）",
-                ans=[str(p.k)], src="20-概念卡/天地盘")
+                q=f"{head(gz, shi, jiang)}\n"
+                  f"问：天盘 {jiang} 应放在哪个地盘宫？",
+                ans=[shi], src="20-概念卡/天地盘")
         if kind == "天盘":
             z = spec[4]
             return base | dict(
@@ -332,6 +349,13 @@ def replay(spec):
                   f"问：此课当用九宗门哪一门起三传？",
                 ans=[p.keshi, p.keshi + "课", p.keshi + "法"],
                 src="第一册 003~011 入手法诸诀｜第六册 课经一")
+        if kind == "贼克":
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按贼克法，此课是元首还是重审？初传取谁？"
+                  "（如「重审 辰」）",
+                ans=[p.keshi + p.chuan[0], p.keshi + "课" + p.chuan[0]],
+                src="第一册 003-贼克法｜《占事略决》第一、二章")
         if kind == "三传":
             return base | dict(
                 q=f"{head(gz, shi, jiang)}\n问：三传是什么？（三个字，初→中→末）",
@@ -393,6 +417,8 @@ def load_state():
             state = json.loads(STATE.read_text("utf-8"))
             state.setdefault("wrong_archive", [])
             state.setdefault("weak_groups", {})
+            state.setdefault("unscored_sessions", [])
+            state.setdefault("progression_waivers", {})
             for w in state.setdefault("wrong", []):
                 w.setdefault("reasons", ["待归因"])
                 w.setdefault("diagnosis", "")
@@ -402,7 +428,8 @@ def load_state():
             pass
     return {
         "levels": {}, "wrong": [], "wrong_archive": [],
-        "weak_groups": {}, "sessions": [],
+        "weak_groups": {}, "sessions": [], "unscored_sessions": [],
+        "progression_waivers": {},
     }
 
 
@@ -417,8 +444,9 @@ def lv_state(st, lid):
     )
     state.setdefault("teachback", False)
     state.setdefault("passed", False)
-    if lid == 1:
+    if lid in (1, 4):
         state.setdefault("topics", {})
+    if lid == 1:
         state.setdefault("mixed", {"hist": []})
     return state
 
@@ -461,7 +489,8 @@ def final_passed(s, lid=None):
 def pick_level(st):
     for l in LEVELS:
         s = lv_state(st, l["id"])
-        if not final_passed(s, l["id"]):
+        waived = str(l["id"]) in st.get("progression_waivers", {})
+        if not final_passed(s, l["id"]) and not waived:
             return l["id"]
     return LEVELS[-1]["id"]
 
@@ -502,7 +531,8 @@ def ask(item, no_input=False):
 
 def record_result(st, lid, score, topic=None):
     state = lv_state(st, lid)
-    state["hist"].append(score)  # 保留关卡总历史，兼容旧记录。
+    if not (lid == 4 and topic):
+        state["hist"].append(score)  # 专项不冒充完整九宗门成绩。
     if lid == 1:
         bucket = topic_state(state, topic) if topic else state["mixed"]
         bucket["hist"].append(score)
@@ -512,9 +542,121 @@ def record_result(st, lid, score, topic=None):
                 bucket["passed"] = False
             state["teachback"] = False
             state["passed"] = False
+    elif lid == 4 and topic:
+        bucket = topic_state(state, topic)
+        bucket["hist"].append(score)
+        if score == 0:
+            bucket["teachback"] = False
+            bucket["passed"] = False
     elif score == 0:
         state["teachback"] = False
         state["passed"] = False
+
+
+def record_external_session(lid, scores, source, session_id, topic=None, details=None):
+    """Record a deterministically judged session from another local UI."""
+    if lid not in LV:
+        raise ValueError(f"没有关卡 {lid}")
+    if not isinstance(scores, list) or not scores or any(s not in (0, 1) for s in scores):
+        raise ValueError("外部训练成绩无效")
+    if not isinstance(source, str) or not source.strip():
+        raise ValueError("外部训练来源无效")
+    if not isinstance(session_id, str) or not session_id.strip():
+        raise ValueError("外部训练会话编号无效")
+    if topic is not None and not (
+        (lid == 1 and topic in LEVEL1_TOPICS)
+        or (lid == 4 and topic in LEVEL4_TOPICS)
+    ):
+        raise ValueError("专项训练类型无效")
+    if details is not None and (
+        not isinstance(details, list) or len(details) != len(scores)
+        or any(not isinstance(row, dict) for row in details)
+    ):
+        raise ValueError("外部训练明细无效")
+
+    st = load_state()
+    imported = st.setdefault("external_sessions", {})
+    if session_id in imported:
+        return {
+            "recorded": False,
+            "right": sum(scores),
+            "n": len(scores),
+            "ready": (score_ready(topic_state(lv_state(st, lid), topic))
+                      if topic else practice_ready(lv_state(st, lid), lid)),
+        }
+
+    for score in scores:
+        record_result(st, lid, score, topic=topic)
+    right = sum(scores)
+    session = {
+        "date": date.today().isoformat(),
+        "level": lid,
+        "right": right,
+        "n": len(scores),
+        "source": source,
+        "session_id": session_id,
+        "topic": topic,
+    }
+    if details is not None:
+        session["details"] = details
+    st["sessions"].append(session)
+    imported_session = {
+        "date": datetime.now().isoformat(timespec="seconds"),
+        "level": lid,
+        "right": right,
+        "n": len(scores),
+        "source": source,
+        "topic": topic,
+    }
+    if details is not None:
+        imported_session["details"] = details
+    imported[session_id] = imported_session
+    save_state(st)
+    write_back(st)
+    return {
+        "recorded": True,
+        "right": right,
+        "n": len(scores),
+        "ready": (score_ready(topic_state(lv_state(st, lid), topic))
+                  if topic else practice_ready(lv_state(st, lid), lid)),
+    }
+
+
+def record_unscored_session(lid, n, source, session_id, note):
+    """Preserve completed work when a system fault destroyed the score."""
+    if lid not in LV or not isinstance(n, int) or n <= 0:
+        raise ValueError("未计分训练记录无效")
+    if not all(isinstance(v, str) and v.strip()
+               for v in (source, session_id, note)):
+        raise ValueError("未计分训练记录信息不完整")
+    st = load_state()
+    rows = st.setdefault("unscored_sessions", [])
+    if any(row.get("session_id") == session_id for row in rows):
+        return False
+    rows.append({
+        "date": date.today().isoformat(),
+        "level": lid,
+        "n": n,
+        "source": source,
+        "session_id": session_id,
+        "note": note,
+    })
+    save_state(st)
+    write_back(st)
+    return True
+
+
+def waive_level_progression(lid, reason):
+    """Allow progression after an agent-caused loss without fabricating a pass."""
+    if lid not in LV or not isinstance(reason, str) or not reason.strip():
+        raise ValueError("进度豁免信息无效")
+    st = load_state()
+    st.setdefault("progression_waivers", {})[str(lid)] = {
+        "date": date.today().isoformat(),
+        "reason": reason,
+    }
+    save_state(st)
+    write_back(st)
 
 
 def judge(item, lid, st, card, topic=None, count_practice=True,
@@ -604,7 +746,12 @@ def run(lid, n, st, rng, topic=None, assume_learned=False):
 
     right = asked = 0
     for _ in range(n):
-        item = lvl["gen"](rng, topic) if lid == 1 else lvl["gen"](rng)
+        if lid == 1:
+            item = lvl["gen"](rng, topic)
+        elif lid == 4 and topic == "贼克":
+            item = g_zeike(rng)
+        else:
+            item = lvl["gen"](rng)
         s, quit_ = judge(item, lid, st, lvl["card"], topic=topic)
         if quit_:
             print("\n中断。已答部分照常计入。")
@@ -780,50 +927,148 @@ def run_weak(reason, n, st, rng):
 
 # ---------------------------------------------------------------- 回写
 
+def _recent_score(hist):
+    if len(hist) >= PASS_WINDOW:
+        return f"{sum(hist[-PASS_WINDOW:])}/{PASS_WINDOW}"
+    return f"{len(hist)}/{PASS_WINDOW} 题" if hist else "—"
+
+
+def _topic_status(state):
+    if score_ready(state) and state.get("teachback"):
+        return "✅ 通过"
+    if score_ready(state):
+        return "🗣 待复述"
+    return "🔸 在练" if state.get("hist") else "⬜ 未开"
+
+
+def _level_status(st, level):
+    state = lv_state(st, level["id"])
+    waived = st.get("progression_waivers", {}).get(str(level["id"]))
+    if final_passed(state, level["id"]):
+        return "✅ 过关"
+    if waived:
+        return "⚠ 已完成·成绩遗失·不阻断"
+    if practice_ready(state, level["id"]):
+        return "🗣 待复述"
+    return "🔸 在练" if state["hist"] else "⬜ 未开"
+
+
+def _next_step(st):
+    for lid, topics in ((1, LEVEL1_TOPICS), (4, LEVEL4_TOPICS)):
+        level_state = lv_state(st, lid)
+        for topic in topics:
+            state = topic_state(level_state, topic)
+            if state["hist"] and not topic_passed(level_state, topic):
+                if score_ready(state):
+                    return f"完成「{topic}」白话复述验收。"
+                return (f"继续「{topic}」专项："
+                        f"`python3 tools/tutor.py --level {lid} --topic {topic}`")
+    lid = pick_level(st)
+    return f"建议练关卡 **{lid}**：`python3 tools/tutor.py --level {lid}`"
+
+
+def _session_errors(row):
+    if row.get("right") == row.get("n"):
+        return "—"
+    details = row.get("details")
+    if not isinstance(details, list):
+        return "旧记录未保存"
+    stage_names = {
+        "tianpan": "天地盘", "sike": "四课", "zeike": "贼克",
+        "keshi": "课体", "chuan": "三传", "tianjiang": "天将",
+    }
+    errors = []
+    for index, detail in enumerate(details, 1):
+        if detail.get("clean"):
+            continue
+        stages = "、".join(dict.fromkeys(
+            stage_names.get(item.get("stage"), str(item.get("stage")))
+            for item in detail.get("mistakes", [])
+        )) or "未保存"
+        errors.append(f"第{index}题：{stages}")
+    return "；".join(errors) or "旧记录未保存"
+
+
 def write_back(st):
     lines = ["---", "tags: [掌握度/训练]", "---", "",
              "# 训练记录", "",
              "> 本文件由 `tools/tutor.py` 自动生成，不要手改。",
              f"> 最后更新：{datetime.now():%Y-%m-%d %H:%M}", "",
-             "| 关卡 | 名称 | 阶段 | 已答 | 近 12 题正确率 | 白话复述 | 状态 |",
-             "| :---: | :--- | :---: | :---: | :---: | :---: | :---: |"]
-    for l in LEVELS:
-        s = lv_state(st, l["id"])
-        h = s["hist"]
-        r = rate(h)
-        ready = practice_ready(s, l["id"])
-        done = final_passed(s, l["id"])
-        teachback = "✅" if s.get("teachback") else "—"
-        badge = ("✅ 过关" if done else
-                 "🗣 待复述" if ready else
-                 "🔸 在练" if h else "⬜ 未开")
-        score_text = "见专项" if l["id"] == 1 else f"{r * 100:.0f}%"
-        lines.append(f"| {l['id']} | {l['name']} | {l['stage']} | {len(h)} | "
-                     f"{score_text} | {teachback} | {badge} |")
+             "## 已学与当前", "",
+             "| 学习单元 | 训练范围 | 最近 12 题 | 白话复述 | 状态 |",
+             "| :--- | :--- | :---: | :---: | :---: |"]
     l1 = lv_state(st, 1)
-    lines += ["", "## 关卡 1 专项", "",
-              "| 专项 | 最近一轮 | 白话复述 | 状态 |",
-              "| :--- | :---: | :---: | :---: |"]
     for topic in LEVEL1_TOPICS:
         ts = topic_state(l1, topic)
-        h = ts["hist"]
-        score = f"{sum(h[-PASS_WINDOW:])}/{PASS_WINDOW}" if len(h) >= PASS_WINDOW \
-            else f"{len(h)}/{PASS_WINDOW} 题"
-        done = topic_passed(l1, topic)
-        status = "✅ 通过" if done else ("🗣 待复述" if score_ready(ts)
-                                      else "🔸 在练" if h else "⬜ 未开")
-        lines.append(f"| {topic} | {score} | "
-                     f"{'✅' if ts.get('teachback') else '—'} | {status} |")
+        lines.append(f"| {topic} | 关卡 1 单项 | {_recent_score(ts['hist'])} | "
+                     f"{'✅' if ts.get('teachback') else '—'} | {_topic_status(ts)} |")
     mh = l1["mixed"]["hist"]
-    mixed_score = f"{sum(mh[-PASS_WINDOW:])}/{PASS_WINDOW}" if len(mh) >= PASS_WINDOW \
-        else f"{len(mh)}/{PASS_WINDOW} 题"
-    lines.append(f"| 混合验收 | {mixed_score} | — | "
+    lines.append(f"| 地基混合验收 | 关卡 1 综合 | {_recent_score(mh)} | — | "
                  f"{'✅ 达标' if score_ready(l1['mixed']) else '🔒 未开放' if not all(topic_passed(l1, t) for t in LEVEL1_TOPICS) else '🔸 待练'} |")
+    for lid in (2, 3):
+        level = LV[lid]
+        state = lv_state(st, lid)
+        waived = st.get("progression_waivers", {}).get(str(lid))
+        score = (f"{waived.get('date')} 完成 12 题，分数遗失"
+                 if waived and not state["hist"] else _recent_score(state["hist"]))
+        lines.append(
+            f"| {level['name']} | 关卡 {lid} 完整 | {score} | "
+            f"{'✅' if state.get('teachback') else '—'} | {_level_status(st, level)} |"
+        )
+    l4 = lv_state(st, 4)
+    for topic in LEVEL4_TOPICS:
+        ts = topic_state(l4, topic)
+        lines.append(f"| {topic} | 关卡 4 前置单项 | {_recent_score(ts['hist'])} | "
+                     f"{'✅' if ts.get('teachback') else '—'} | {_topic_status(ts)} |")
+
+    lines += ["", "## 后续完整关卡", "",
+              "> 单项成绩不冒充完整关卡成绩；未教学内容不提前开放。",
+              "",
+              "| 关卡 | 完整范围 | 完整关卡成绩 | 状态 |",
+              "| :---: | :--- | :---: | :---: |"]
+    for level in LEVELS[3:]:
+        state = lv_state(st, level["id"])
+        note = ""
+        if level["id"] == 4 and any(
+            topic_state(state, topic)["hist"] for topic in LEVEL4_TOPICS
+        ):
+            note = "（已有贼克单项记录）"
+        lines.append(
+            f"| {level['id']} | {level['name']} | {_recent_score(state['hist'])} | "
+            f"{_level_status(st, level)}{note} |"
+        )
+
     tot = sum(len(lv_state(st, l['id'])['hist']) for l in LEVELS)
-    lines += ["", f"累计答题 **{tot}** 题　待复现错题 **{len(st['wrong'])}** 条", "",
+    tot += sum(len(topic_state(l4, topic)["hist"]) for topic in LEVEL4_TOPICS)
+    unscored = st.get("unscored_sessions", [])
+    unscored_n = sum(row["n"] for row in unscored)
+    lines += ["", "## 训练流水", "",
+              f"累计计分 **{tot}** 题；未计分完成 **{unscored_n}** 题；"
+              f"待复现错题 **{len(st['wrong'])}** 条。", "",
+              "| 日期 | 训练项 | 成绩 | 错误阶段 | 来源 |",
+              "| :---: | :--- | :---: | :--- | :--- |"]
+    for row in st.get("sessions", [])[-10:]:
+        lid = row.get("level")
+        item = row.get("topic") or (
+            LV[lid]["name"] if isinstance(lid, int) and lid in LV else str(lid)
+        )
+        lines.append(
+            f"| {row.get('date', '—')} | {item} | "
+            f"{row.get('right', 0)}/{row.get('n', 0)} | {_session_errors(row)} | "
+            f"{row.get('source', '终端训练器')} |"
+        )
+    if unscored:
+        lines += ["", "## 未计分完成记录", "",
+                  "| 日期 | 关卡 | 题数 | 来源 | 说明 |",
+                  "| :---: | :---: | :---: | :--- | :--- |"]
+        for row in unscored:
+            lines.append(
+                f"| {row['date']} | {row['level']} | {row['n']} | "
+                f"{row['source']} | {row['note']} |"
+            )
+    lines += ["",
               "## 下一步", "",
-              f"建议练关卡 **{pick_level(st)}**："
-              f"`python3 tools/tutor.py --level {pick_level(st)}`", "",
+              _next_step(st), "",
               "错题复现：`python3 tools/tutor.py --review`", ""]
     RECORD.parent.mkdir(parents=True, exist_ok=True)
     RECORD.write_text("\n".join(lines), "utf-8")
@@ -866,6 +1111,7 @@ def show_status(st):
         r = rate(h)
         ready = practice_ready(s, l["id"])
         done = final_passed(s, l["id"])
+        waived = str(l["id"]) in st.get("progression_waivers", {})
         if l["id"] == 1:
             summary = "　".join(
                 f"{name}:{sum(topic_state(s, name)['hist'][-PASS_WINDOW:])}/12"
@@ -878,7 +1124,7 @@ def show_status(st):
             bar = "█" * int(r * 10) + "·" * (10 - int(r * 10)) if h else "·" * 10
             print(f"  {l['id']}. {pad(l['name'], 26)} {bar} {r * 100:3.0f}%  "
                   f"{len(h):>3}题  "
-                  f"{'✅ 过关' if done else '🗣 待复述' if ready else ''}")
+                  f"{'✅ 过关' if done else '⚠ 未计分完成·不阻断' if waived else '🗣 待复述' if ready else ''}")
     due = [w for w in st["wrong"] if w.get("due", "") <= date.today().isoformat()]
     print("─" * 62)
     print(f"  待复现错题 {len(due)} / {len(st['wrong'])} 条")
@@ -897,8 +1143,8 @@ def show_wrong_list(st):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="六壬交互式训练器（先教学，后练习）")
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
-    ap.add_argument("--topic", choices=LEVEL1_TOPICS,
-                    help="关卡 1 单项练习：寄宫、旬空或遁干")
+    ap.add_argument("--topic", choices=TOPIC_CHOICES,
+                    help="单项练习：关卡1寄宫/旬空/遁干，关卡4贼克")
     ap.add_argument("--n", type=int, default=PASS_WINDOW,
                     help=f"本轮题量（默认 {PASS_WINDOW}，与达标窗口对齐：一轮跑完即可判定）")
     ap.add_argument("--review", action="store_true", help="只做到期错题（跨关卡，重问原题）")
@@ -954,17 +1200,18 @@ def main(argv=None):
             return 2
         s = lv_state(st, lid)
         if a.topic:
-            if lid != 1:
-                print("--topic 目前只用于关卡 1。")
+            if not ((lid == 1 and a.topic in LEVEL1_TOPICS)
+                    or (lid == 4 and a.topic in LEVEL4_TOPICS)):
+                print("该关卡不支持这个 --topic。")
                 return 2
             ts = topic_state(s, a.topic)
             if not score_ready(ts):
-                print(f"关卡 1「{a.topic}」专项尚未达到 "
+                print(f"关卡 {lid}「{a.topic}」专项尚未达到 "
                       f"{PASS_CORRECT}/{PASS_WINDOW}，不能记录复述通过。")
                 return 2
             ts["teachback"] = True
             ts["passed"] = True
-            msg = f"关卡 1「{a.topic}」：专项练习 + 白话复述通过。"
+            msg = f"关卡 {lid}「{a.topic}」：专项练习 + 白话复述通过。"
         else:
             if not practice_ready(s, lid):
                 print(f"关卡 {lid} 的练习尚未达标，不能记录整关复述通过。")
@@ -990,8 +1237,9 @@ def main(argv=None):
         if lid not in LV:
             print(f"没有关卡 {lid}。用 --list 看。")
             return 2
-        if a.topic and lid != 1:
-            print("--topic 目前只用于关卡 1。")
+        if a.topic and not ((lid == 1 and a.topic in LEVEL1_TOPICS)
+                            or (lid == 4 and a.topic in LEVEL4_TOPICS)):
+            print("该关卡不支持这个 --topic。")
             return 2
         r, n = run(lid, a.n or 10, st, rng, topic=a.topic,
                    assume_learned=a.yes)
@@ -1002,7 +1250,7 @@ def main(argv=None):
         print(f"\n{'=' * 62}\n本轮 {r}/{n}　正确率 {r / n * 100:.0f}%")
         if lid:
             s = lv_state(st, lid)
-            if lid == 1 and a.topic:
+            if a.topic:
                 ts = topic_state(s, a.topic)
                 if score_ready(ts):
                     print(f"「{a.topic}」专项达标（至少 "

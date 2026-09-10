@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>六壬排盘训练台</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="app-shell">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">六壬伴读 · 操作训练</p>
+      <h1>排盘训练台</h1>
+    </div>
+    <div class="run-stats" aria-label="本次练习统计">
+      <span><strong id="correct-count">0</strong> 正确</span>
+      <span><strong id="attempt-count">0</strong> 次检查</span>
+    </div>
+  </header>
+
+  <section class="case-controls" aria-label="课题条件">
+    <label>训练专项
+      <select id="topic-select">
+        <option value="贼克" selected>贼克</option>
+        <option value="四课">四课</option>
+      </select>
+    </label>
+    <label>日干支<select id="day-select"></select></label>
+    <label>占时<select id="shi-select"></select></label>
+    <label>月将<select id="jiang-select"></select></label>
+    <fieldset class="daynight">
+      <legend>昼夜</legend>
+      <label><input type="radio" name="daynight" value="昼" checked>昼</label>
+      <label><input type="radio" name="daynight" value="夜">夜</label>
+    </fieldset>
+    <button id="random-button" class="secondary" type="button">
+      <span class="button-symbol" aria-hidden="true">&#8635;</span><span>随机一课</span>
+    </button>
+  </section>
+
+  <section class="question-bar" aria-label="当前题目">
+    <div class="question-number">
+      <span id="question-index">练习模式</span>
+      <strong id="question-score">0 / 0</strong>
+    </div>
+    <div class="question-copy">
+      <p>当前题目</p>
+      <h2 id="question-text">戊戌日，卯时，未将：先排天地盘，再立四课。</h2>
+    </div>
+    <button id="session-button" class="primary" type="button">
+      <span class="button-symbol" aria-hidden="true">&#9654;</span><span>开始12题</span>
+    </button>
+    <button id="next-button" class="primary hidden" type="button">
+      <span>下一题</span><span class="button-symbol" aria-hidden="true">&#8594;</span>
+    </button>
+    <button id="copy-result-button" class="secondary hidden" type="button">
+      <span>复制结果</span>
+    </button>
+  </section>
+
+  <nav class="stage-tabs" aria-label="训练阶段">
+    <button class="stage-tab active" data-stage="tianpan" type="button"><span>1</span>天地盘</button>
+    <button class="stage-tab" data-stage="sike" type="button"><span>2</span>四课</button>
+    <button class="stage-tab" data-stage="zeike" type="button"><span>3</span>贼克</button>
+    <button class="stage-tab locked" data-stage="chuan" type="button" disabled><span>4</span>三传</button>
+    <button class="stage-tab locked" data-stage="tianjiang" type="button" disabled><span>5</span>天将</button>
+  </nav>
+
+  <section class="workspace">
+    <div class="plate-section">
+      <div class="section-heading">
+        <div>
+          <p id="stage-kicker">第一步</p>
+          <h2 id="stage-title">月将加时，填写天盘</h2>
+        </div>
+        <p id="stage-progress">0 / 12</p>
+      </div>
+
+      <div id="plate" class="plate" aria-label="十二宫天地盘">
+        <div class="palace" data-di="巳" style="grid-area: si"></div>
+        <div class="palace" data-di="午" style="grid-area: wu"></div>
+        <div class="palace" data-di="未" style="grid-area: wei"></div>
+        <div class="palace" data-di="申" style="grid-area: shen"></div>
+        <div class="palace" data-di="辰" style="grid-area: chen"></div>
+        <div class="plate-center">
+          <div class="case-name"><strong id="case-day">甲子日</strong><span id="case-time">卯时 · 子将</span></div>
+          <div class="anchor-note">月将放在占时宫上</div>
+          <div class="legend"><span><i class="dot earth"></i>地盘</span><span><i class="dot sky"></i>你的天盘</span></div>
+        </div>
+        <div class="palace" data-di="酉" style="grid-area: you"></div>
+        <div class="palace" data-di="卯" style="grid-area: mao"></div>
+        <div class="palace" data-di="戌" style="grid-area: xu"></div>
+        <div class="palace" data-di="寅" style="grid-area: yin"></div>
+        <div class="palace" data-di="丑" style="grid-area: chou"></div>
+        <div class="palace" data-di="子" style="grid-area: zi"></div>
+        <div class="palace" data-di="亥" style="grid-area: hai"></div>
+      </div>
+    </div>
+
+    <aside class="answer-panel">
+      <div id="sike-editor" class="editor hidden">
+        <div class="section-heading compact">
+          <div><p>第二步</p><h2>填写四课上神</h2></div>
+        </div>
+        <div class="sike-grid"></div>
+      </div>
+
+      <div id="keshi-editor" class="editor hidden">
+        <div class="section-heading compact">
+          <div><p>第三步</p><h2>判断九宗门</h2></div>
+        </div>
+        <label class="large-field">课式<select id="keshi-answer" data-stage="keshi" data-key="0"></select></label>
+      </div>
+
+      <div id="zeike-editor" class="editor hidden">
+        <div class="section-heading compact">
+          <div><p>第三步</p><h2>判断贼克并取初传</h2></div>
+        </div>
+        <section class="sike-reference" aria-label="已确认四课">
+          <h3>已确认四课</h3>
+          <div id="zeike-sike-grid" class="sike-reference-grid"></div>
+        </section>
+        <div class="zeike-grid">
+          <article class="zeike-card" data-key="0">
+            <label>课名<select id="zeike-keshi" data-stage="zeike" data-key="0"></select></label>
+          </article>
+          <article class="zeike-card" data-key="1">
+            <label>初传<select id="zeike-chu" data-stage="zeike" data-key="1"></select></label>
+          </article>
+        </div>
+      </div>
+
+      <div id="chuan-editor" class="editor hidden">
+        <div class="section-heading compact">
+          <div><p>第四步</p><h2>填写三传</h2></div>
+        </div>
+        <div class="chuan-grid"></div>
+      </div>
+
+      <div id="tianjiang-editor" class="editor hidden">
+        <div class="section-heading compact">
+          <div><p>第五步</p><h2>填写十二天将</h2></div>
+        </div>
+        <p class="muted">天将直接填写在十二宫盘格内。</p>
+      </div>
+
+      <div id="tianpan-editor" class="editor">
+        <div class="section-heading compact">
+          <div><p>当前任务</p><h2>完成十二宫</h2></div>
+        </div>
+        <ol class="task-list">
+          <li>任选一宫，确定一组天地盘对应。</li>
+          <li>系统按同一位移补全其余十一宫。</li>
+          <li>核对整盘后点击检查。</li>
+        </ol>
+      </div>
+
+      <div id="feedback" class="feedback idle" aria-live="polite">
+        <strong>等待填写</strong>
+        <span>完成当前阶段后检查。</span>
+      </div>
+
+      <div class="actions">
+        <button id="reset-button" class="icon-button" type="button" title="清空当前阶段" aria-label="清空当前阶段">
+          <span class="button-symbol" aria-hidden="true">&#8634;</span>
+        </button>
+        <button id="reveal-button" class="secondary" type="button">显示答案</button>
+        <button id="check-button" class="primary" type="button">
+          <span class="button-symbol" aria-hidden="true">&#10003;</span><span>检查当前阶段</span>
+        </button>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

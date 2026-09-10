@@ -44,10 +44,34 @@
         1,
         1,
         1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
         1
       ],
-      "passed": false,
-      "teachback": false,
+      "passed": true,
+      "teachback": true,
       "topics": {
         "遁干": {
           "hist": [
@@ -82,77 +106,102 @@
             1,
             1
           ],
-          "teachback": false,
-          "passed": false
+          "teachback": true,
+          "passed": true
+        },
+        "旬空": {
+          "hist": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "teachback": true,
+          "passed": true
         }
       },
       "mixed": {
-        "hist": []
+        "hist": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    "2": {
+      "hist": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "teachback": true,
+      "passed": true
+    },
+    "4": {
+      "hist": [],
+      "teachback": false,
+      "passed": false,
+      "topics": {
+        "贼克": {
+          "hist": [
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "teachback": true,
+          "passed": true
+        }
       }
     }
   },
-  "wrong": [
-    {
-      "key": "遁干|庚子亥",
-      "spec": [
-        "遁干",
-        "庚子亥"
-      ],
-      "level": 1,
-      "q": "庚子日，亥 上遁得何干？（本旬不含则答「无」）",
-      "ans": "己",
-      "given": "壬",
-      "first": "2026-09-08",
-      "streak": 0,
-      "due": "2026-09-09",
-      "reasons": [
-        "教学前基线",
-        "步骤遗漏"
-      ],
-      "diagnosis": "旧流程在正式旬遁教学前出题；未先锁定旬首并从旬首支起甲顺布。",
-      "baseline_pending": true
-    },
-    {
-      "key": "遁干|甲午丑",
-      "spec": [
-        "遁干",
-        "甲午丑"
-      ],
-      "level": 1,
-      "q": "甲午日，丑 上遁得何干？（本旬不含则答「无」）",
-      "ans": "辛",
-      "given": "乙",
-      "first": "2026-09-08",
-      "streak": 0,
-      "due": "2026-09-09",
-      "reasons": [
-        "教学前基线",
-        "步骤遗漏"
-      ],
-      "diagnosis": "旧流程在正式旬遁教学前出题；从甲午旬首顺布时未保持干支同步逐位推进。",
-      "baseline_pending": true
-    },
-    {
-      "key": "遁干|庚子申",
-      "spec": [
-        "遁干",
-        "庚子申"
-      ],
-      "level": 1,
-      "q": "庚子日，申 上遁得何干？（本旬不含则答「无」）",
-      "ans": "丙",
-      "given": "庚",
-      "first": "2026-09-08",
-      "streak": 0,
-      "due": "2026-09-09",
-      "reasons": [
-        "教学前基线",
-        "步骤遗漏"
-      ],
-      "diagnosis": "旧流程在正式旬遁教学前出题；把当日日干误当成目标支的旬遁干。",
-      "baseline_pending": true
-    }
-  ],
+  "wrong": [],
   "sessions": [
     {
       "date": "2026-09-08",
@@ -183,8 +232,371 @@
       "level": 1,
       "right": 12,
       "n": 12
+    },
+    {
+      "date": "2026-09-09",
+      "level": "review",
+      "right": 3,
+      "n": 3
+    },
+    {
+      "date": "2026-09-09",
+      "level": 1,
+      "right": 12,
+      "n": 12
+    },
+    {
+      "date": "2026-09-09",
+      "level": 1,
+      "right": 12,
+      "n": 12
+    },
+    {
+      "date": "2026-09-09",
+      "level": 2,
+      "right": 12,
+      "n": 12
+    },
+    {
+      "date": "2026-09-10",
+      "level": 4,
+      "right": 9,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "ca4c4e90-8cde-4e44-be28-ea559ed9aaf3",
+      "topic": "贼克"
+    },
+    {
+      "date": "2026-09-10",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "bc47d2c0-7faa-4678-b02f-101e292a77ad",
+      "topic": "贼克",
+      "details": [
+        {
+          "day": "乙卯",
+          "shi": "卯",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己卯",
+          "shi": "子",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸亥",
+          "shi": "亥",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙卯",
+          "shi": "戌",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸未",
+          "shi": "寅",
+          "jiang": "巳",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "寅",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛亥",
+          "shi": "亥",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛丑",
+          "shi": "酉",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙寅",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己丑",
+          "shi": "未",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬申",
+          "shi": "寅",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
     }
   ],
-  "wrong_archive": [],
-  "weak_groups": {}
+  "wrong_archive": [
+    {
+      "key": "遁干|庚子亥",
+      "spec": [
+        "遁干",
+        "庚子亥"
+      ],
+      "level": 1,
+      "q": "庚子日，亥 上遁得何干？（本旬不含则答「无」）",
+      "ans": "己",
+      "given": "壬",
+      "first": "2026-09-08",
+      "streak": 1,
+      "due": "2026-09-09",
+      "reasons": [
+        "教学前基线",
+        "步骤遗漏"
+      ],
+      "diagnosis": "旧流程在正式旬遁教学前出题；未先锁定旬首并从旬首支起甲顺布。",
+      "baseline_pending": true,
+      "archived": "2026-09-09",
+      "exit_reason": "教学后首次复现答对，基线题退出"
+    },
+    {
+      "key": "遁干|甲午丑",
+      "spec": [
+        "遁干",
+        "甲午丑"
+      ],
+      "level": 1,
+      "q": "甲午日，丑 上遁得何干？（本旬不含则答「无」）",
+      "ans": "辛",
+      "given": "乙",
+      "first": "2026-09-08",
+      "streak": 1,
+      "due": "2026-09-09",
+      "reasons": [
+        "教学前基线",
+        "步骤遗漏"
+      ],
+      "diagnosis": "旧流程在正式旬遁教学前出题；从甲午旬首顺布时未保持干支同步逐位推进。",
+      "baseline_pending": true,
+      "archived": "2026-09-09",
+      "exit_reason": "教学后首次复现答对，基线题退出"
+    },
+    {
+      "key": "遁干|庚子申",
+      "spec": [
+        "遁干",
+        "庚子申"
+      ],
+      "level": 1,
+      "q": "庚子日，申 上遁得何干？（本旬不含则答「无」）",
+      "ans": "丙",
+      "given": "庚",
+      "first": "2026-09-08",
+      "streak": 1,
+      "due": "2026-09-09",
+      "reasons": [
+        "教学前基线",
+        "步骤遗漏"
+      ],
+      "diagnosis": "旧流程在正式旬遁教学前出题；把当日日干误当成目标支的旬遁干。",
+      "baseline_pending": true,
+      "archived": "2026-09-09",
+      "exit_reason": "教学后首次复现答对，基线题退出"
+    },
+    {
+      "key": "天盘|壬寅|子|寅|申",
+      "spec": [
+        "天盘",
+        "壬寅",
+        "子",
+        "寅",
+        "申"
+      ],
+      "level": 2,
+      "q": "壬寅日　子时　寅将 ⏎ 问：地盘 申 宫上的天盘支是什么？",
+      "ans": "戌",
+      "given": "",
+      "first": "2026-09-09",
+      "streak": 0,
+      "due": "2026-09-10",
+      "reasons": [
+        "输入失误"
+      ],
+      "diagnosis": "agent 为退出其工具侧会话输入 q，被训练器当作答案；非用户作答，排除成绩",
+      "baseline_pending": false,
+      "archived": "2026-09-09",
+      "exit_reason": "人工归档"
+    }
+  ],
+  "weak_groups": {},
+  "unscored_sessions": [
+    {
+      "date": "2026-09-09",
+      "level": 3,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "lost-session-20260909",
+      "note": "旧版训练台故障；用户确认完成12题，分数不可恢复，不计入正确率"
+    }
+  ],
+  "progression_waivers": {
+    "3": {
+      "date": "2026-09-09",
+      "reason": "旧版网页训练台由agent实现缺陷导致12题分数丢失；用户确认完成12题，白话复述已通过；不伪造过关成绩，但不要求重做、不阻断后续学习"
+    }
+  },
+  "external_sessions": {
+    "ca4c4e90-8cde-4e44-be28-ea559ed9aaf3": {
+      "date": "2026-09-10T00:16:36",
+      "level": 4,
+      "right": 9,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": "贼克"
+    },
+    "bc47d2c0-7faa-4678-b02f-101e292a77ad": {
+      "date": "2026-09-10T10:29:16",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": "贼克",
+      "details": [
+        {
+          "day": "乙卯",
+          "shi": "卯",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己卯",
+          "shi": "子",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸亥",
+          "shi": "亥",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙卯",
+          "shi": "戌",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸未",
+          "shi": "寅",
+          "jiang": "巳",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "寅",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛亥",
+          "shi": "亥",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛丑",
+          "shi": "酉",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙寅",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己丑",
+          "shi": "未",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬申",
+          "shi": "寅",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
+    }
+  }
 }
