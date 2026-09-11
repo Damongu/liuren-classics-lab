@@ -2,13 +2,10 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import json
-import os
 import random
-import shutil
-import subprocess
 import sys
-import threading
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -22,14 +19,27 @@ ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = ROOT.parent
 sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 
-from tutor import record_external_session  # noqa: E402
+from tutor import load_state, record_external_session, score_ready  # noqa: E402
 
 
 WEB_ROOT = ROOT / "web"
 STAGES = ("tianpan", "sike", "zeike", "keshi", "chuan", "tianjiang")
 KESHI = ("元首", "重审", "知一", "涉害", "遥克", "昴星", "别责", "八专", "伏吟", "返吟")
-TOPICS = ("四课", "贼克")
+TOPICS = ("四课", "贼克", "比用", "贼克＋比用", "涉害")
 RESULT_LOG = ROOT / ".training-results.jsonl"
+
+
+def recommended_topic() -> str:
+    """Match the browser trainer to the first unfinished taught unit."""
+    level = load_state().get("levels", {}).get("4", {})
+    topics = level.get("topics", {})
+    if not score_ready(topics.get("贼克", {})):
+        return "贼克"
+    if not score_ready(topics.get("比用", {})):
+        return "比用"
+    if not score_ready(topics.get("贼克＋比用", {})):
+        return "贼克＋比用"
+    return "涉害"
 
 
 def _case(day: str, shi: str, jiang: str, daynight: str = "昼"):
@@ -65,13 +75,47 @@ def case_prompt(day: str, shi: str, jiang: str, daynight: str = "昼") -> dict:
 def random_case_prompt(topic: str = "四课", daynight: str = "昼") -> dict:
     if topic not in TOPICS:
         raise ValueError("训练类型无效")
+    wanted = None
+    if topic == "贼克":
+        wanted = {"元首", "重审"}
+    elif topic == "比用":
+        wanted = {"知一"}
+    elif topic == "贼克＋比用":
+        wanted = {random.choice(("元首", "重审", "知一"))}
+    elif topic == "涉害":
+        wanted = {"涉害"}
     while True:
         day = gz_name(random.randrange(60))
         shi = random.choice(ZHI)
         jiang = random.choice(ZHI)
         p = _case(day, shi, jiang, daynight)
-        if topic != "贼克" or p.keshi in ("元首", "重审"):
+        if wanted is None or p.keshi in wanted:
             return case_prompt(day, shi, jiang, daynight)
+
+
+def _selection_reasons(p) -> list[str]:
+    ze = [k for k in p.kes if k.xia_ze_shang]
+    direction = "有下贼取下贼" if ze else "无下贼取上克"
+    if p.keshi == "知一":
+        yin_yang = "阳日取阳神" if p.is_gang else "阴日取阴神"
+        return [direction, yin_yang]
+    if p.keshi == "重审":
+        return [direction]
+    if p.keshi == "元首":
+        return [direction]
+    if p.keshi == "涉害":
+        reasons = [
+            direction,
+            "俱比或俱不比入涉害",
+            "涉归本家逐位计重",
+            "取涉害重数最多者",
+        ]
+        if any("深浅相等" in note or "深浅与" in note for note in p.reason):
+            reasons.append("同重先比孟仲季")
+        if any("复等" in note and "先见神" in note for note in p.reason):
+            reasons.append("同级复等依刚柔取先见")
+        return reasons
+    raise ValueError("本题不属于当前取用训练范围")
 
 
 def _normalize_map(value) -> dict[str, str]:
@@ -86,8 +130,18 @@ def _normalize_list(value, size: int) -> list[str]:
     return [(str(value[i]).strip() if i < len(value) else "") for i in range(size)]
 
 
+def _normalize_reasons(values) -> list[str]:
+    """Normalize equivalent labels retained by an in-progress browser session."""
+    aliases = {
+        "取受克重数最多者": "取涉害重数最多者",
+    }
+    if not isinstance(values, list):
+        return []
+    return sorted({aliases.get(str(value).strip(), str(value).strip()) for value in values})
+
+
 def _normalize_mistakes(
-    item: dict, day: str, shi: str, jiang: str, daynight: str
+    item: dict, day: str, shi: str, jiang: str, daynight: str, topic: str
 ) -> list[dict]:
     raw_mistakes = item.get("mistakes", [])
     if not isinstance(raw_mistakes, list):
@@ -101,6 +155,7 @@ def _normalize_mistakes(
             "shi": shi,
             "jiang": jiang,
             "daynight": daynight,
+            "topic": topic,
             "stage": raw["stage"],
             "answers": raw.get("answers"),
             "reveal": True,
@@ -144,9 +199,13 @@ def check_answers(payload: dict) -> dict:
         expected = {i: k.up for i, k in enumerate(p.kes)}
         order = list(range(4))
     elif stage == "zeike":
-        answers = dict(enumerate(_normalize_list(raw, 2)))
-        expected = {0: p.keshi, 1: p.chuan[0]}
-        order = [0, 1]
+        base = _normalize_list(raw, 2)
+        raw_reasons = raw[2] if isinstance(raw, list) and len(raw) > 2 else []
+        reasons = _normalize_reasons(raw_reasons)
+        answers = {0: base[0], 1: base[1], 2: reasons}
+        expected = {0: p.keshi, 1: p.chuan[0], 2: sorted(_selection_reasons(p))}
+        # 涉害专项的题目已限定为涉害课，课名不是本专项考核项。
+        order = [1, 2] if payload.get("topic") == "涉害" else [0, 1, 2]
     elif stage == "keshi":
         answers = {0: str(raw or "").strip()}
         expected = {0: p.keshi}
@@ -184,40 +243,33 @@ def check_answers(payload: dict) -> dict:
     return result
 
 
-def _trae_cli() -> Path | None:
-    found = shutil.which("trae-cn.cmd") or shutil.which("trae-cn")
-    if found:
-        return Path(found)
-    install_root = os.environ.get("VSCODE_CWD", "")
-    candidate = Path(install_root) / "bin" / "trae-cn.cmd"
-    return candidate if candidate.is_file() else None
+def _focus_trae_window() -> bool:
+    """Focus the existing TRAE window without launching another process."""
+    if sys.platform != "win32":
+        return False
+    user32 = ctypes.windll.user32
+    candidates: list[tuple[int, str]] = []
 
+    @ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
+    def collect(hwnd, _):
+        if not user32.IsWindowVisible(hwnd):
+            return True
+        size = user32.GetWindowTextLengthW(hwnd)
+        if not size:
+            return True
+        title = ctypes.create_unicode_buffer(size + 1)
+        user32.GetWindowTextW(hwnd, title, size + 1)
+        if "TraeCode CN" in title.value:
+            candidates.append((hwnd, title.value))
+        return True
 
-def _schedule_trae_return(cli: Path, prompt: str, delay: float = 1.0) -> None:
-    """Focus TRAE after the browser has finished handling the result response."""
-    def launch() -> None:
-        creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
-        command = [
-            str(cli), "chat", "--mode", "agent",
-            "--reuse-window", "--maximize", prompt,
-        ]
-        shell = False
-        if cli.suffix.lower() == ".cmd":
-            command = subprocess.list2cmdline(command)
-            shell = True
-        subprocess.Popen(
-            command,
-            cwd=str(ROOT.parent),
-            creationflags=creation_flags,
-            shell=shell,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-    timer = threading.Timer(delay, launch)
-    timer.daemon = True
-    timer.start()
+    user32.EnumWindows(collect, 0)
+    if not candidates:
+        return False
+    project_matches = [item for item in candidates if "六壬agent工作区" in item[1]]
+    hwnd = (project_matches or candidates)[0][0]
+    user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+    return bool(user32.SetForegroundWindow(hwnd))
 
 
 def return_training_result(payload: dict) -> dict:
@@ -246,7 +298,7 @@ def return_training_result(payload: dict) -> dict:
         if (day not in valid_days or shi not in ZHI or jiang not in ZHI
                 or daynight not in ("昼", "夜") or not isinstance(clean, bool)):
             raise ValueError("训练明细无效")
-        mistakes = _normalize_mistakes(item, day, shi, jiang, daynight)
+        mistakes = _normalize_mistakes(item, day, shi, jiang, daynight, topic)
         if clean and mistakes:
             raise ValueError("训练明细的首次正确标记与错题记录矛盾")
         normalized.append({
@@ -266,12 +318,12 @@ def return_training_result(payload: dict) -> dict:
         "records": normalized,
         "session_id": session_id,
     }
-    level = 4 if topic == "贼克" else 3
+    level = 3 if topic == "四课" else (7 if topic == "涉害" else 4)
     scores = [1 if item["clean"] else 0 for item in normalized]
-    if topic == "贼克":
+    if topic not in ("四课", "涉害"):
         recorded = record_external_session(
             level, scores, "web-trainer", session_id,
-            topic="贼克", details=normalized,
+            topic=topic, details=normalized,
         )
     else:
         recorded = record_external_session(
@@ -296,17 +348,14 @@ def return_training_result(payload: dict) -> dict:
         )
     detail = "；".join(wrong) if wrong else "无"
     prompt = (
-        f"训练台自动返回结果：{topic}专项 {score}/{total}，"
+        f"训练台结果：{topic}{'专项' if topic != '贼克＋比用' else '杂糅训练'} "
+        f"{score}/{total}，"
         f"{'达标' if result['passed'] else '未达标'}。"
         f"{'已写入训练记录。' if result['recorded'] else '该会话已记录，未重复写入。'}"
         f"非首次全对题：{detail}。请据此继续当前教学流程。"
     )
-    cli = _trae_cli()
-    if cli is None:
-        return {**result, "returned": False, "message": prompt, "error": "未找到 trae-cn CLI"}
-
-    _schedule_trae_return(cli, prompt)
-    return {**result, "returned": True, "message": prompt}
+    focused = _focus_trae_window()
+    return {**result, "returned": False, "focused": focused, "message": prompt}
 
 
 class TrainerHandler(SimpleHTTPRequestHandler):
@@ -335,6 +384,7 @@ class TrainerHandler(SimpleHTTPRequestHandler):
                 "tianjiang": list(TIANJIANG),
                 "keshi": list(KESHI),
                 "stages": list(STAGES),
+                "recommended_topic": recommended_topic(),
             })
             return
         if parsed.path == "/api/case":

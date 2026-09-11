@@ -41,7 +41,7 @@ EXPECTED_DIRS = [
     "99-今注剥离",
 ]
 
-# 期望的七部书及其最少条数（低于此数说明构建不完整）
+# 期望的八部书及其最少条数（低于此数说明构建不完整）
 EXPECTED_BOOKS = {
     "太白阴经": 15,
     "占事略决": 30,
@@ -50,6 +50,7 @@ EXPECTED_BOOKS = {
     "六壬心镜": 180,
     "六壬断案": 200,
     "壬归": 35,
+    "卜筮书残卷": 2,
 }
 
 # 必须存在的关键文件
@@ -118,7 +119,7 @@ def check_key_files(vault: Path, r: Report):
 
 def check_books(vault: Path, r: Report):
     if not r.quiet:
-        print("\n[3/8] 七部唐宋层书")
+        print("\n[3/8] 八部唐宋层书")
     root = vault / "10-底本" / "唐宋层"
     if not root.is_dir():
         r.err("找不到 10-底本/唐宋层，底本未导入")

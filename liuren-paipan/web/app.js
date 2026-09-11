@@ -2,7 +2,7 @@ const ZHI = [..."子丑寅卯辰巳午未申酉戌亥"];
 const STAGE_COPY = {
   tianpan: ["第一步", "月将加时，填写天盘", 12],
   sike: ["第二步", "沿两条链，填写四课", 4],
-  zeike: ["第三步", "判断贼克并取初传", 2],
+  zeike: ["第三步", "判断取用并说明依据", 3],
   keshi: ["第三步", "根据四课判断九宗门", 1],
   chuan: ["第四步", "依取用路径填写三传", 3],
   tianjiang: ["第五步", "起贵人，填写十二天将", 12],
@@ -15,7 +15,7 @@ const state = {
   topic: "贼克",
   stage: "tianpan",
   answers: {
-    tianpan: {}, sike: ["", "", "", ""], zeike: ["", ""],
+    tianpan: {}, sike: ["", "", "", ""], zeike: ["", "", []],
     keshi: "", chuan: ["", "", ""], tianjiang: {},
   },
   attempts: 0,
@@ -44,7 +44,7 @@ function restoreSession() {
   try {
     const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
     if (!saved || typeof saved.id !== "string" || saved.total !== 12 ||
-        !["四课", "贼克"].includes(saved.topic) ||
+        !["四课", "贼克", "比用", "贼克＋比用", "涉害"].includes(saved.topic) ||
         !Array.isArray(saved.records) || saved.records.length > saved.total ||
         !Number.isInteger(saved.score) || saved.score < 0 || saved.score > saved.records.length) {
       return false;
@@ -109,7 +109,7 @@ function clearAnswers() {
   state.answers = {
     tianpan: Object.fromEntries(ZHI.map((z) => [z, ""])),
     sike: ["", "", "", ""],
-    zeike: ["", ""],
+    zeike: ["", "", []],
     keshi: "",
     chuan: ["", "", ""],
     tianjiang: Object.fromEntries(ZHI.map((z) => [z, ""])),
@@ -135,8 +135,8 @@ async function loadCase(random = false) {
 function renderQuestion() {
   const c = state.currentCase;
   $("#question-text").textContent =
-    state.topic === "贼克"
-      ? `${c.day}日，${c.shi}时，${c.jiang}将：排天地盘、立四课，再判元首或重审并取初传。`
+    state.topic !== "四课"
+      ? `${c.day}日，${c.shi}时，${c.jiang}将：排天地盘、立四课，判断取用、初传及依据。`
       : `${c.day}日，${c.shi}时，${c.jiang}将：先排天地盘，再立四课。`;
   if (state.session.active) {
     $("#question-index").textContent = `第 ${state.session.index} / ${state.session.total} 题`;
@@ -153,7 +153,7 @@ function renderQuestion() {
 }
 
 function unlockedStages() {
-  return new Set(state.topic === "贼克"
+  return new Set(state.topic !== "四课"
     ? ["tianpan", "sike", "zeike"]
     : ["tianpan", "sike"]);
 }
@@ -225,8 +225,29 @@ function renderZeike() {
       <span class="upper"><small>上</small><b>${state.answers.sike[index]}</b></span>
       <span class="lower"><small>下</small><b>${lows[index]}</b></span>
     </article>`).reverse().join("");
-  $("#zeike-keshi").innerHTML = options(["元首", "重审"], "课名");
+  const keshiNames = state.topic === "贼克" ? ["元首", "重审"]
+    : (state.topic === "比用" ? ["知一"]
+      : (state.topic === "涉害" ? ["涉害"] : ["元首", "重审", "知一"]));
+  $("#selection-title").textContent = state.topic === "涉害"
+    ? "涉归本家计重并定初传"
+    : "判断取用并取初传";
+  $("#zeike-keshi").closest(".zeike-card").classList.toggle("hidden", state.topic === "涉害");
+  $("#zeike-keshi").innerHTML = options(keshiNames, "课名");
   $("#zeike-chu").innerHTML = options(state.meta.zhi, "初传");
+  const selectedReasons = new Set(state.answers.zeike[2] || []);
+  const reasonOptions = [
+    "有下贼取下贼", "无下贼取上克", "阳日取阳神", "阴日取阴神",
+  ];
+  if (state.topic === "涉害") reasonOptions.push(
+    "俱比或俱不比入涉害",
+    "涉归本家逐位计重",
+    "取涉害重数最多者",
+    "同重先比孟仲季",
+    "同级复等依刚柔取先见",
+  );
+  $("#zeike-reason").innerHTML = `<legend>判断依据（可多选）</legend>` +
+    reasonOptions.map((reason) => `<label><input type="checkbox" data-stage="zeike"
+    data-key="2" value="${reason}" ${selectedReasons.has(reason) ? "checked" : ""}>${reason}</label>`).join("");
   $("#zeike-keshi").value = state.answers.zeike[0] || "";
   $("#zeike-chu").value = state.answers.zeike[1] || "";
 }
@@ -264,9 +285,13 @@ function currentAnswers() {
 
 function updateProgress(total = STAGE_COPY[state.stage][2]) {
   const answers = currentAnswers();
-  const values = typeof answers === "string" ? [answers] :
+  let values = typeof answers === "string" ? [answers] :
     (Array.isArray(answers) ? answers : Object.values(answers));
-  const done = values.filter(Boolean).length;
+  if (state.stage === "zeike" && state.topic === "涉害") {
+    values = [state.answers.zeike[1], state.answers.zeike[2]];
+    total = 2;
+  }
+  const done = values.filter((value) => Array.isArray(value) ? value.length > 0 : Boolean(value)).length;
   $("#stage-progress").textContent = `${done} / ${total}`;
 }
 
@@ -317,7 +342,12 @@ function onInput(event) {
     fillTianpanFromAnchor(key, input.value);
     return;
   }
-  if (Array.isArray(state.answers[stage])) state.answers[stage][Number(key)] = input.value;
+  if (stage === "zeike" && key === "2" && input.type === "checkbox") {
+    const selected = new Set(state.answers.zeike[2] || []);
+    if (input.checked) selected.add(input.value);
+    else selected.delete(input.value);
+    state.answers.zeike[2] = [...selected];
+  } else if (Array.isArray(state.answers[stage])) state.answers[stage][Number(key)] = input.value;
   else if (typeof state.answers[stage] === "object") state.answers[stage][key] = input.value;
   else state.answers[stage] = input.value;
   input.closest(".palace, .ke-card, .zeike-card, .chuan-card")
@@ -343,7 +373,13 @@ function markCells(result, reveal) {
       if (reveal && !cell.correct) {
         element.classList.add("revealed");
         const select = element.querySelector("select");
-        select.value = cell.expected;
+        if (select) {
+          select.value = cell.expected;
+        } else if (Array.isArray(cell.expected)) {
+          element.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+            input.checked = cell.expected.includes(input.value);
+          });
+        }
       }
     }
   }
@@ -356,6 +392,7 @@ function markCells(result, reveal) {
 async function check(reveal = false) {
   const payload = {
     ...state.currentCase,
+    topic: state.topic,
     stage: state.stage,
     answers: currentAnswers(),
     reveal,
@@ -385,10 +422,10 @@ async function check(reveal = false) {
     if (result.correct) {
       if (state.stage === "tianpan") {
         advanceStage("天地盘正确，请填写四课上神。");
-      } else if (state.stage === "sike" && state.topic === "贼克") {
-        advanceStage("四课正确，请判断元首或重审并取初传。");
+      } else if (state.stage === "sike" && state.topic !== "四课") {
+        advanceStage("四课正确，请判断取用、初传，并选择判断依据。");
       } else if (((state.stage === "sike" && state.topic === "四课")
-                  || (state.stage === "zeike" && state.topic === "贼克"))
+                  || (state.stage === "zeike" && state.topic !== "四课"))
                  && state.session.active && state.session.passed.has("tianpan")
                  && state.session.passed.has("sike") && !state.session.complete) {
         state.session.complete = true;
@@ -413,7 +450,7 @@ async function check(reveal = false) {
               : "已完成订正，本题不计首次正确。");
         }
       } else if ((state.stage === "sike" && state.topic === "四课")
-                 || (state.stage === "zeike" && state.topic === "贼克")) {
+                 || (state.stage === "zeike" && state.topic !== "四课")) {
         setFeedback("success", "本阶段正确", `${result.total} 项全部吻合。`);
       } else if (state.stage !== "tianjiang") {
         advanceStage(`${STAGE_COPY[state.stage][1]}已通过。`);
@@ -446,7 +483,7 @@ async function startSession() {
 async function finishSession() {
   const passed = state.session.score >= 11;
   persistSession();
-  setFeedback("idle", `本轮 ${state.session.score} / ${state.session.total}`, "正在返回对话并提交结果…");
+  setFeedback("idle", `本轮 ${state.session.score} / ${state.session.total}`, "正在保存成绩…");
   try {
     const result = await request("/api/result", {
       method: "POST",
@@ -465,7 +502,9 @@ async function finishSession() {
     localStorage.removeItem(SESSION_KEY);
     renderQuestion();
     setFeedback(passed ? "success" : "error", `本轮 ${state.session.score} / ${state.session.total}`,
-      result.returned ? "结果已发送，正在返回 TRAE 对话。" : "未能唤起 TRAE；请点击“复制结果”后返回对话粘贴。");
+      result.focused
+        ? "成绩已保存，TRAE 已置前；请在当前对话发送任意消息以继续。"
+        : "成绩已保存；请返回当前对话发送任意消息以继续。");
   } catch (error) {
     state.session.resultMessage =
       `训练台结果：${state.session.topic}专项 ${state.session.score}/${state.session.total}。请继续当前教学流程。`;
@@ -490,7 +529,8 @@ async function copyResult() {
 }
 
 function resetCurrent() {
-  if (Array.isArray(state.answers[state.stage])) state.answers[state.stage].fill("");
+  if (state.stage === "zeike") state.answers.zeike = ["", "", []];
+  else if (Array.isArray(state.answers[state.stage])) state.answers[state.stage].fill("");
   else if (typeof state.answers[state.stage] === "object") {
     Object.keys(state.answers[state.stage]).forEach((key) => state.answers[state.stage][key] = "");
   } else state.answers[state.stage] = "";
@@ -499,16 +539,29 @@ function resetCurrent() {
 
 async function init() {
   state.meta = await request("/api/meta");
+  const restored = restoreSession();
+  if (!restored) state.topic = state.meta.recommended_topic || "四课";
   $("#topic-select").value = state.topic;
   fillSelect($("#day-select"), state.meta.days, "戊戌");
   fillSelect($("#shi-select"), state.meta.zhi, "卯");
   fillSelect($("#jiang-select"), state.meta.zhi, "未");
   $("#keshi-answer").innerHTML = options(state.meta.keshi, "选择课式");
   clearAnswers();
-  state.currentCase = await request(
-    `/api/case?day=戊戌&shi=卯&jiang=未&daynight=昼&topic=${encodeURIComponent(state.topic)}`
-  );
-  const restored = restoreSession();
+  const initialParams = new URLSearchParams({
+    daynight: "昼",
+    topic: state.topic,
+  });
+  if (state.topic === "四课") {
+    initialParams.set("day", "戊戌");
+    initialParams.set("shi", "卯");
+    initialParams.set("jiang", "未");
+  } else {
+    initialParams.set("random", "1");
+  }
+  state.currentCase = await request(`/api/case?${initialParams}`);
+  $("#day-select").value = state.currentCase.day;
+  $("#shi-select").value = state.currentCase.shi;
+  $("#jiang-select").value = state.currentCase.jiang;
   $("#topic-select").value = state.topic;
   if (restored && state.session.records.length < state.session.total) {
     await loadCase(true);
@@ -522,7 +575,7 @@ async function init() {
   $(".case-controls").addEventListener("change", (event) => {
     if (event.target.id === "topic-select") {
       state.topic = event.target.value;
-      loadCase(state.topic === "贼克");
+      loadCase(state.topic !== "四课");
     } else if (!event.target.matches("[data-stage]")) {
       loadCase(false);
     }

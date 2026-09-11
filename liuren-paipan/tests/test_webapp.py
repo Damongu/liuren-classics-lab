@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
 import webapp  # noqa: E402
 import tutor  # noqa: E402
 from webapp import (  # noqa: E402
-    WEB_ROOT, case_prompt, check_answers, random_case_prompt,
+    WEB_ROOT, case_prompt, check_answers, random_case_prompt, recommended_topic,
     return_training_result,
 )
 
@@ -37,9 +37,14 @@ class WebTrainerTests(unittest.TestCase):
         self.assertIn('request("/api/result"', script)
         self.assertIn('localStorage.setItem(SESSION_KEY', script)
         self.assertIn("function restoreSession()", script)
+        self.assertIn('initialParams.set("random", "1")', script)
         self.assertIn('id="topic-select"', html)
         self.assertIn('id="zeike-editor"', html)
         self.assertIn('id="zeike-sike-grid"', html)
+        self.assertIn('id="zeike-reason"', html)
+        self.assertIn('<option value="比用">比用</option>', html)
+        self.assertIn('<option value="贼克＋比用">贼克＋比用</option>', html)
+        self.assertIn('<option value="涉害">涉害·涉归本家计重</option>', html)
         self.assertIn("function renderZeike()", script)
         self.assertIn("state.answers.sike[2]", script)
         self.assertIn("</article>`).reverse().join", script)
@@ -56,6 +61,28 @@ class WebTrainerTests(unittest.TestCase):
         self.assertNotIn("tian", prompt)
         self.assertNotIn("chuan", prompt)
         self.assertNotIn("keshi", prompt)
+
+    def test_recommended_topic_follows_training_progress(self):
+        states = [
+            ({}, "贼克"),
+            ({"levels": {"4": {"topics": {
+                "贼克": {"hist": [1] * 11 + [0]},
+            }}}}, "比用"),
+            ({"levels": {"4": {"topics": {
+                "贼克": {"hist": [1] * 11 + [0]},
+                "比用": {"hist": [1] * 12},
+            }}}}, "贼克＋比用"),
+            ({"levels": {"4": {"topics": {
+                "贼克": {"hist": [1] * 11 + [0]},
+                "比用": {"hist": [1] * 12},
+                "贼克＋比用": {"hist": [1] * 11 + [0]},
+            }}}}, "涉害"),
+        ]
+        for state, expected in states:
+            with self.subTest(expected=expected), patch.object(
+                webapp, "load_state", return_value=state,
+            ):
+                self.assertEqual(recommended_topic(), expected)
 
     def test_tianpan_check(self):
         answers = {
@@ -87,9 +114,149 @@ class WebTrainerTests(unittest.TestCase):
             result = check_answers({
                 **prompt,
                 "stage": "zeike",
-                "answers": [plate.keshi, plate.chuan[0]],
+                "answers": [
+                    plate.keshi,
+                    plate.chuan[0],
+                    ["有下贼取下贼" if plate.keshi == "重审" else "无下贼取上克"],
+                ],
             })
             self.assertTrue(result["correct"])
+
+    def test_biyong_random_cases_require_reason(self):
+        for _ in range(40):
+            prompt = random_case_prompt("比用")
+            plate = webapp._case(
+                prompt["day"], prompt["shi"], prompt["jiang"], prompt["daynight"],
+            )
+            self.assertEqual(plate.keshi, "知一")
+            direction = ("有下贼取下贼"
+                         if any(k.xia_ze_shang for k in plate.kes)
+                         else "无下贼取上克")
+            reason = "阳日取阳神" if plate.is_gang else "阴日取阴神"
+            result = check_answers({
+                **prompt,
+                "stage": "zeike",
+                "answers": [plate.keshi, plate.chuan[0], [direction, reason]],
+            })
+            self.assertTrue(result["correct"])
+            one_reason_only = check_answers({
+                **prompt,
+                "stage": "zeike",
+                "answers": [plate.keshi, plate.chuan[0], [reason]],
+            })
+            self.assertFalse(one_reason_only["correct"])
+            missing_reason = check_answers({
+                **prompt,
+                "stage": "zeike",
+                "answers": [plate.keshi, plate.chuan[0], []],
+            })
+            self.assertFalse(missing_reason["correct"])
+
+    def test_zeike_biyong_mixed_cases_stay_within_taught_scope(self):
+        seen = set()
+        for _ in range(60):
+            prompt = random_case_prompt("贼克＋比用")
+            plate = webapp._case(
+                prompt["day"], prompt["shi"], prompt["jiang"], prompt["daynight"],
+            )
+            self.assertIn(plate.keshi, ("元首", "重审", "知一"))
+            seen.add(plate.keshi)
+        self.assertEqual(seen, {"元首", "重审", "知一"})
+
+    def test_shehai_random_cases_use_counted_depth(self):
+        for _ in range(40):
+            prompt = random_case_prompt("涉害")
+            plate = webapp._case(
+                prompt["day"], prompt["shi"], prompt["jiang"], prompt["daynight"],
+            )
+            self.assertEqual(plate.keshi, "涉害")
+            self.assertIn(plate.keshi_sub, ("见机", "察微", "涉害", "缀瑕"))
+            self.assertTrue(any("涉害深浅：" in reason for reason in plate.reason))
+            result = check_answers({
+                **prompt,
+                "topic": "涉害",
+                "stage": "zeike",
+                "answers": [
+                    "",
+                    plate.chuan[0],
+                    webapp._selection_reasons(plate),
+                ],
+            })
+            self.assertTrue(result["correct"])
+
+    def test_shehai_topic_does_not_score_fixed_keshi_name(self):
+        prompt = random_case_prompt("涉害")
+        plate = webapp._case(
+            prompt["day"], prompt["shi"], prompt["jiang"], prompt["daynight"],
+        )
+        result = check_answers({
+            **prompt,
+            "topic": "涉害",
+            "stage": "zeike",
+            "answers": [
+                "",
+                plate.chuan[0],
+                webapp._selection_reasons(plate),
+            ],
+        })
+        self.assertTrue(result["correct"])
+        self.assertEqual([cell["key"] for cell in result["cells"]], [1, 2])
+
+    def test_shehai_tie_requires_tie_break_reasons(self):
+        prompt = case_prompt("辛未", "子", "未")
+        plate = webapp._case("辛未", "子", "未")
+        reasons = webapp._selection_reasons(plate)
+        self.assertIn("同重先比孟仲季", reasons)
+        self.assertIn("同级复等依刚柔取先见", reasons)
+
+        full = check_answers({
+            **prompt,
+            "topic": "涉害",
+            "stage": "zeike",
+            "answers": ["", plate.chuan[0], reasons],
+        })
+        missing_tie_break = check_answers({
+            **prompt,
+            "topic": "涉害",
+            "stage": "zeike",
+            "answers": [
+                "",
+                plate.chuan[0],
+                [reason for reason in reasons if reason != "同级复等依刚柔取先见"],
+            ],
+        })
+        self.assertTrue(full["correct"])
+        self.assertFalse(missing_tie_break["correct"])
+
+    def test_shehai_first_ke_stem_element_can_win_without_tie_break(self):
+        prompt = case_prompt("戊申", "子", "未")
+        plate = webapp._case("戊申", "子", "未")
+        reasons = webapp._selection_reasons(plate)
+        self.assertEqual(plate.chuan[0], "子")
+        self.assertNotIn("同重先比孟仲季", reasons)
+        self.assertNotIn("同级复等依刚柔取先见", reasons)
+        result = check_answers({
+            **prompt,
+            "topic": "涉害",
+            "stage": "zeike",
+            "answers": ["", "子", reasons],
+        })
+        self.assertTrue(result["correct"])
+
+    def test_shehai_accepts_pre_rename_equivalent_reason_label(self):
+        prompt = case_prompt("甲申", "巳", "未")
+        plate = webapp._case("甲申", "巳", "未")
+        reasons = [
+            "取受克重数最多者" if reason == "取涉害重数最多者" else reason
+            for reason in webapp._selection_reasons(plate)
+        ]
+        result = check_answers({
+            **prompt,
+            "topic": "涉害",
+            "stage": "zeike",
+            "answers": ["", plate.chuan[0], reasons],
+        })
+        self.assertTrue(result["correct"])
 
     def test_later_stage_checks_share_same_plate(self):
         self.assertTrue(check_answers({**CASE, "stage": "keshi", "answers": "元首"})["correct"])
@@ -104,7 +271,7 @@ class WebTrainerTests(unittest.TestCase):
             **CASE, "stage": "tianjiang", "answers": generals,
         })["correct"])
 
-    def test_training_result_is_saved_and_returned_to_trae(self):
+    def test_training_result_is_saved_and_trae_is_only_focused(self):
         records = [
             {"day": "戊戌", "shi": "卯", "jiang": "未", "clean": i != 4}
             for i in range(12)
@@ -115,8 +282,7 @@ class WebTrainerTests(unittest.TestCase):
                  patch.object(webapp, "record_external_session", return_value={
                      "recorded": True, "right": 11, "n": 12, "ready": True,
                  }) as record_session, \
-                 patch.object(webapp, "_trae_cli", return_value=Path("trae-cn.cmd")), \
-                 patch.object(webapp, "_schedule_trae_return") as schedule_return:
+                 patch.object(webapp, "_focus_trae_window", return_value=True) as focus:
                 result = return_training_result({
                     "session_id": "session-1234",
                     "score": 11,
@@ -124,7 +290,8 @@ class WebTrainerTests(unittest.TestCase):
                     "records": records,
                 })
 
-        self.assertTrue(result["returned"])
+        self.assertFalse(result["returned"])
+        self.assertTrue(result["focused"])
         self.assertTrue(result["passed"])
         self.assertTrue(result["recorded"])
         self.assertIn("四课专项 11/12", result["message"])
@@ -136,16 +303,12 @@ class WebTrainerTests(unittest.TestCase):
             "web-trainer", "session-1234",
         ))
         self.assertEqual(len(kwargs["details"]), 12)
-        schedule_return.assert_called_once_with(Path("trae-cn.cmd"), result["message"])
+        focus.assert_called_once_with()
 
-    def test_trae_return_is_delayed_until_after_http_response(self):
-        with patch("webapp.threading.Timer") as timer:
-            webapp._schedule_trae_return(Path("trae-cn.cmd"), "结果", delay=1.25)
-
-        timer.assert_called_once()
-        self.assertEqual(timer.call_args.args[0], 1.25)
-        timer.return_value.start.assert_called_once()
-        self.assertTrue(timer.return_value.daemon)
+    def test_result_does_not_launch_trae_cli(self):
+        source = Path(webapp.__file__).read_text(encoding="utf-8")
+        self.assertNotIn("trae-cn.cmd", source)
+        self.assertNotIn("subprocess.Popen", source)
 
     def test_zeike_result_is_saved_as_level4_topic(self):
         records = [
@@ -158,7 +321,7 @@ class WebTrainerTests(unittest.TestCase):
                  patch.object(webapp, "record_external_session", return_value={
                      "recorded": True, "right": 12, "n": 12, "ready": True,
                  }) as record_session, \
-                 patch.object(webapp, "_trae_cli", return_value=None):
+                 patch.object(webapp, "_focus_trae_window", return_value=False):
                 result = return_training_result({
                     "session_id": "zeike-session-1234",
                     "score": 12,
@@ -174,6 +337,54 @@ class WebTrainerTests(unittest.TestCase):
         ))
         self.assertEqual(kwargs["topic"], "贼克")
         self.assertEqual(len(kwargs["details"]), 12)
+
+    def test_biyong_result_is_saved_as_level4_topic(self):
+        records = [
+            {"day": "壬辰", "shi": "巳", "jiang": "辰", "clean": True}
+            for _ in range(12)
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            result_log = Path(directory) / "results.jsonl"
+            with patch.object(webapp, "RESULT_LOG", result_log), \
+                 patch.object(webapp, "record_external_session", return_value={
+                     "recorded": True, "right": 12, "n": 12, "ready": True,
+                 }) as record_session, \
+                 patch.object(webapp, "_focus_trae_window", return_value=False):
+                result = return_training_result({
+                    "session_id": "biyong-session-1234",
+                    "score": 12,
+                    "total": 12,
+                    "records": records,
+                    "topic": "比用",
+                })
+
+        self.assertIn("比用专项 12/12", result["message"])
+        self.assertEqual(record_session.call_args.kwargs["topic"], "比用")
+
+    def test_shehai_result_is_saved_as_level7(self):
+        records = [
+            {"day": "丁卯", "shi": "卯", "jiang": "未", "clean": True}
+            for _ in range(12)
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            result_log = Path(directory) / "results.jsonl"
+            with patch.object(webapp, "RESULT_LOG", result_log), \
+                 patch.object(webapp, "record_external_session", return_value={
+                     "recorded": True, "right": 12, "n": 12, "ready": True,
+                 }) as record_session, \
+                 patch.object(webapp, "_focus_trae_window", return_value=False):
+                result = return_training_result({
+                    "session_id": "shehai-session-1234",
+                    "score": 12,
+                    "total": 12,
+                    "records": records,
+                    "topic": "涉害",
+                })
+
+        self.assertIn("涉害专项 12/12", result["message"])
+        args, kwargs = record_session.call_args
+        self.assertEqual(args, (7, [1] * 12, "web-trainer", "shehai-session-1234"))
+        self.assertNotIn("topic", kwargs)
 
     def test_training_result_preserves_error_stage_and_answers(self):
         records = [
@@ -194,7 +405,7 @@ class WebTrainerTests(unittest.TestCase):
                  patch.object(webapp, "record_external_session", return_value={
                      "recorded": True, "right": 11, "n": 12, "ready": True,
                  }) as record_session, \
-                 patch.object(webapp, "_trae_cli", return_value=None):
+                 patch.object(webapp, "_focus_trae_window", return_value=False):
                 result = return_training_result({
                     "session_id": "detail-session-1234",
                     "score": 11,

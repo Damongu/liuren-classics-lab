@@ -6,13 +6,18 @@
       "card": "15-导读/01-第一册 起例/005-涉害法-导读.md",
       "grade": "A",
       "chars": 32,
-      "generated": "2026-09-09 03:37",
-      "source_mtime": "2026-09-08 09:44",
+      "generated": "2026-09-10 17:09",
+      "source_mtime": "2026-09-09 11:48",
       "receipts": [
         {
           "at": "2026-09-09 03:35",
           "result": "pass",
           "minutes": 4
+        },
+        {
+          "at": "2026-09-10 17:20",
+          "result": "pass",
+          "minutes": 2
         }
       ]
     },
@@ -45,7 +50,13 @@
       "chars": 53,
       "generated": "2026-09-09 22:17",
       "source_mtime": "2026-09-09 11:48",
-      "receipts": []
+      "receipts": [
+        {
+          "at": "2026-09-10 11:38",
+          "result": "pass",
+          "minutes": 3
+        }
+      ]
     }
   }
 }

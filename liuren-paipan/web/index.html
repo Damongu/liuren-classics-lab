@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>六壬排盘训练台</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css?v=20260911-count">
 </head>
 <body>
 <main class="app-shell">
@@ -23,6 +23,9 @@
     <label>训练专项
       <select id="topic-select">
         <option value="贼克" selected>贼克</option>
+        <option value="比用">比用</option>
+        <option value="贼克＋比用">贼克＋比用</option>
+        <option value="涉害">涉害·涉归本家计重</option>
         <option value="四课">四课</option>
       </select>
     </label>
@@ -62,7 +65,7 @@
   <nav class="stage-tabs" aria-label="训练阶段">
     <button class="stage-tab active" data-stage="tianpan" type="button"><span>1</span>天地盘</button>
     <button class="stage-tab" data-stage="sike" type="button"><span>2</span>四课</button>
-    <button class="stage-tab" data-stage="zeike" type="button"><span>3</span>贼克</button>
+    <button class="stage-tab" data-stage="zeike" type="button"><span>3</span>取用</button>
     <button class="stage-tab locked" data-stage="chuan" type="button" disabled><span>4</span>三传</button>
     <button class="stage-tab locked" data-stage="tianjiang" type="button" disabled><span>5</span>天将</button>
   </nav>
@@ -115,7 +118,7 @@
 
       <div id="zeike-editor" class="editor hidden">
         <div class="section-heading compact">
-          <div><p>第三步</p><h2>判断贼克并取初传</h2></div>
+          <div><p>第三步</p><h2 id="selection-title">判断取用并取初传</h2></div>
         </div>
         <section class="sike-reference" aria-label="已确认四课">
           <h3>已确认四课</h3>
@@ -127,6 +130,11 @@
           </article>
           <article class="zeike-card" data-key="1">
             <label>初传<select id="zeike-chu" data-stage="zeike" data-key="1"></select></label>
+          </article>
+          <article class="zeike-card" data-key="2">
+            <fieldset id="zeike-reason" class="reason-options">
+              <legend>判断依据（可多选）</legend>
+            </fieldset>
           </article>
         </div>
       </div>
@@ -174,6 +182,6 @@
   </section>
 </main>
 
-<script src="/app.js"></script>
+<script src="/app.js?v=20260911-count"></script>
 </body>
 </html>

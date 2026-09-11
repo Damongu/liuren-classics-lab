@@ -84,7 +84,8 @@ python3 tools/retro.py --close
 | 涉及真实时间地点 | `python3 -m liuren pan --time "YYYY-MM-DD HH:MM" --place 城市` |
 | 要举反例／找符合条件的盘 | `python3 -m liuren find ...`（720 课全枚举） |
 | 排完的盘值得留档 | 加 `--card` 落进 `六壬vault/30-课例/` |
-| 遇到口径分歧 | **两说都跑一遍给他看差异**，不私自选边。开关：`--guiren` `--daynight` `--shehai-class` |
+| 涉害教程口径 | 默认依《占事略决》直取孟仲季；《大全》逐位计重用 `--shehai-method count` 展示，后置比用格另加 `--shehai-bihe` |
+| 遇到其他口径分歧 | **两说都跑一遍给他看差异**，不私自选边。开关：`--guiren` `--daynight` `--shehai-method` `--shehai-class` |
 | 读原文之前 | `python3 tools/guide.py --entry 本节条目 --check`；缺卡先生成再填满，讲完导读问两句回执并落 `--receipt` |
 | 他要练题 | 让他自己跑 `python3 tools/tutor.py`。**判分归程序，你不判分** |
 | 他贴错题给你 | 先归因到具体哪一步偏了，再调排盘器复现，对照输出里的 `reason` 指断点，然后走四拍 |

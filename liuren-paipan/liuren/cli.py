@@ -23,8 +23,8 @@ DEFAULT_VAULT = Path(__file__).resolve().parents[2] / "六壬vault"
 
 def build_opts(a) -> Options:
     return Options(guiren=a.guiren, daynight=a.daynight,
-                   day_boundary=a.day_boundary, shehai_class=a.shehai_class,
-                   shehai_bihe=not a.no_shehai_bihe)
+                   day_boundary=a.day_boundary, shehai_method=a.shehai_method,
+                   shehai_class=a.shehai_class, shehai_bihe=a.shehai_bihe)
 
 
 def add_opt_args(p: argparse.ArgumentParser) -> None:
@@ -35,10 +35,13 @@ def add_opt_args(p: argparse.ArgumentParser) -> None:
                    help="昼夜界：sun=实际日出日入（默认）｜fixed=卯申界")
     g.add_argument("--day-boundary", default="zi23", choices=["zi23", "midnight"],
                    help="日界：zi23=子时换日（默认）｜midnight=子夜换日")
+    g.add_argument("--shehai-method", default="count", choices=["direct", "count"],
+                   help="涉害：count=涉归本家逐位计重（默认，《六壬大全》）"
+                        "｜direct=直取孟仲季（十世纪《占事略决》）")
     g.add_argument("--shehai-class", default="gong", choices=["gong", "shen"],
                    help="涉害孟仲季按：gong=所临地盘宫（默认）｜shen=上神本身")
-    g.add_argument("--no-shehai-bihe", action="store_true",
-                   help="关闭涉害比用格覆盖（走纯涉害）")
+    g.add_argument("--shehai-bihe", action="store_true",
+                   help="在count口径启用《六壬大全》涉害比用格覆盖（默认关闭）")
 
 
 def cmd_pan(a) -> int:

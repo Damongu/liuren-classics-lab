@@ -199,35 +199,31 @@ GUIREN_TABLES = {"book": GUIREN_BOOK, "common": GUIREN_COMMON}
 SHUN_GONG = ("亥", "子", "丑", "寅", "卯", "辰")
 
 
-# ---------- 涉害数法：地盘宫计数表 ----------
-# 底本《六壬大全》第六册涉害课自带四组算例，逐条反推可得下表（每宫按"本气 + 所藏"
-# 逐项计数，同一宫可计两项）：
-#   ① 庚子日 午加庚(申)：前行历"酉、辛"金二重  -> 酉计金1、戌计金1（戌中辛）
-#   ② 庚子日 戌加子    ：前行历"癸水"一重      -> 丑计水1（丑中癸）；辰不计水
-#   ③ 丁卯日 丑加卯    ：前行历"辰中乙木"一重  -> 辰计木1
-#   ④ 丁卯日 亥加丑    ：前行历"辰、戊、未、己、戌土"五重
-#                       -> 辰计土2（辰土+戊土）、未计土2（未土+己土）、戌计土1；
-#                          巳不计土（否则应为六重）
-#   ⑤ 六月甲午日 申加午：前行历"丁火"一重      -> 未计火1（未中丁）
-# 数法：自上神所临地盘宫「前行」至本家宫止（首尾皆不计），
-#       逐宫累计与「起点宫五行」相同的项数 —— 即原课那一层克的重复次数。
+# ---------- 涉害数法：地盘本气 + 十干寄宫 ----------
+# 自上神所临地盘宫前行至本家宫（首尾不计），逐宫展开：
+#   1. 地支本气；
+#   2. 寄居该宫的天干。
+# 多重下贼上时，数其中克候选上神的地神；多重上克下时，数候选上神所克的地神。
+# 《大全》丁卯例“辰、戊、未、己、戌土五重”即辰支、巳宫戊、未支、未宫己、戌支；
+# 《观月经》“巳上戊土、未上未土、己土，前又戌土，共四重”与此完全一致。
 SHEHAI_ITEMS = {
-    "子": ("水",), "丑": ("土", "水"), "寅": ("木",), "卯": ("木",),
-    "辰": ("土", "土", "木"), "巳": ("火",), "午": ("火",),
-    "未": ("土", "土", "火"), "申": ("金",), "酉": ("金",),
-    "戌": ("土", "金"), "亥": ("水",),
+    z: (ZHI_WUXING[z],) + tuple(GAN_WUXING[g] for g in GAN if JIGONG[g] == z)
+    for z in ZHI
 }
-# 「观月经」层另一算法：巳兼计戊土。
-#   第六册涉害课引「观月经」：甲辰日神后加辰，"巳上戊土、未上未土、己土，前又戌土，
-#   共四重" —— 巳计土。与上面④的五重相冲，是两个文本层的分歧，做成开关。
-SHEHAI_ITEMS_GUANYUE = dict(SHEHAI_ITEMS, **{"巳": ("火", "土")})
 
-SHEHAI_TABLES = {"kejing": SHEHAI_ITEMS, "guanyue": SHEHAI_ITEMS_GUANYUE}
+# 保留旧参数名以兼容已有课例卡；两者不再代表不同算法。
+SHEHAI_TABLES = {"kejing": SHEHAI_ITEMS, "guanyue": SHEHAI_ITEMS}
 
 
-def shehai_count(gong: str, wx: str, table: str = "kejing") -> int:
-    """某地盘宫里与 wx 同五行的项数（涉害数法用）。"""
-    return sum(1 for w in SHEHAI_TABLES[table][gong] if w == wx)
+def shehai_count(gong: str, up: str, xia_ze_shang: bool,
+                  table: str = "kejing") -> int:
+    """按四课克向统计某地盘宫中与候选上神相克的地神数。"""
+    up_wx = wuxing(up)
+    if xia_ze_shang:
+        return sum(1 for ground_wx in SHEHAI_TABLES[table][gong]
+                   if KE[ground_wx] == up_wx)
+    return sum(1 for ground_wx in SHEHAI_TABLES[table][gong]
+               if KE[up_wx] == ground_wx)
 
 
 def bihe(gan: str, z: str) -> bool:

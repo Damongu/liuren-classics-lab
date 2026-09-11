@@ -197,8 +197,62 @@
           ],
           "teachback": true,
           "passed": true
+        },
+        "比用": {
+          "hist": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          "teachback": true,
+          "passed": true
+        },
+        "贼克＋比用": {
+          "hist": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "teachback": true,
+          "passed": true
         }
       }
+    },
+    "7": {
+      "hist": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "teachback": false,
+      "passed": false
     }
   },
   "wrong": [],
@@ -372,6 +426,496 @@
           "mistakes": []
         }
       ]
+    },
+    {
+      "date": "2026-09-10",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "e247f28e-c137-4128-8679-d2fed853fb56",
+      "topic": "比用",
+      "details": [
+        {
+          "day": "甲寅",
+          "shi": "申",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙寅",
+          "shi": "子",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "庚寅",
+          "shi": "亥",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊戌",
+          "shi": "午",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬辰",
+          "shi": "未",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙酉",
+          "shi": "午",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬子",
+          "shi": "亥",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "未",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲午",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙申",
+          "shi": "午",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲子",
+          "shi": "丑",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "sike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": "亥",
+                  "expected": "未"
+                },
+                {
+                  "key": "3",
+                  "actual": "午",
+                  "expected": "寅"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "庚子",
+          "shi": "子",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
+    },
+    {
+      "date": "2026-09-10",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "7732dfd2-978d-4fa9-8da2-767aba977cc3",
+      "topic": "贼克＋比用",
+      "details": [
+        {
+          "day": "壬寅",
+          "shi": "酉",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "巳",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙辰",
+          "shi": "亥",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲子",
+          "shi": "寅",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊午",
+          "shi": "未",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "0",
+                  "actual": "重审",
+                  "expected": "元首"
+                },
+                {
+                  "key": "1",
+                  "actual": "戌",
+                  "expected": "寅"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "有下贼取下贼"
+                  ],
+                  "expected": [
+                    "无下贼取上克"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "己酉",
+          "shi": "辰",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛巳",
+          "shi": "子",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙辰",
+          "shi": "寅",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊申",
+          "shi": "卯",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁酉",
+          "shi": "午",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
+    },
+    {
+      "date": "2026-09-11",
+      "level": 7,
+      "right": 9,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "66d9a382-4275-48a9-a509-51ed109eba00",
+      "topic": null,
+      "details": [
+        {
+          "day": "癸卯",
+          "shi": "申",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊辰",
+          "shi": "巳",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己巳",
+          "shi": "巳",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲申",
+          "shi": "巳",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取受克重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸亥",
+          "shi": "戌",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "1",
+                  "actual": "卯",
+                  "expected": "酉"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取受克重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸亥",
+          "shi": "未",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸亥",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "同重先比孟仲季",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "同重先比孟仲季",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "乙卯",
+          "shi": "午",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁卯",
+          "shi": "寅",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "同重先比孟仲季",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "同重先比孟仲季",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "庚午",
+          "shi": "戌",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "1",
+                  "actual": "戌",
+                  "expected": "申"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸卯",
+          "shi": "卯",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲申",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ],
+      "score_correction": "第4、7、9题仅因等价按钮文案更新误判，按题目失效剔除"
     }
   ],
   "wrong_archive": [
@@ -597,6 +1141,493 @@
           "mistakes": []
         }
       ]
+    },
+    "e247f28e-c137-4128-8679-d2fed853fb56": {
+      "date": "2026-09-10T14:40:55",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": "比用",
+      "details": [
+        {
+          "day": "甲寅",
+          "shi": "申",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙寅",
+          "shi": "子",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "庚寅",
+          "shi": "亥",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊戌",
+          "shi": "午",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬辰",
+          "shi": "未",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙酉",
+          "shi": "午",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬子",
+          "shi": "亥",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "未",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲午",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙申",
+          "shi": "午",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲子",
+          "shi": "丑",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "sike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": "亥",
+                  "expected": "未"
+                },
+                {
+                  "key": "3",
+                  "actual": "午",
+                  "expected": "寅"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "庚子",
+          "shi": "子",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
+    },
+    "7732dfd2-978d-4fa9-8da2-767aba977cc3": {
+      "date": "2026-09-10T16:32:53",
+      "level": 4,
+      "right": 11,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": "贼克＋比用",
+      "details": [
+        {
+          "day": "壬寅",
+          "shi": "酉",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "巳",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙辰",
+          "shi": "亥",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲子",
+          "shi": "寅",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊午",
+          "shi": "未",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "0",
+                  "actual": "重审",
+                  "expected": "元首"
+                },
+                {
+                  "key": "1",
+                  "actual": "戌",
+                  "expected": "寅"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "有下贼取下贼"
+                  ],
+                  "expected": [
+                    "无下贼取上克"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "己酉",
+          "shi": "辰",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛巳",
+          "shi": "子",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛酉",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊寅",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丙辰",
+          "shi": "寅",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊申",
+          "shi": "卯",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁酉",
+          "shi": "午",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
+    },
+    "66d9a382-4275-48a9-a509-51ed109eba00": {
+      "date": "2026-09-11T18:37:20",
+      "level": 7,
+      "right": 9,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": null,
+      "details": [
+        {
+          "day": "癸卯",
+          "shi": "申",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "戊辰",
+          "shi": "巳",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "己巳",
+          "shi": "巳",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲申",
+          "shi": "巳",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取受克重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸亥",
+          "shi": "戌",
+          "jiang": "寅",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "1",
+                  "actual": "卯",
+                  "expected": "酉"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取受克重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸亥",
+          "shi": "未",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "癸亥",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "同重先比孟仲季",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "同重先比孟仲季",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "乙卯",
+          "shi": "午",
+          "jiang": "辰",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁卯",
+          "shi": "寅",
+          "jiang": "卯",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": [],
+          "invalidated_mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "同重先比孟仲季",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "同重先比孟仲季",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "庚午",
+          "shi": "戌",
+          "jiang": "子",
+          "daynight": "昼",
+          "clean": false,
+          "mistakes": [
+            {
+              "stage": "zeike",
+              "revealed": false,
+              "wrong": [
+                {
+                  "key": "1",
+                  "actual": "戌",
+                  "expected": "申"
+                },
+                {
+                  "key": "2",
+                  "actual": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "无下贼取上克",
+                    "涉归本家逐位计重"
+                  ],
+                  "expected": [
+                    "俱比或俱不比入涉害",
+                    "取涉害重数最多者",
+                    "有下贼取下贼",
+                    "涉归本家逐位计重"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "day": "癸卯",
+          "shi": "卯",
+          "jiang": "丑",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲申",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ],
+      "score_correction": "第4、7、9题仅因等价按钮文案更新误判，按题目失效剔除"
     }
   }
 }

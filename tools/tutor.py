@@ -161,13 +161,40 @@ def g_zeike(rng):
     """L4 贼克专项：只练元首、重审及发用上神。"""
     ks = rng.choice(["元首", "重审"])
     gz, shi, jiang, p = rnd_case(rng, keshi=ks)
+    why = "有下贼取下贼" if p.keshi == "重审" else "无下贼取上克"
     return dict(q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
                   "问：按贼克法，此课是元首还是重审？初传取谁？"
-                  "（如「重审 辰」）",
-                ans=[p.keshi + p.chuan[0], p.keshi + "课" + p.chuan[0]],
+                  "并说明判断依据。"
+                  f"（如「{p.keshi} {p.chuan[0]} {why}」）",
+                ans=[
+                    p.keshi + p.chuan[0] + why,
+                    p.keshi + "课" + p.chuan[0] + why,
+                ],
                 plate=p,
                 src="第一册 003-贼克法｜《占事略决》第一、二章",
                 spec=("贼克", gz, shi, jiang))
+
+
+def g_biyong(rng):
+    """L4 比用专项：只练知一课及发用上神。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="知一")
+    why = "阳日取阳神" if p.is_gang else "阴日取阴神"
+    return dict(q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按比用法，初传取谁？并说明判断依据。"
+                  f"（如「戌 {why}」）",
+                ans=[p.chuan[0] + why, why + p.chuan[0]],
+                plate=p,
+                src="第一册 004-比用法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第二法",
+                spec=("比用", gz, shi, jiang))
+
+
+def g_zeike_biyong(rng):
+    """L4 贼克＋比用杂糅：等概率抽元首、重审、知一。"""
+    ks = rng.choice(["元首", "重审", "知一"])
+    if ks == "知一":
+        return g_biyong(rng)
+    return g_zeike(rng)
 
 
 def g_chuan(rng):
@@ -212,16 +239,17 @@ def g_jiang12(rng):
 
 
 def g_shehai(rng):
-    """L7 涉害专项：格 + 初传。"""
+    """L7 涉害专项：按《六壬大全》涉归本家逐位计重。"""
     gz, shi, jiang, p = rnd_case(rng, keshi="涉害")
+    depth = p.shehai_depth(p.chuan[0])
+    why = f"{depth}重"
     d = dict(q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
-               f"问：此涉害课属何格？初传取谁？（如「比用格 戌」）",
-             ans=[p.keshi_sub + p.chuan[0]],
-             plate=p, src="第一册 005-涉害法｜第六册 004-涉害课",
+               "问：按涉归本家逐位计重法，初传取谁？该候选计几重？"
+               f"（如「{p.chuan[0]} {why}」）",
+             ans=[p.chuan[0] + why, why + p.chuan[0]],
+             plate=p, src="《六壬大全·涉害课》｜"
+                          "20-概念卡/涉害涉归本家",
              spec=("涉害", gz, shi, jiang))
-    alt = _shehai_alt(p)
-    if alt:
-        d["alt"] = alt
     return d
 
 
@@ -297,7 +325,7 @@ LEVELS = [
 LV = {l["id"]: l for l in LEVELS}
 
 LEVEL1_TOPICS = ("寄宫", "旬空", "遁干")
-LEVEL4_TOPICS = ("贼克",)
+LEVEL4_TOPICS = ("贼克", "比用", "贼克＋比用")
 TOPIC_CHOICES = LEVEL1_TOPICS + LEVEL4_TOPICS
 LEVEL1_BRIEF = {
     "寄宫": "十干按六壬寄宫表落到地支宫；这是固定表，不按日旬变化。",
@@ -325,7 +353,8 @@ def replay(spec):
         return dict(q=f"{gz}日，{z} 上遁得何干？（本旬不含则答「无」）",
                     ans=[d] if d else ["无", "None", "空"],
                     src="第一册 起例·遁干", spec=tuple(spec))
-    if kind in ("局", "加时", "天盘", "四课", "课体", "贼克", "三传", "涉害"):
+    if kind in ("局", "加时", "天盘", "四课", "课体", "贼克", "比用",
+                "三传", "涉害"):
         gz, shi, jiang = spec[1], spec[2], spec[3]
         p = from_ganzhi(gz, shi, jiang)
         base = dict(plate=p, spec=tuple(spec))
@@ -350,22 +379,36 @@ def replay(spec):
                 ans=[p.keshi, p.keshi + "课", p.keshi + "法"],
                 src="第一册 003~011 入手法诸诀｜第六册 课经一")
         if kind == "贼克":
+            why = "有下贼取下贼" if p.keshi == "重审" else "无下贼取上克"
             return base | dict(
                 q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
                   "问：按贼克法，此课是元首还是重审？初传取谁？"
-                  "（如「重审 辰」）",
-                ans=[p.keshi + p.chuan[0], p.keshi + "课" + p.chuan[0]],
+                  "并说明判断依据。",
+                ans=[
+                    p.keshi + p.chuan[0] + why,
+                    p.keshi + "课" + p.chuan[0] + why,
+                ],
                 src="第一册 003-贼克法｜《占事略决》第一、二章")
+        if kind == "比用":
+            why = "阳日取阳神" if p.is_gang else "阴日取阴神"
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按比用法，初传取谁？并说明判断依据。",
+                ans=[p.chuan[0] + why, why + p.chuan[0]],
+                src="第一册 004-比用法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第二法")
         if kind == "三传":
             return base | dict(
                 q=f"{head(gz, shi, jiang)}\n问：三传是什么？（三个字，初→中→末）",
                 ans=["".join(p.chuan)], alt=_alt_chuan(p),
                 src="20-概念卡/三传主干（贼克与比用）")
+        why = f"{p.shehai_depth(p.chuan[0])}重"
         return base | dict(
             q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
-              f"问：此涉害课属何格？初传取谁？（如「比用格 戌」）",
-            ans=[p.keshi_sub + p.chuan[0]], alt=_shehai_alt(p),
-            src="第一册 005-涉害法｜第六册 004-涉害课")
+              "问：按涉归本家逐位计重法，初传取谁？该候选计几重？"
+              f"（如「{p.chuan[0]} {why}」）",
+            ans=[p.chuan[0] + why, why + p.chuan[0]],
+            src="《六壬大全·涉害课》｜20-概念卡/涉害涉归本家")
     if kind in ("贵人", "乘将"):
         gz, shi, jiang, dn = spec[1], spec[2], spec[3], spec[4]
         p = from_ganzhi(gz, shi, jiang, daynight=dn)
@@ -748,8 +791,12 @@ def run(lid, n, st, rng, topic=None, assume_learned=False):
     for _ in range(n):
         if lid == 1:
             item = lvl["gen"](rng, topic)
-        elif lid == 4 and topic == "贼克":
-            item = g_zeike(rng)
+        elif lid == 4 and topic in LEVEL4_TOPICS:
+            item = {
+                "贼克": g_zeike,
+                "比用": g_biyong,
+                "贼克＋比用": g_zeike_biyong,
+            }[topic](rng)
         else:
             item = lvl["gen"](rng)
         s, quit_ = judge(item, lid, st, lvl["card"], topic=topic)
@@ -1032,7 +1079,7 @@ def write_back(st):
         if level["id"] == 4 and any(
             topic_state(state, topic)["hist"] for topic in LEVEL4_TOPICS
         ):
-            note = "（已有贼克单项记录）"
+            note = "（已有前置分项记录）"
         lines.append(
             f"| {level['id']} | {level['name']} | {_recent_score(state['hist'])} | "
             f"{_level_status(st, level)}{note} |"
@@ -1144,7 +1191,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="六壬交互式训练器（先教学，后练习）")
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
     ap.add_argument("--topic", choices=TOPIC_CHOICES,
-                    help="单项练习：关卡1寄宫/旬空/遁干，关卡4贼克")
+                    help="分项练习：关卡1寄宫/旬空/遁干，"
+                         "关卡4贼克/比用/贼克＋比用")
     ap.add_argument("--n", type=int, default=PASS_WINDOW,
                     help=f"本轮题量（默认 {PASS_WINDOW}，与达标窗口对齐：一轮跑完即可判定）")
     ap.add_argument("--review", action="store_true", help="只做到期错题（跨关卡，重问原题）")

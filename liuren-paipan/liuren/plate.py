@@ -30,13 +30,15 @@ class Options:
     guiren: str = "common"
     daynight: str = "sun"       # sun=实际日出日入（底本第三十九法主张）｜fixed=卯申界
     day_boundary: str = "zi23"  # zi23=子时换日｜midnight=子夜换日【待考】
-    shehai_table: str = "kejing"  # 涉害数法表：kejing=课经订讹层｜guanyue=观月经层
+    # 涉害深浅：count=《大全》逐位计重（教程默认）｜direct=《占事略决》直取孟仲季
+    shehai_method: str = "count"
+    shehai_table: str = "kejing"  # 兼容旧参数；两名均用“地支本气 + 十干寄宫”
     shehai_class: str = "gong"  # 涉害取孟仲：gong=按所临地盘宫｜shen=按上神本身
     # 涉害用神若与日干不比，是否改取比和者（底本"比用格"）。底本自相矛盾：
     #   开 —— 第六册涉害课"比用格"、第十一册第九十三法订讹，两处明言当取比和者
     #   关 —— 第六册"见机格"例（庚子日戌时申将取午加庚）走的是纯涉害
-    # 默认开，并在 divergences 里同时给出另一说，供你自己裁。
-    shehai_bihe: bool = True
+    # 教程默认采用纯计重，不追加底本内部有冲突的后置比用格。
+    shehai_bihe: bool = False
     bieze_rou: str = "+4"       # 柔日"支前三合"：+4=顺数第五位｜-4=逆数第五位
     strict: bool = False        # True 时遇到规则歧义直接抛错，不做兜底
 
@@ -166,21 +168,33 @@ class Plate:
         yy = GAN_YINYANG[self.gan]
         return [c for c in cands if ZHI_YINYANG[c] == yy]
 
+    def _shehai_is_xia_ze_shang(self, up: str) -> bool:
+        """返回候选所循克向：True 为下贼上，False 为上克下。"""
+        has_ze = any(k.xia_ze_shang for k in self.kes)
+        matches = [
+            k for k in self.kes
+            if k.up == up and (k.xia_ze_shang if has_ze else k.shang_ke_xia)
+        ]
+        if not matches:
+            raise ValueError(f"{up}不是本课涉害候选")
+        return has_ze
+
     def _shehai_depth(self, up: str) -> int:
-        """涉害深浅：自上神所临地盘宫前行至本家宫止，数「同一层克」重复几重。
+        """涉害深浅：归本家途中按原四课克向逐项计重。
 
         底本第六册涉害课订讹："从地盘历数归本家，受克深者……午加庚金，前行历酉、
         辛金二重归本家地盘午位。戌加子水，前行历癸水一重归本家地盘戌位。"
-        计数表与逐条反推见 ganzhi.SHEHAI_ITEMS。首尾两宫都不计。
+        多重下贼上数沿途地神克候选天神，多重上克下数候选天神克沿途地神。
+        计数表见 ganzhi.SHEHAI_ITEMS。首尾两宫都不计。
         """
         start = self.di[up]
-        wx0 = wuxing(start)          # 起点宫五行 = 原课那一层克的施受方
+        xia_ze_shang = self._shehai_is_xia_ze_shang(up)
         depth = 0
         cur = shift(start, 1)
         for _ in range(12):
             if cur == up:                 # 行来本家止
                 break
-            depth += shehai_count(cur, wx0, self.opts.shehai_table)
+            depth += shehai_count(cur, up, xia_ze_shang, self.opts.shehai_table)
             cur = shift(cur, 1)
         return depth
 
@@ -192,7 +206,30 @@ class Plate:
         target = self.di[up] if self.opts.shehai_class == "gong" else up
         return zhi_class(target)
 
-    def _shehai(self, cands: list[str]) -> str:
+    def _shehai_direct(self, cands: list[str]) -> str:
+        """《占事略决》直取法：加孟为深，加仲为半，加季为浅。
+
+        同级时依该书第四法“若涉害俱深，以先举者为用”，即按四课先干后支的
+        候选顺序取第一神。不逐位计重，也不追加《大全》比用格。
+        """
+        rank = {"孟": 3, "仲": 2, "季": 1}
+        classes = {c: self._cls_of(c) for c in cands}
+        best = max(rank[classes[c]] for c in cands)
+        tied = [c for c in cands if rank[classes[c]] == best]
+        pick = tied[0]
+        self._note("涉害直取孟仲季：" + "、".join(
+            f"{c}临{self.di[c] if self.opts.shehai_class == 'gong' else c}"
+            f"为{classes[c]}" for c in cands))
+        if len(tied) > 1:
+            self._note(f"{classes[pick]}位复等，依《占事略决》取先举之{pick}")
+        else:
+            self._note(f"取{classes[pick]}位之{pick}为用")
+        self.keshi = "涉害"
+        self.keshi_sub = f"临{classes[pick]}"
+        return pick
+
+    def _shehai_counted(self, cands: list[str]) -> str:
+        """《六壬大全》口径：涉归本家逐位计重，复等再取孟仲季。"""
         depths = {c: self._shehai_depth(c) for c in cands}
         best = max(depths.values())
         tied = [c for c in cands if depths[c] == best]
@@ -201,38 +238,36 @@ class Plate:
         if len(tied) == 1:
             pick = tied[0]
         else:
-            # 深浅相等时底本两层给的是两套名目与两套取法：
-            #   订讹层："涉害俱深，则取四孟上神发用"（见机）／"无孟则取仲"（察微）
-            #   课经层（甲午日缀瑕例）："乃涉害相等，刚日以日上先见神为用，柔日以辰上
-            #             先见神为用，名曰缀瑕"
-            # 默认走订讹层（孟 > 仲 > 复等），但若课经层给出不同用神，记为分歧。
+            # 订讹层的完整次序：重数相等先取孟、无孟取仲、无孟仲取季；
+            # 同级仍有多个，才是复等，刚日取干两课先见、柔日取支两课先见。
+            rank = {"孟": 3, "仲": 2, "季": 1}
+            best_class = max(rank[self._cls_of(c)] for c in tied)
+            same_class = [c for c in tied if rank[self._cls_of(c)] == best_class]
             fu_pick = self.gan_shang if self.is_gang else self.zhi_shang
-            pick = None
-            for want, sub in (("孟", "见机"), ("仲", "察微")):
-                sel = [c for c in tied if self._cls_of(c) == want]
-                if sel:
-                    pick = sel[0]
-                    self._note(f"深浅相等，取临四{want}者")
-                    if fu_pick in tied and fu_pick != pick:
-                        self.divergences.append({
-                            "规则": "涉害·见机／缀瑕",
-                            "本盘取": pick, "另一说": fu_pick,
-                            "依据": f"订讹层：涉害俱深取临四{want}者（{sub}）",
-                            "另说依据": "课经层缀瑕例："
-                                        + ("刚日以日上先见神为用" if self.is_gang
-                                           else "柔日以辰上先见神为用"),
-                        })
-                    elif fu_pick == pick:
-                        self._note("此处课经层缀瑕取法同归一神")
-                    break
-            if pick is None:
-                # '复等柔辰刚日宜'；底本第六册作"缀瑕格：刚日取日上先见神，柔日取辰上先见神"
+            wanted_class = self._cls_of(same_class[0])
+            if len(same_class) == 1:
+                pick = same_class[0]
+                self._note(f"深浅相等，取临四{wanted_class}者")
+                if fu_pick in tied and fu_pick != pick:
+                    self.divergences.append({
+                        "规则": "涉害·见机／缀瑕",
+                        "本盘取": pick, "另一说": fu_pick,
+                        "依据": f"订讹层：重数相等先取临四{wanted_class}者",
+                        "另说依据": "课经正文缀瑕例可读作重数一等即"
+                                    + ("刚日取干上先见神" if self.is_gang
+                                       else "柔日取支上先见神"),
+                    })
+            else:
                 fudeng = True
-                pick = self.gan_shang if self.is_gang else self.zhi_shang
-                if pick not in tied:
-                    pick = tied[0]
-                self._note("深浅复等，" + ("刚日取干上先见神" if self.is_gang
-                                          else "柔日取支上先见神"))
+                side_order = self.kes[:2] if self.is_gang else self.kes[2:]
+                other_order = self.kes[2:] if self.is_gang else self.kes[:2]
+                ordered = [k.up for k in (*side_order, *other_order)]
+                pick = next(c for c in ordered if c in same_class)
+                self._note(
+                    f"深浅与{wanted_class}位复等，"
+                    + ("刚日取干两课先见神" if self.is_gang
+                       else "柔日取支两课先见神")
+                )
         # 格名：临孟见机、临仲察微、临季即涉害、复等缀瑕
         sub = {"孟": "见机", "仲": "察微", "季": "涉害"}[self._cls_of(pick)]
         if fudeng:
@@ -261,6 +296,13 @@ class Plate:
                     "另说依据": f"底本比用格当取比和之{alt}",
                 })
         return pick
+
+    def _shehai(self, cands: list[str]) -> str:
+        if self.opts.shehai_method == "direct":
+            return self._shehai_direct(cands)
+        if self.opts.shehai_method == "count":
+            return self._shehai_counted(cands)
+        raise ValueError(f"未知涉害口径：{self.opts.shehai_method}")
 
     def _from_ke_candidates(self) -> str | None:
         """贼克法 + 比用法 + 涉害法。返回初传，无克返回 None。

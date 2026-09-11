@@ -5,13 +5,17 @@
 from __future__ import annotations
 
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from liuren import Options, from_ganzhi, from_jia, from_time  # noqa: E402
+from liuren.ganzhi import SHEHAI_ITEMS  # noqa: E402
 from liuren.search import enumerate720, filter_courses  # noqa: E402
+
+DAQUAN = Options(shehai_method="count", shehai_bihe=True)
 
 # (日干支, 时, 将, 期望初传, 期望课式关键字或None, 底本出处)
 CASES_SHI_JIANG = [
@@ -49,7 +53,7 @@ CASES_CHUAN = [
 
 def test_shi_jiang():
     for gz, shi, jiang, chu, keshi, src in CASES_SHI_JIANG:
-        p = from_ganzhi(gz, shi, jiang)
+        p = from_ganzhi(gz, shi, jiang, opts=DAQUAN)
         if chu:
             assert p.chuan[0] == chu, f"{gz}日{shi}时{jiang}将 初传应{chu}，得{p.chuan[0]}｜{src}"
         if keshi:
@@ -58,7 +62,7 @@ def test_shi_jiang():
 
 def test_jia():
     for gz, t, d, chu, src in CASES_JIA:
-        p = from_jia(gz, t, d)
+        p = from_jia(gz, t, d, opts=DAQUAN)
         assert p.chuan[0] == chu, f"{gz}日{t}加{d} 初传应{chu}，得{p.chuan[0]}｜{src}"
 
 
@@ -78,30 +82,55 @@ SHEHAI_DEPTHS = [
 def test_shehai_depths():
     """涉害重数必须和底本写的数字一样，不许只对结论不对过程。"""
     for gz, up, gong, want, table, src in SHEHAI_DEPTHS:
-        p = from_jia(gz, up, gong, opts=Options(shehai_table=table))
+        p = from_jia(gz, up, gong,
+                     opts=Options(shehai_method="count", shehai_table=table))
         got = p.shehai_depth(up)
         assert got == want, f"{gz}日{up}加{gong}（{table}层）应{want}重，得{got}｜{src}"
 
 
-def test_shehai_table_layers_differ():
-    """巳是否兼计戊土 —— 课经层与观月经层的分歧，两层都要能算。"""
-    a = from_jia("甲辰", "子", "辰", opts=Options(shehai_table="kejing"))
-    b = from_jia("甲辰", "子", "辰", opts=Options(shehai_table="guanyue"))
-    assert (a.shehai_depth("子"), b.shehai_depth("子")) == (3, 4)
+def test_shehai_table_aliases_agree():
+    """旧参数名继续可用；两段原文都按十干寄宫在巳宫计戊土。"""
+    a = from_jia("甲辰", "子", "辰",
+                 opts=Options(shehai_method="count", shehai_table="kejing"))
+    b = from_jia("甲辰", "子", "辰",
+                 opts=Options(shehai_method="count", shehai_table="guanyue"))
+    assert (a.shehai_depth("子"), b.shehai_depth("子")) == (4, 4)
+
+
+def test_shehai_items_follow_jigong_positions():
+    """计数项必须落在实际寄宫，防止总数碰巧相同却把戊土错放到辰宫。"""
+    assert SHEHAI_ITEMS["辰"] == ("土", "木")       # 辰本气、乙
+    assert SHEHAI_ITEMS["巳"] == ("火", "火", "土") # 巳本气、丙、戊
+    assert SHEHAI_ITEMS["未"] == ("土", "火", "土") # 未本气、丁、己
+
+
+def test_shehai_first_ke_uses_original_ke_direction_not_jigong_element():
+    """戊申第七局：子加戊属下贼上，数沿途克子水者；巳只定路径起点。"""
+    p = from_ganzhi(
+        "戊申", "子", "未",
+        opts=Options(shehai_method="count", shehai_bihe=False),
+    )
+    assert p.shehai_depth("子") == 3, p.reason
+    assert p.shehai_depth("卯") == 2, p.reason
+    assert p.shehai_depth("戌") == 1, p.reason
+    assert p.chuan[0] == "子", p.chuan
+    assert not any("复等" in reason for reason in p.reason), p.reason
 
 
 def test_gengzi_shehai_divergence():
     """第六册涉害课订讹：庚子日午加庚，前行历酉辛二重为深，取午发用（纯涉害）。
     同册比用格却把庚子归入"皆用比，不用涉害"。底本自相矛盾，两说都要能算。"""
-    pure = from_jia("庚子", "午", "庚", opts=Options(shehai_bihe=False))
+    pure = from_jia("庚子", "午", "庚",
+                    opts=Options(shehai_method="count", shehai_bihe=False))
     assert pure.chuan[0] == "午", pure.chuan
-    biyong = from_jia("庚子", "午", "庚", opts=Options(shehai_bihe=True))
+    biyong = from_jia("庚子", "午", "庚",
+                      opts=Options(shehai_method="count", shehai_bihe=True))
     assert biyong.chuan[0] == "戌" and biyong.divergences
 
 
 def test_chuan_in_twelve_ju():
     for gz, chuan, src in CASES_CHUAN:
-        hits = [r for r in filter_courses(enumerate720(), day_gz=gz)
+        hits = [r for r in filter_courses(enumerate720(DAQUAN), day_gz=gz)
                 if "".join(r.chuan) == chuan]
         assert hits, f"{gz}日十二局中应有三传{chuan}｜{src}"
 
@@ -144,7 +173,7 @@ def test_xuanwu_38fa():
 
 def test_book_counts():
     """底本可数自述：720 总数、别责 9 课、八专日五除癸丑、独足格唯一。"""
-    rows = enumerate720()
+    rows = enumerate720(DAQUAN)
     assert len(rows) == 720
     assert len(filter_courses(rows, keshi="别责")) == 9
     assert sorted({r.day_gz for r in filter_courses(rows, keshi="八专")}) == \
@@ -191,11 +220,83 @@ def test_zhongqi_huanjiang():
 
 def test_options_divergence_recorded():
     """涉害比用格：两说都要留痕，不许静默。"""
-    on = from_ganzhi("庚子", "戌", "申", opts=Options(shehai_bihe=True))
-    off = from_ganzhi("庚子", "戌", "申", opts=Options(shehai_bihe=False))
+    on = from_ganzhi("庚子", "戌", "申",
+                     opts=Options(shehai_method="count", shehai_bihe=True))
+    off = from_ganzhi("庚子", "戌", "申",
+                      opts=Options(shehai_method="count", shehai_bihe=False))
     assert on.chuan[0] != off.chuan[0]
     assert on.divergences and off.divergences
     assert on.divergences[0]["另一说"] == off.chuan[0]
+
+
+def test_shehai_direct_remains_available():
+    """《占事略决》直取孟仲季保留为显式可选口径。"""
+    cases = [
+        ("丁卯", "卯", "未", "未"),  # 未临卯仲，亥临未季
+        ("甲申", "寅", "辰", "辰"),  # 辰临寅孟，子临戌季
+        ("庚午", "卯", "亥", "戌"),  # 戌临寅孟，子临辰季
+    ]
+    for gz, shi, jiang, want in cases:
+        p = from_ganzhi(gz, shi, jiang, opts=Options(shehai_method="direct"))
+        assert p.chuan[0] == want, \
+            f"{gz}日{shi}时{jiang}将直取孟仲季应{want}，得{p.chuan[0]}"
+        assert any("直取孟仲季" in reason for reason in p.reason)
+
+
+def test_shehai_direct_distribution_and_two_meng_tie():
+    """720课中直取法不发用季；两个孟复等时按四课次序取先举者。"""
+    rows = enumerate720(Options(shehai_method="direct"))
+    subs = Counter(r.sub for r in rows if r.keshi == "涉害")
+    assert subs == {"临孟": 53, "临仲": 23}, subs
+
+    p = from_ganzhi("戊辰", "子", "未", opts=Options(shehai_method="direct"))
+    assert p.chuan[0] == "子", p.chuan
+    assert any("孟位复等" in reason and "先举之子" in reason for reason in p.reason)
+
+
+def test_shehai_count_is_default():
+    """教程默认采用《大全》涉归本家纯计重，不追加后置比用格。"""
+    default = from_ganzhi("丁卯", "子", "戌")
+    explicit = from_ganzhi(
+        "丁卯", "子", "戌",
+        opts=Options(shehai_method="count", shehai_bihe=False),
+    )
+    direct = from_ganzhi(
+        "丁卯", "子", "戌",
+        opts=Options(shehai_method="direct"),
+    )
+    assert default.chuan == explicit.chuan == ("亥", "酉", "未")
+    assert direct.chuan[0] == "丑"
+    assert any("亥5重" in reason for reason in default.reason)
+
+
+def test_shehai_count_distribution():
+    """寄宫纠正后的720课分布必须固定，季位确有发用。"""
+    rows = enumerate720(Options(shehai_method="count", shehai_bihe=False))
+    counts = Counter(
+        r.plate._cls_of(r.chuan[0])
+        for r in rows
+        if any("入涉害" in reason for reason in r.plate.reason)
+    )
+    assert counts == {"孟": 50, "仲": 13, "季": 19}, counts
+
+
+def test_shehai_count_same_class_tie_uses_day_or_chen_side():
+    """重数、孟仲季均相等后，刚取干两课先见，柔取支两课先见。"""
+    cases = [
+        ("己巳", "未", "子"),  # 柔日，两孟同重，取支侧先见
+        ("辛未", "未", "酉"),  # 柔日，支上第一神非孟，取支侧仍并列的孟
+        ("壬申", "未", "午"),  # 刚日，两孟同重，取干侧先见
+        ("丁巳", "未", "子"),  # 柔日，两孟同重，取支侧先见
+    ]
+    for day, jiang, want in cases:
+        p = from_ganzhi(
+            day, "子", jiang,
+            opts=Options(shehai_method="count", shehai_bihe=False),
+        )
+        assert p.chuan[0] == want, (day, p.chuan, p.reason)
+        assert p.keshi_sub.endswith("缀瑕"), (day, p.keshi_sub)
+        assert any("复等" in reason and "先见神" in reason for reason in p.reason)
 
 
 def test_guiren_tables_differ():
