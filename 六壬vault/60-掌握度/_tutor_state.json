@@ -233,6 +233,24 @@
           ],
           "teachback": true,
           "passed": true
+        },
+        "贼克＋比用＋涉害": {
+          "hist": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "teachback": true,
+          "passed": true
         }
       }
     },
@@ -916,6 +934,113 @@
         }
       ],
       "score_correction": "第4、7、9题仅因等价按钮文案更新误判，按题目失效剔除"
+    },
+    {
+      "date": "2026-09-12",
+      "level": 4,
+      "right": 12,
+      "n": 12,
+      "source": "web-trainer",
+      "session_id": "473c66fe-b581-4ab8-becd-9f29f6b4b3e1",
+      "topic": "贼克＋比用＋涉害",
+      "details": [
+        {
+          "day": "乙酉",
+          "shi": "辰",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲戌",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲戌",
+          "shi": "寅",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬申",
+          "shi": "酉",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁卯",
+          "shi": "午",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁酉",
+          "shi": "酉",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁丑",
+          "shi": "寅",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "庚子",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬午",
+          "shi": "申",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛亥",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙丑",
+          "shi": "辰",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲午",
+          "shi": "申",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
     }
   ],
   "wrong_archive": [
@@ -1628,6 +1753,112 @@
         }
       ],
       "score_correction": "第4、7、9题仅因等价按钮文案更新误判，按题目失效剔除"
+    },
+    "473c66fe-b581-4ab8-becd-9f29f6b4b3e1": {
+      "date": "2026-09-12T21:46:43",
+      "level": 4,
+      "right": 12,
+      "n": 12,
+      "source": "web-trainer",
+      "topic": "贼克＋比用＋涉害",
+      "details": [
+        {
+          "day": "乙酉",
+          "shi": "辰",
+          "jiang": "酉",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲戌",
+          "shi": "巳",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲戌",
+          "shi": "寅",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬申",
+          "shi": "酉",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁卯",
+          "shi": "午",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁酉",
+          "shi": "酉",
+          "jiang": "戌",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "丁丑",
+          "shi": "寅",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "庚子",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "壬午",
+          "shi": "申",
+          "jiang": "未",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "辛亥",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "乙丑",
+          "shi": "辰",
+          "jiang": "亥",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        },
+        {
+          "day": "甲午",
+          "shi": "申",
+          "jiang": "午",
+          "daynight": "昼",
+          "clean": true,
+          "mistakes": []
+        }
+      ]
     }
   }
 }

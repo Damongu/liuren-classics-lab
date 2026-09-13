@@ -197,6 +197,16 @@ def g_zeike_biyong(rng):
     return g_zeike(rng)
 
 
+def g_zeike_biyong_shehai(rng):
+    """L4 三法混合：等概率抽元首、重审、知一、涉害。"""
+    ks = rng.choice(["元首", "重审", "知一", "涉害"])
+    if ks == "涉害":
+        return g_shehai(rng)
+    if ks == "知一":
+        return g_biyong(rng)
+    return g_zeike(rng)
+
+
 def g_chuan(rng):
     """L5 三传。"""
     gz, shi, jiang, p = rnd_case(rng)
@@ -325,7 +335,7 @@ LEVELS = [
 LV = {l["id"]: l for l in LEVELS}
 
 LEVEL1_TOPICS = ("寄宫", "旬空", "遁干")
-LEVEL4_TOPICS = ("贼克", "比用", "贼克＋比用")
+LEVEL4_TOPICS = ("贼克", "比用", "贼克＋比用", "贼克＋比用＋涉害")
 TOPIC_CHOICES = LEVEL1_TOPICS + LEVEL4_TOPICS
 LEVEL1_BRIEF = {
     "寄宫": "十干按六壬寄宫表落到地支宫；这是固定表，不按日旬变化。",
@@ -796,6 +806,7 @@ def run(lid, n, st, rng, topic=None, assume_learned=False):
                 "贼克": g_zeike,
                 "比用": g_biyong,
                 "贼克＋比用": g_zeike_biyong,
+                "贼克＋比用＋涉害": g_zeike_biyong_shehai,
             }[topic](rng)
         else:
             item = lvl["gen"](rng)

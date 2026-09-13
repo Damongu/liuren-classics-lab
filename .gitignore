@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+.conda/
 .pytest_cache/
 liuren-paipan/.training-results.jsonl
 

@@ -45,6 +45,7 @@ class WebTrainerTests(unittest.TestCase):
         self.assertIn('<option value="比用">比用</option>', html)
         self.assertIn('<option value="贼克＋比用">贼克＋比用</option>', html)
         self.assertIn('<option value="涉害">涉害·涉归本家计重</option>', html)
+        self.assertIn('<option value="贼克＋比用＋涉害">贼克＋比用＋涉害</option>', html)
         self.assertIn("function renderZeike()", script)
         self.assertIn("state.answers.sike[2]", script)
         self.assertIn("</article>`).reverse().join", script)
@@ -77,6 +78,14 @@ class WebTrainerTests(unittest.TestCase):
                 "比用": {"hist": [1] * 12},
                 "贼克＋比用": {"hist": [1] * 11 + [0]},
             }}}}, "涉害"),
+            ({"levels": {
+                "4": {"topics": {
+                    "贼克": {"hist": [1] * 11 + [0]},
+                    "比用": {"hist": [1] * 12},
+                    "贼克＋比用": {"hist": [1] * 11 + [0]},
+                }},
+                "7": {"hist": [1] * 9 + [0] * 3},
+            }}, "贼克＋比用＋涉害"),
         ]
         for state, expected in states:
             with self.subTest(expected=expected), patch.object(
@@ -93,6 +102,20 @@ class WebTrainerTests(unittest.TestCase):
         result = check_answers({**CASE, "stage": "tianpan", "answers": answers})
         self.assertTrue(result["correct"])
         self.assertNotIn("expected", result["cells"][0])
+
+    def test_missing_answers_are_distinct_from_wrong_answers(self):
+        result = check_answers({
+            **CASE,
+            "stage": "sike",
+            "answers": ["酉", "", "子", "午"],
+        })
+        self.assertFalse(result["complete"])
+        self.assertFalse(result["correct"])
+        self.assertEqual(result["missing_count"], 1)
+        self.assertEqual(result["wrong_count"], 1)
+        self.assertTrue(result["cells"][0]["filled"])
+        self.assertFalse(result["cells"][1]["filled"])
+        self.assertFalse(result["cells"][1]["correct"])
 
     def test_sike_check_and_reveal(self):
         correct = check_answers({**CASE, "stage": "sike", "answers": list("酉丑寅午")})
@@ -162,6 +185,28 @@ class WebTrainerTests(unittest.TestCase):
             self.assertIn(plate.keshi, ("元首", "重审", "知一"))
             seen.add(plate.keshi)
         self.assertEqual(seen, {"元首", "重审", "知一"})
+
+    def test_three_method_mixed_cases_are_class_balanced(self):
+        seen = set()
+        for _ in range(100):
+            prompt = random_case_prompt("贼克＋比用＋涉害")
+            plate = webapp._case(
+                prompt["day"], prompt["shi"], prompt["jiang"], prompt["daynight"],
+            )
+            self.assertIn(plate.keshi, ("元首", "重审", "知一", "涉害"))
+            seen.add(plate.keshi)
+            result = check_answers({
+                **prompt,
+                "topic": "贼克＋比用＋涉害",
+                "stage": "zeike",
+                "answers": [
+                    plate.keshi,
+                    plate.chuan[0],
+                    webapp._selection_reasons(plate),
+                ],
+            })
+            self.assertTrue(result["correct"])
+        self.assertEqual(seen, {"元首", "重审", "知一", "涉害"})
 
     def test_shehai_random_cases_use_counted_depth(self):
         for _ in range(40):
@@ -385,6 +430,31 @@ class WebTrainerTests(unittest.TestCase):
         args, kwargs = record_session.call_args
         self.assertEqual(args, (7, [1] * 12, "web-trainer", "shehai-session-1234"))
         self.assertNotIn("topic", kwargs)
+
+    def test_three_method_result_is_saved_as_level4_topic(self):
+        records = [
+            {"day": "甲子", "shi": "子", "jiang": "辰", "clean": True}
+            for _ in range(12)
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            result_log = Path(directory) / "results.jsonl"
+            with patch.object(webapp, "RESULT_LOG", result_log), \
+                 patch.object(webapp, "record_external_session", return_value={
+                     "recorded": True, "right": 12, "n": 12, "ready": True,
+                 }) as record_session, \
+                 patch.object(webapp, "_focus_trae_window", return_value=False):
+                result = return_training_result({
+                    "session_id": "three-method-session-1234",
+                    "score": 12,
+                    "total": 12,
+                    "records": records,
+                    "topic": "贼克＋比用＋涉害",
+                })
+
+        self.assertIn("贼克＋比用＋涉害混合练习 12/12", result["message"])
+        args, kwargs = record_session.call_args
+        self.assertEqual(args, (4, [1] * 12, "web-trainer", "three-method-session-1234"))
+        self.assertEqual(kwargs["topic"], "贼克＋比用＋涉害")
 
     def test_training_result_preserves_error_stage_and_answers(self):
         records = [

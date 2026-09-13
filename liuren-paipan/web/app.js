@@ -1,4 +1,6 @@
 const ZHI = [..."子丑寅卯辰巳午未申酉戌亥"];
+const THREE_METHODS_TOPIC = "贼克＋比用＋涉害";
+const TOPICS = ["四课", "贼克", "比用", "贼克＋比用", "涉害", THREE_METHODS_TOPIC];
 const STAGE_COPY = {
   tianpan: ["第一步", "月将加时，填写天盘", 12],
   sike: ["第二步", "沿两条链，填写四课", 4],
@@ -44,7 +46,7 @@ function restoreSession() {
   try {
     const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
     if (!saved || typeof saved.id !== "string" || saved.total !== 12 ||
-        !["四课", "贼克", "比用", "贼克＋比用", "涉害"].includes(saved.topic) ||
+        !TOPICS.includes(saved.topic) ||
         !Array.isArray(saved.records) || saved.records.length > saved.total ||
         !Number.isInteger(saved.score) || saved.score < 0 || saved.score > saved.records.length) {
       return false;
@@ -228,6 +230,7 @@ function renderZeike() {
   const keshiNames = state.topic === "贼克" ? ["元首", "重审"]
     : (state.topic === "比用" ? ["知一"]
       : (state.topic === "涉害" ? ["涉害"] : ["元首", "重审", "知一"]));
+  if (state.topic === THREE_METHODS_TOPIC) keshiNames.push("涉害");
   $("#selection-title").textContent = state.topic === "涉害"
     ? "涉归本家计重并定初传"
     : "判断取用并取初传";
@@ -238,7 +241,7 @@ function renderZeike() {
   const reasonOptions = [
     "有下贼取下贼", "无下贼取上克", "阳日取阳神", "阴日取阴神",
   ];
-  if (state.topic === "涉害") reasonOptions.push(
+  if (state.topic === "涉害" || state.topic === THREE_METHODS_TOPIC) reasonOptions.push(
     "俱比或俱不比入涉害",
     "涉归本家逐位计重",
     "取涉害重数最多者",
@@ -351,7 +354,7 @@ function onInput(event) {
   else if (typeof state.answers[stage] === "object") state.answers[stage][key] = input.value;
   else state.answers[stage] = input.value;
   input.closest(".palace, .ke-card, .zeike-card, .chuan-card")
-    ?.classList.remove("correct", "wrong", "revealed");
+    ?.classList.remove("correct", "wrong", "missing", "revealed");
   updateProgress();
 }
 
@@ -368,8 +371,10 @@ function markCells(result, reveal) {
       element = $(`.chuan-card[data-key="${cell.key}"]`);
     }
     if (element) {
-      element.classList.remove("correct", "wrong", "revealed");
-      element.classList.add(cell.correct ? "correct" : "wrong");
+      element.classList.remove("correct", "wrong", "missing", "revealed");
+      if (cell.correct) element.classList.add("correct");
+      else if (!cell.filled && !reveal) element.classList.add("missing");
+      else element.classList.add("wrong");
       if (reveal && !cell.correct) {
         element.classList.add("revealed");
         const select = element.querySelector("select");
@@ -404,7 +409,8 @@ async function check(reveal = false) {
       body: JSON.stringify(payload),
     });
     markCells(result, reveal);
-    if (state.session.active && (reveal || !result.correct)) {
+    const hasActualError = result.wrong_count > 0;
+    if (state.session.active && (reveal || hasActualError)) {
       state.session.clean = false;
       state.session.mistakes.push({
         stage: state.stage,
@@ -413,7 +419,7 @@ async function check(reveal = false) {
       });
     }
     if (result.correct) state.session.passed.add(state.stage);
-    if (!reveal) {
+    if (!reveal && (result.complete || hasActualError)) {
       state.attempts += 1;
       if (result.correct) state.correct += 1;
       $("#attempt-count").textContent = state.attempts;
@@ -458,7 +464,10 @@ async function check(reveal = false) {
         setFeedback("success", "本阶段正确", `${result.total} 项全部吻合。可以进入下一阶段。`);
       }
     } else if (!result.complete && !reveal) {
-      setFeedback("error", "尚未填完", `已填 ${result.correct_count} 项正确；空白项仍需完成。`);
+      const detail = result.wrong_count
+        ? `还有 ${result.missing_count} 项未填；另有 ${result.wrong_count} 项已填但不正确。`
+        : `还有 ${result.missing_count} 项未选择；补齐后再检查，本次不计错。`;
+      setFeedback(result.wrong_count ? "error" : "idle", "尚未填完", detail);
     } else if (reveal) {
       setFeedback("error", "已显示标准位置", "红色格为原答案不同处；重新填写后可再次检查。");
     } else {

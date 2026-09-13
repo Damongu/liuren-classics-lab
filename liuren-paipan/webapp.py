@@ -25,7 +25,8 @@ from tutor import load_state, record_external_session, score_ready  # noqa: E402
 WEB_ROOT = ROOT / "web"
 STAGES = ("tianpan", "sike", "zeike", "keshi", "chuan", "tianjiang")
 KESHI = ("元首", "重审", "知一", "涉害", "遥克", "昴星", "别责", "八专", "伏吟", "返吟")
-TOPICS = ("四课", "贼克", "比用", "贼克＋比用", "涉害")
+THREE_METHODS_TOPIC = "贼克＋比用＋涉害"
+TOPICS = ("四课", "贼克", "比用", "贼克＋比用", "涉害", THREE_METHODS_TOPIC)
 RESULT_LOG = ROOT / ".training-results.jsonl"
 
 
@@ -39,6 +40,11 @@ def recommended_topic() -> str:
         return "比用"
     if not score_ready(topics.get("贼克＋比用", {})):
         return "贼克＋比用"
+    shehai = load_state().get("levels", {}).get("7", {})
+    if not shehai.get("hist"):
+        return "涉害"
+    if not score_ready(topics.get(THREE_METHODS_TOPIC, {})):
+        return THREE_METHODS_TOPIC
     return "涉害"
 
 
@@ -84,6 +90,8 @@ def random_case_prompt(topic: str = "四课", daynight: str = "昼") -> dict:
         wanted = {random.choice(("元首", "重审", "知一"))}
     elif topic == "涉害":
         wanted = {"涉害"}
+    elif topic == THREE_METHODS_TOPIC:
+        wanted = {random.choice(("元首", "重审", "知一", "涉害"))}
     while True:
         day = gz_name(random.randrange(60))
         shi = random.choice(ZHI)
@@ -166,7 +174,7 @@ def _normalize_mistakes(
                 "actual": cell["actual"],
                 "expected": cell["expected"],
             }
-            for cell in checked["cells"] if not cell["correct"]
+            for cell in checked["cells"] if cell["filled"] and not cell["correct"]
         ]
         if wrong:
             mistakes.append({
@@ -223,17 +231,25 @@ def check_answers(payload: dict) -> dict:
     for key in order:
         actual = answers.get(key, "")
         want = expected[key]
-        cell = {"key": key, "actual": actual, "correct": actual == want}
+        filled = bool(actual)
+        cell = {
+            "key": key,
+            "actual": actual,
+            "filled": filled,
+            "correct": filled and actual == want,
+        }
         if reveal:
             cell["expected"] = want
         cells.append(cell)
-    complete = all(cell["actual"] for cell in cells)
+    complete = all(cell["filled"] for cell in cells)
     correct = complete and all(cell["correct"] for cell in cells)
     result = {
         "stage": stage,
         "complete": complete,
         "correct": correct,
         "correct_count": sum(cell["correct"] for cell in cells),
+        "missing_count": sum(not cell["filled"] for cell in cells),
+        "wrong_count": sum(cell["filled"] and not cell["correct"] for cell in cells),
         "total": len(cells),
         "cells": cells,
     }
@@ -348,7 +364,8 @@ def return_training_result(payload: dict) -> dict:
         )
     detail = "；".join(wrong) if wrong else "无"
     prompt = (
-        f"训练台结果：{topic}{'专项' if topic != '贼克＋比用' else '杂糅训练'} "
+        f"训练台结果：{topic}"
+        f"{'混合练习' if topic == THREE_METHODS_TOPIC else '杂糅训练' if topic == '贼克＋比用' else '专项'} "
         f"{score}/{total}，"
         f"{'达标' if result['passed'] else '未达标'}。"
         f"{'已写入训练记录。' if result['recorded'] else '该会话已记录，未重复写入。'}"

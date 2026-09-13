@@ -42,7 +42,7 @@ py -3 tools\selfcheck.py
 
 ```
 六壬agent工作区/                ← Trae 打开这一层
-├── AGENTS.md                   ← ★ Agent 指令（Trae 自动读；换别的工具就粘进自定义指令）
+├── AGENTS.md                   ← ★ Agent 指令（Trae、Pi、DeepSeek Harness 自动读）
 ├── .trae/rules/                ← Trae 项目规则，内容指向 AGENTS.md
 ├── 一键部署.sh                 ← 重建入口
 ├── tools/tutor.py              ← ★ 交互式训练器（9 关，程序判分）
@@ -103,9 +103,20 @@ py -3 tools\selfcheck.py
 ---
 
 
-## 一、Trae + Obsidian 怎么配
+## 一、Agent Harness + Obsidian 怎么配
 
-**一句话：Trae 管"改"，Obsidian 管"读"。同一份文件，两个视角。**
+**一句话：Agent harness 管"改"，Obsidian 管"读"。同一份文件，两个视角。**
+
+目前直接支持三种入口：
+
+| 入口 | 项目指令 | 启动方式 |
+| :--- | :--- | :--- |
+| Trae | `.trae/rules/` 指向根目录 `AGENTS.md` | 用 Trae 打开仓库根目录 |
+| Pi | 原生自动加载根目录 `AGENTS.md` | 在仓库根目录运行 `pi` |
+| DeepSeek Harness | `dsh-base` 原生加载根目录 `AGENTS.md` | 在仓库根目录运行 `npx @deepseek-ai/dsh web` |
+
+三种入口共用同一份 `AGENTS.md`，不要复制成多份提示词文件；规则只维护一处，避免不同
+harness 的教学口径漂移。
 
 ### 第一步：落地
 
@@ -119,11 +130,10 @@ py -3 tools\selfcheck.py
 3. **Obsidian**：`Open folder as vault` 选 `六壬agent工作区/六壬vault`（**只选 vault 那层**）。
    首次打开会提示信任作者，允许即可。
 4. **让 agent 知道规矩**：顶层 `AGENTS.md` 是这个伴读 agent 的行为指令（角色设定、四拍循环、
-   取证分层、污染判定、收尾更新哪些目录）。Trae 打开顶层后会自动读取 `.trae/rules/`，
-   它指向 `AGENTS.md`，**不需要你手动做什么**。
-   换成别的工具（Cursor / Claude Code / 网页版对话）就把 `AGENTS.md` 全文粘进
-   「自定义指令 / System Prompt」，否则 AI 只会当成普通问答，不会走四拍循环，
-   也不会自动更新掌握度。**这一步不做，这套东西就只是一堆 Markdown。**
+   取证分层、污染判定、收尾更新哪些目录）。Trae 通过 `.trae/rules/` 加载它；Pi 和
+   DeepSeek Harness 会原生加载它，三者都不需要手工粘贴。其他不支持 `AGENTS.md` 的工具
+   才需要把全文放入「自定义指令 / System Prompt」，否则 AI 只会当成普通问答，不会走
+   四拍循环，也不会自动更新掌握度。
 5. **（可选）建一个 Trae 自定义 Agent**：把 `Trae自定义Agent-提示词.md` 全文粘进 Trae 的
    Agent 提示词框（2214 字符，上限 10000）。好处是不必每次交代身份，新开对话即入戏。
    注意 Trae 的 10000 字符额度是**输入框 + Agent 提示词 + MCP 工具描述 + 个人规则 +
@@ -147,6 +157,80 @@ python3 -m liuren pan --day 甲午 --shi 辰 --jiang 午 --card
 
 Python 版本要求 ≥ 3.10。Windows 下若 `python3` 不识别，用 `py -3`；
 终端中文乱码执行一次 `chcp 65001`。
+
+### 用 Pi 部署
+
+Pi 是终端式 coding agent。需要 Node.js 22.19 或更高版本；安装后从**仓库根目录**启动，
+它会自动把根目录 `AGENTS.md` 加入上下文。
+
+macOS / Linux：
+
+```bash
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+cd /path/to/liuren-classics-lab
+export DEEPSEEK_API_KEY="你的密钥"
+pi --provider deepseek
+```
+
+Windows PowerShell：
+
+```powershell
+npm.cmd install -g --ignore-scripts @earendil-works/pi-coding-agent
+Set-Location D:\path\to\liuren-classics-lab
+$env:DEEPSEEK_API_KEY = "你的密钥"
+pi.cmd --provider deepseek
+```
+
+也可以启动 `pi` 后执行 `/login` 保存 DeepSeek API key，再用 `/model` 选择模型。首次加载
+项目级 `.pi/` 资源时 Pi 可能询问是否信任目录；本项目目前不依赖可执行的 `.pi` 扩展，
+真正的项目规则就是已纳入 Git 的 `AGENTS.md`。
+
+最小验收：向 Pi 发送下面这句。它应当先运行开场简报和日志命令，而不是直接回答。
+
+```text
+按 AGENTS.md 开场，只汇报当前学习阶段，不开始新课。
+```
+
+Windows 若 PowerShell 禁止执行 npm 生成的 `.ps1` 包装器，请使用上例的 `npm.cmd` 和
+`pi.cmd`；这不需要修改系统执行策略。
+
+### 用 DeepSeek Harness 部署
+
+DeepSeek Harness 当前处于 developer preview，配置格式可能发生不兼容变更。它要求
+Node.js 22.19 或更高版本。无需在本仓库生成 Harness 配置，也不要把 API key 写进 Git：
+
+macOS / Linux：
+
+```bash
+cd /path/to/liuren-classics-lab
+npx @deepseek-ai/dsh web
+```
+
+Windows PowerShell：
+
+```powershell
+Set-Location D:\path\to\liuren-classics-lab
+npx.cmd @deepseek-ai/dsh web
+```
+
+默认 Web UI 地址为 `http://127.0.0.1:3080`。首次运行后：
+
+1. 打开 `Settings → Models`，在 DeepSeek 卡片中填写 API key 并保存；
+2. 点击 `Choose workspace`，添加并选择当前仓库根目录；
+3. 新建会话，发送与上面 Pi 验收相同的开场指令。
+
+默认的 `standard` agent preset 启用 workspace instruction loader，项目根目录由 `.git`
+识别，并自动读取 `AGENTS.md`；默认指令预算是 65,536 字节，当前文件在预算内。密钥保存
+在 Harness 自己的 `$DSH_HOME/.credentials.yaml`，仓库内不保存密钥。
+
+只运行一次无界面任务时，可在仓库根目录使用：
+
+```bash
+npx @deepseek-ai/dsh --profile headless "按 AGENTS.md 开场，只汇报当前学习阶段，不开始新课。"
+```
+
+首次运行会下载 npm 包，后续由 npm 缓存复用。若需固定版本以获得可重复部署，把命令中的
+包名改为 `@deepseek-ai/dsh@具体版本`。
 
 ### 第三步：Obsidian 插件（够用就好，别装成插件收藏家）
 
