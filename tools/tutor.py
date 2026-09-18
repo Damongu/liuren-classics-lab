@@ -5,7 +5,7 @@
 设计要点：
   1. 出题与判分**完全不经过 LLM**。题目从 720 课穷举里采样，标准答案由排盘器给出，
      所以判分绝对准确；讲解用排盘器自带的 reason 推导链。
-  2. 课体分布极不均匀（别责仅 9/720、昴星 16、八专 16），随机抽题几乎练不到。
+  2. 课体分布极不均匀（别责仅 9/720、昴星 16），随机抽题几乎练不到。
      所以判定类关卡按课体**分层等概率**采样。
   3. 遇到底本自相矛盾处（如涉害比用格），答另一说判「半对」并把分歧摊开，
      而不是判错 —— 这是本项目的立场：分歧要看见，不要被抹平。
@@ -27,14 +27,15 @@ import json
 import random
 import sys
 from datetime import date, datetime, timedelta
+from itertools import permutations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "liuren-paipan"))
 
 from liuren import Options, from_ganzhi, from_time                      # noqa: E402
-from liuren.ganzhi import (GAN, JIGONG, ZHI, dungan, gz_name, kongwang,  # noqa: E402
-                           shift)
+from liuren.ganzhi import (GAN, JIGONG, ZHI, dungan, gz_name, ke,       # noqa: E402
+                           kongwang, shift)
 from liuren.render import pad, render_kes, render_plate                   # noqa: E402
 from liuren.search import enumerate720, filter_courses                   # noqa: E402
 
@@ -45,7 +46,8 @@ WRONGQ = VAULT / "60-掌握度" / "错题队列.md"
 MARK_B, MARK_E = "<!-- tutor:begin -->", "<!-- tutor:end -->"
 
 INTERVALS = [1, 3, 7, 21]          # 间隔重复节奏（天）
-PASS_WINDOW, PASS_CORRECT = 12, 11  # 12 题至少答对 11 题
+PASS_WINDOW, PASS_CORRECT = 12, 11  # 完整关卡/累计混合：12 题至少 11 题
+TOPIC_WINDOW, TOPIC_CORRECT = 6, 6  # 单项：6 题须全对
 PASS_RATE = PASS_CORRECT / PASS_WINDOW
 ERROR_REASONS = (
     "待归因", "概念缺失", "步骤遗漏", "辨析错误", "计算失误",
@@ -207,6 +209,216 @@ def g_zeike_biyong_shehai(rng):
     return g_zeike(rng)
 
 
+def g_four_methods(rng):
+    """L4 四法累计混合：贼克、比用、涉害、遥克等概率。"""
+    method = rng.choice(["贼克", "比用", "涉害", "遥克"])
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+    }[method](rng)
+
+
+def g_five_methods(rng):
+    """L4 五法累计混合：已学取用法等概率抽题。"""
+    method = rng.choice(["贼克", "比用", "涉害", "遥克", "昴星"])
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+        "昴星": g_maoxing,
+    }[method](rng)
+
+
+def g_six_methods(rng):
+    """L4 六法累计混合：已学取用法等概率抽题。"""
+    method = rng.choice(["贼克", "比用", "涉害", "遥克", "昴星", "别责"])
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+        "昴星": g_maoxing,
+        "别责": g_bieze,
+    }[method](rng)
+
+
+def g_seven_methods(rng):
+    """L4 七法累计混合：已学取用法等概率抽题。"""
+    method = rng.choice(["贼克", "比用", "涉害", "遥克", "昴星", "别责", "八专"])
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+        "昴星": g_maoxing,
+        "别责": g_bieze,
+        "八专": g_bazhuan,
+    }[method](rng)
+
+
+def g_eight_methods(rng):
+    """L4 八法累计混合：已学取用法等概率抽题。"""
+    method = rng.choice(
+        ["贼克", "比用", "涉害", "遥克", "昴星", "别责", "八专", "伏吟"]
+    )
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+        "昴星": g_maoxing,
+        "别责": g_bieze,
+        "八专": g_bazhuan,
+        "伏吟": g_fuyin,
+    }[method](rng)
+
+
+def g_nine_methods(rng):
+    """L4 九法累计混合：九宗门取用法等概率抽题。"""
+    method = rng.choice(
+        ["贼克", "比用", "涉害", "遥克", "昴星", "别责", "八专", "伏吟", "返吟"]
+    )
+    return {
+        "贼克": g_zeike,
+        "比用": g_biyong,
+        "涉害": g_shehai,
+        "遥克": g_yaoke,
+        "昴星": g_maoxing,
+        "别责": g_bieze,
+        "八专": g_bazhuan,
+        "伏吟": g_fuyin,
+        "返吟": g_fanyin,
+    }[method](rng)
+
+
+def g_yaoke(rng):
+    """L4 遥克专项：候选穷举、蒿矢/弹射与比用取初传。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="遥克")
+    ups = list(dict.fromkeys(k.up for k in p.kes))
+    hao = [u for u in ups if ke(u, p.gan)]
+    tan = [u for u in ups if ke(p.gan, u)]
+    cands = hao if hao else tan
+    sub = "蒿矢" if hao else "弹射"
+    if len(cands) > 1:
+        why = "阳日取阳神" if p.is_gang else "阴日取阴神"
+    else:
+        why = "神克日优先" if hao else "无神克日取日克神"
+    candidate_orders = {"".join(order) for order in permutations(cands)}
+    answers = [
+        candidates + sub + p.chuan[0] + why
+        for candidates in candidate_orders
+    ]
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：先列出全部同向遥克候选，再答蒿矢或弹射、初传及依据。"
+          f"（格式如「{'、'.join(cands)} {sub} {p.chuan[0]} {why}」）",
+        ans=answers,
+        plate=p,
+        src="第一册 006-遥克法｜《太白阴经·推四课法》｜"
+            "《占事略决·课用九法》第五法",
+        spec=("遥克", gz, shi, jiang),
+    )
+
+
+def g_maoxing(rng):
+    """L4 昴星专项：按刚柔日读取酉位并排定中末传。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="昴星")
+    why = "阳仰酉上先支后干" if p.is_gang else "阴俯酉下先干后支"
+    chuan = "".join(p.chuan)
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：按昴星法，写出三传（初→中→末）并说明取法依据。"
+          f"（如「{chuan} {why}」）",
+        ans=[chuan + why, why + chuan],
+        plate=p,
+        src="第一册 007-昴星法｜《太白阴经·推四课法》｜"
+            "《占事略决·课用九法》第六法",
+        spec=("昴星", gz, shi, jiang),
+    )
+
+
+def g_bieze(rng):
+    """L4 别责专项：辨入口，按刚柔日取初传并排中末传。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="别责")
+    why = "刚日取干合寄宫上神" if p.is_gang else "柔日取支前三合宫上神"
+    chuan = "".join(p.chuan)
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：按别责法，写出三传（初→中→末）并说明取法依据。"
+          f"（如「{chuan} {why}」）",
+        ans=[chuan + why, why + chuan],
+        plate=p,
+        src="第一册 008-别责法｜《景祐六壬神定经·释用式第三十一》",
+        spec=("别责", gz, shi, jiang),
+    )
+
+
+def bazhuan_why(p):
+    return (
+        f"有克按{p.keshi_sub.removeprefix('有克·')}取用"
+        if p.keshi_sub.startswith("有克·")
+        else ("刚日日阳顺三" if p.is_gang else "柔日辰阴逆三")
+    )
+
+
+def g_bazhuan(rng):
+    """L4 八专专项：辨两课有克、无克两条取用路径。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="八专")
+    why = bazhuan_why(p)
+    chuan = "".join(p.chuan)
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：按八专法，写出三传（初→中→末）并说明取法依据。"
+          f"（如「{chuan} {why}」）",
+        ans=[chuan + why, why + chuan],
+        plate=p,
+        src="第一册 009-八专法｜《太白阴经·推四课法》｜"
+            "《占事略决·课用九法》第九法",
+        spec=("八专", gz, shi, jiang),
+    )
+
+
+def g_fuyin(rng):
+    """L4 伏吟专项：辨有克无克，并按刑、自刑分支排三传。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="伏吟")
+    why = "有克取克处" if p.keshi_sub.startswith("有克") else (
+        "无克刚取日上" if p.is_gang else "无克柔取辰上"
+    )
+    chuan = "".join(p.chuan)
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：按伏吟法，写出三传（初→中→末）并说明初传取法。"
+          f"（如「{chuan} {why}」）",
+        ans=[chuan + why, why + chuan],
+        plate=p,
+        src="第一册 010-伏吟法｜《太白阴经·推四课法》｜"
+            "《占事略决·课用九法》第七法｜"
+            "《景祐六壬神定经·释用式第三十一》",
+        spec=("伏吟", gz, shi, jiang),
+    )
+
+
+def g_fanyin(rng):
+    """L4 返吟专项：辨有克、井栏射，并排定三传。"""
+    gz, shi, jiang, p = rnd_case(rng, keshi="返吟")
+    why = "有克取克处" if p.keshi_sub.startswith("有克") else "无克取马"
+    chuan = "".join(p.chuan)
+    return dict(
+        q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+          "问：按返吟法，写出三传（初→中→末）并说明初传取法。"
+          f"（如「{chuan} {why}」）",
+        ans=[chuan + why, why + chuan],
+        plate=p,
+        src="第一册 011-返吟法｜《太白阴经·推四课法》｜"
+            "《占事略决·课用九法》第八法｜"
+            "《景祐六壬神定经·释用式第三十一》",
+        spec=("返吟", gz, shi, jiang),
+    )
+
+
 def g_chuan(rng):
     """L5 三传。"""
     gz, shi, jiang, p = rnd_case(rng)
@@ -233,7 +445,9 @@ def _alt_chuan(p):
 def g_jiang12(rng):
     """L6 十二天将与贵人。"""
     dn = rng.choice(["昼", "夜"])
-    gz, shi, jiang, _ = rnd_case(rng)
+    shi = rng.choice(("巳", "午", "未") if dn == "昼" else ("亥", "子", "丑"))
+    gz, k = gz_name(rng.randrange(60)), rng.randrange(12)
+    jiang = shift(shi, k)
     p = from_ganzhi(gz, shi, jiang, daynight=dn)
     if rng.random() < 0.5:
         return dict(q=f"{head(gz, shi, jiang, dn)}\n问：贵人落在哪个天盘支上？"
@@ -335,7 +549,44 @@ LEVELS = [
 LV = {l["id"]: l for l in LEVELS}
 
 LEVEL1_TOPICS = ("寄宫", "旬空", "遁干")
-LEVEL4_TOPICS = ("贼克", "比用", "贼克＋比用", "贼克＋比用＋涉害")
+MIXED_TOPICS = (
+    "贼克＋比用",
+    "贼克＋比用＋涉害",
+    "贼克＋比用＋涉害＋遥克",
+    "贼克＋比用＋涉害＋遥克＋昴星",
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专",
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟",
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟",
+)
+MIXED_PREREQUISITES = {
+    "贼克＋比用": ("贼克", "比用"),
+    "贼克＋比用＋涉害": ("贼克＋比用",),
+    "贼克＋比用＋涉害＋遥克": ("贼克＋比用＋涉害", "遥克"),
+    "贼克＋比用＋涉害＋遥克＋昴星": (
+        "贼克＋比用＋涉害＋遥克", "昴星",
+    ),
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责": (
+        "贼克＋比用＋涉害＋遥克＋昴星", "别责",
+    ),
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专": (
+        "贼克＋比用＋涉害＋遥克＋昴星＋别责", "八专",
+    ),
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟": (
+        "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专", "伏吟",
+    ),
+    "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟": (
+        "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟", "返吟",
+    ),
+}
+LEVEL4_TOPICS = ("贼克", "比用", "贼克＋比用", "贼克＋比用＋涉害",
+                 "遥克", "贼克＋比用＋涉害＋遥克", "昴星",
+                 "贼克＋比用＋涉害＋遥克＋昴星", "别责",
+                 "贼克＋比用＋涉害＋遥克＋昴星＋别责", "八专",
+                 "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专", "伏吟",
+                 "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟",
+                 "返吟",
+                 "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟")
 TOPIC_CHOICES = LEVEL1_TOPICS + LEVEL4_TOPICS
 LEVEL1_BRIEF = {
     "寄宫": "十干按六壬寄宫表落到地支宫；这是固定表，不按日旬变化。",
@@ -363,8 +614,8 @@ def replay(spec):
         return dict(q=f"{gz}日，{z} 上遁得何干？（本旬不含则答「无」）",
                     ans=[d] if d else ["无", "None", "空"],
                     src="第一册 起例·遁干", spec=tuple(spec))
-    if kind in ("局", "加时", "天盘", "四课", "课体", "贼克", "比用",
-                "三传", "涉害"):
+    if kind in ("局", "加时", "天盘", "四课", "课体", "贼克", "比用", "遥克",
+                "昴星", "别责", "八专", "伏吟", "返吟", "三传", "涉害"):
         gz, shi, jiang = spec[1], spec[2], spec[3]
         p = from_ganzhi(gz, shi, jiang)
         base = dict(plate=p, spec=tuple(spec))
@@ -407,6 +658,80 @@ def replay(spec):
                 ans=[p.chuan[0] + why, why + p.chuan[0]],
                 src="第一册 004-比用法｜《太白阴经·推四课法》｜"
                     "《占事略决·课用九法》第二法")
+        if kind == "遥克":
+            ups = list(dict.fromkeys(k.up for k in p.kes))
+            hao = [u for u in ups if ke(u, p.gan)]
+            tan = [u for u in ups if ke(p.gan, u)]
+            cands = hao if hao else tan
+            sub = "蒿矢" if hao else "弹射"
+            if len(cands) > 1:
+                why = "阳日取阳神" if p.is_gang else "阴日取阴神"
+            else:
+                why = "神克日优先" if hao else "无神克日取日克神"
+            candidate_orders = {"".join(order) for order in permutations(cands)}
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：先列出全部同向遥克候选，再答蒿矢或弹射、初传及依据。"
+                  f"（格式如「{'、'.join(cands)} {sub} {p.chuan[0]} {why}」）",
+                ans=[
+                    candidates + sub + p.chuan[0] + why
+                    for candidates in candidate_orders
+                ],
+                src="第一册 006-遥克法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第五法")
+        if kind == "昴星":
+            why = "阳仰酉上先支后干" if p.is_gang else "阴俯酉下先干后支"
+            chuan = "".join(p.chuan)
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按昴星法，写出三传（初→中→末）并说明取法依据。"
+                  f"（如「{chuan} {why}」）",
+                ans=[chuan + why, why + chuan],
+                src="第一册 007-昴星法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第六法")
+        if kind == "别责":
+            why = "刚日取干合寄宫上神" if p.is_gang else "柔日取支前三合宫上神"
+            chuan = "".join(p.chuan)
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按别责法，写出三传（初→中→末）并说明取法依据。"
+                  f"（如「{chuan} {why}」）",
+                ans=[chuan + why, why + chuan],
+                src="第一册 008-别责法｜《景祐六壬神定经·释用式第三十一》")
+        if kind == "八专":
+            why = bazhuan_why(p)
+            chuan = "".join(p.chuan)
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按八专法，写出三传（初→中→末）并说明取法依据。"
+                  f"（如「{chuan} {why}」）",
+                ans=[chuan + why, why + chuan],
+                src="第一册 009-八专法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第九法")
+        if kind == "伏吟":
+            why = "有克取克处" if p.keshi_sub.startswith("有克") else (
+                "无克刚取日上" if p.is_gang else "无克柔取辰上"
+            )
+            chuan = "".join(p.chuan)
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按伏吟法，写出三传（初→中→末）并说明初传取法。"
+                  f"（如「{chuan} {why}」）",
+                ans=[chuan + why, why + chuan],
+                src="第一册 010-伏吟法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第七法｜"
+                    "《景祐六壬神定经·释用式第三十一》")
+        if kind == "返吟":
+            why = "有克取克处" if p.keshi_sub.startswith("有克") else "无克取马"
+            chuan = "".join(p.chuan)
+            return base | dict(
+                q=f"{head(gz, shi, jiang)}\n{render_kes(p)}\n"
+                  "问：按返吟法，写出三传（初→中→末）并说明初传取法。"
+                  f"（如「{chuan} {why}」）",
+                ans=[chuan + why, why + chuan],
+                src="第一册 011-返吟法｜《太白阴经·推四课法》｜"
+                    "《占事略决·课用九法》第八法｜"
+                    "《景祐六壬神定经·释用式第三十一》")
         if kind == "三传":
             return base | dict(
                 q=f"{head(gz, shi, jiang)}\n问：三传是什么？（三个字，初→中→末）",
@@ -523,15 +848,34 @@ def score_ready(s):
     return len(h) >= PASS_WINDOW and sum(h[-PASS_WINDOW:]) >= PASS_CORRECT
 
 
+def topic_score_ready(s, topic):
+    h = s.get("hist", [])
+    if topic in MIXED_TOPICS:
+        return len(h) >= PASS_WINDOW and sum(h[-PASS_WINDOW:]) >= PASS_CORRECT
+    # 旧制 12 题专项成绩保留效力；新制专项按最近 6 题全对。
+    legacy_ready = len(h) >= PASS_WINDOW and sum(h[-PASS_WINDOW:]) >= PASS_CORRECT
+    current_ready = len(h) >= TOPIC_WINDOW and sum(h[-TOPIC_WINDOW:]) >= TOPIC_CORRECT
+    return legacy_ready or current_ready
+
+
+def topic_window(topic):
+    return PASS_WINDOW if topic in MIXED_TOPICS else TOPIC_WINDOW
+
+
 def topic_passed(s, topic):
     ts = topic_state(s, topic)
-    return score_ready(ts) and bool(ts.get("teachback"))
+    return topic_score_ready(ts, topic) and (
+        topic in MIXED_TOPICS or bool(ts.get("teachback"))
+    )
 
 
 def practice_ready(s, lid=None):
     if lid == 1:
         return (all(topic_passed(s, topic) for topic in LEVEL1_TOPICS)
                 and score_ready(s["mixed"]))
+    if lid == 7:
+        h = s.get("hist", [])
+        return len(h) >= TOPIC_WINDOW and sum(h[-TOPIC_WINDOW:]) >= TOPIC_CORRECT
     return score_ready(s)
 
 
@@ -634,7 +978,7 @@ def record_external_session(lid, scores, source, session_id, topic=None, details
             "recorded": False,
             "right": sum(scores),
             "n": len(scores),
-            "ready": (score_ready(topic_state(lv_state(st, lid), topic))
+            "ready": (topic_score_ready(topic_state(lv_state(st, lid), topic), topic)
                       if topic else practice_ready(lv_state(st, lid), lid)),
         }
 
@@ -664,15 +1008,72 @@ def record_external_session(lid, scores, source, session_id, topic=None, details
     if details is not None:
         imported_session["details"] = details
     imported[session_id] = imported_session
+    queued = enqueue_external_mistakes(
+        st, lid, session_id, topic, details or [],
+        session_date=imported_session["date"],
+    )
     save_state(st)
     write_back(st)
     return {
         "recorded": True,
         "right": right,
         "n": len(scores),
-        "ready": (score_ready(topic_state(lv_state(st, lid), topic))
+        "wrong_queued": queued,
+        "ready": (topic_score_ready(topic_state(lv_state(st, lid), topic), topic)
                   if topic else practice_ready(lv_state(st, lid), lid)),
     }
+
+
+def record_external_review(results, source, session_id):
+    """Record exact due-item reviews completed in another local UI."""
+    if not isinstance(results, list) or not results:
+        raise ValueError("外部复现结果无效")
+    if not isinstance(source, str) or not source.strip():
+        raise ValueError("外部复现来源无效")
+    if not isinstance(session_id, str) or not session_id.strip():
+        raise ValueError("外部复现会话编号无效")
+
+    st = load_state()
+    imported = st.setdefault("external_reviews", {})
+    if session_id in imported:
+        return imported[session_id] | {"recorded": False}
+
+    right = 0
+    for result in results:
+        if not isinstance(result, dict) or not isinstance(result.get("correct"), bool):
+            raise ValueError("外部复现明细无效")
+        key = str(result.get("key", ""))
+        wrong = next((item for item in st["wrong"] if item.get("key") == key), None)
+        if wrong is None:
+            raise ValueError("复现题已不在活跃队列")
+        item = replay(wrong.get("spec") or key.split("|"))
+        if result["correct"]:
+            right += 1
+            _dequeue(st, wrong["level"], item)
+        else:
+            _enqueue(st, wrong["level"], item, "前端复现未通过")
+
+    summary = {
+        "recorded": True,
+        "right": right,
+        "n": len(results),
+        "source": source,
+        "date": date.today().isoformat(),
+        "results": results,
+    }
+    imported[session_id] = dict(summary)
+    st["sessions"].append({
+        "date": date.today().isoformat(),
+        "level": "review",
+        "right": right,
+        "n": len(results),
+        "source": source,
+        "session_id": session_id,
+        "topic": "到期错题复现",
+    })
+    save_state(st)
+    write_back(st)
+    return summary
 
 
 def record_unscored_session(lid, n, source, session_id, note):
@@ -779,7 +1180,7 @@ def learning_gate(lid, topic=None, assume_learned=False):
 def run(lid, n, st, rng, topic=None, assume_learned=False):
     lvl = LV[lid]
     if lid == 1:
-        n = PASS_WINDOW
+        n = topic_window(topic) if topic else PASS_WINDOW
         state = lv_state(st, lid)
         if topic is None:
             missing = [name for name in LEVEL1_TOPICS
@@ -807,6 +1208,18 @@ def run(lid, n, st, rng, topic=None, assume_learned=False):
                 "比用": g_biyong,
                 "贼克＋比用": g_zeike_biyong,
                 "贼克＋比用＋涉害": g_zeike_biyong_shehai,
+                "遥克": g_yaoke,
+                "贼克＋比用＋涉害＋遥克": g_four_methods,
+                "昴星": g_maoxing,
+                "贼克＋比用＋涉害＋遥克＋昴星": g_five_methods,
+                "别责": g_bieze,
+                "贼克＋比用＋涉害＋遥克＋昴星＋别责": g_six_methods,
+                "八专": g_bazhuan,
+                "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专": g_seven_methods,
+                "伏吟": g_fuyin,
+                "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟": g_eight_methods,
+                "返吟": g_fanyin,
+                "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟": g_nine_methods,
             }[topic](rng)
         else:
             item = lvl["gen"](rng)
@@ -885,6 +1298,147 @@ def _enqueue(st, lid, item, given):
         "due": (date.today() + timedelta(days=1)).isoformat(),
         "reasons": ["待归因"], "diagnosis": "", "baseline_pending": False,
     })
+
+
+def _external_items(detail, mistake):
+    """Convert one browser-stage error into replayable terminal questions."""
+    day = str(detail.get("day", ""))
+    shi = str(detail.get("shi", ""))
+    jiang = str(detail.get("jiang", ""))
+    daynight = str(detail.get("daynight", "昼"))
+    stage = mistake.get("stage")
+    wrong_cells = mistake.get("wrong")
+    if not day or not shi or not jiang or not isinstance(wrong_cells, list):
+        return []
+
+    if stage == "tianpan":
+        specs = [
+            ("天盘", day, shi, jiang, str(cell.get("key", "")))
+            for cell in wrong_cells if str(cell.get("key", "")) in ZHI
+        ]
+    elif stage == "sike":
+        specs = [("四课", day, shi, jiang)]
+    elif stage == "keshi":
+        specs = [("课体", day, shi, jiang)]
+    elif stage == "chuan":
+        specs = [("三传", day, shi, jiang)]
+    elif stage == "tianjiang":
+        plate = from_ganzhi(day, shi, jiang, daynight=daynight)
+        specs = [
+            ("乘将", day, shi, jiang, daynight, plate.tian[str(cell["key"])])
+            for cell in wrong_cells if str(cell.get("key", "")) in ZHI
+        ]
+    elif stage == "zeike":
+        plate = from_ganzhi(day, shi, jiang, daynight=daynight)
+        kind = {
+            "元首": "贼克", "重审": "贼克", "知一": "比用",
+            "涉害": "涉害", "遥克": "遥克", "昴星": "昴星",
+            "别责": "别责", "八专": "八专", "伏吟": "伏吟",
+            "返吟": "返吟",
+        }.get(plate.keshi, "课体")
+        specs = [(kind, day, shi, jiang)]
+    else:
+        specs = []
+
+    items = []
+    for spec in specs:
+        try:
+            items.append(replay(spec))
+        except (KeyError, TypeError, ValueError):
+            continue
+    return items
+
+
+def _external_given(mistake):
+    actual = [
+        cell.get("actual") for cell in mistake.get("wrong", [])
+        if isinstance(cell, dict)
+    ]
+    return json.dumps(actual, ensure_ascii=False, separators=(",", ":"))
+
+
+def enqueue_external_mistakes(st, lid, session_id, topic, details,
+                              session_date=None, excluded_questions=None):
+    """Put valid browser errors into the normal 1/3/7/21-day review queue."""
+    excluded_questions = set(excluded_questions or ())
+    queued = 0
+    for question_index, detail in enumerate(details, 1):
+        question_id = f"q{question_index}"
+        if question_id in excluded_questions or detail.get("clean"):
+            continue
+        mistakes = detail.get("mistakes")
+        if not isinstance(mistakes, list):
+            continue
+        for mistake in mistakes:
+            if not isinstance(mistake, dict):
+                continue
+            for item in _external_items(detail, mistake):
+                key = _key(item)
+                source_ref = {
+                    "source": "web-trainer",
+                    "session_id": session_id,
+                    "question_id": question_id,
+                    "stage": mistake.get("stage"),
+                    "topic": topic,
+                }
+                existing = next(
+                    (wrong for wrong in st["wrong"] if wrong["key"] == key), None
+                )
+                if existing and any(
+                    ref.get("session_id") == session_id
+                    and ref.get("question_id") == question_id
+                    and ref.get("stage") == mistake.get("stage")
+                    for ref in existing.get("sources", [])
+                ):
+                    continue
+                _enqueue(st, lid, item, _external_given(mistake))
+                wrong = next(w for w in st["wrong"] if w["key"] == key)
+                wrong.setdefault("sources", []).append(source_ref)
+                wrong["source"] = "web-trainer"
+                if session_date:
+                    first = str(session_date)[:10]
+                    wrong["first"] = min(wrong.get("first", first), first)
+                queued += 1
+    return queued
+
+
+def backfill_external_wrong_queue(reviews=None):
+    """Audit stored browser sessions and backfill only unresolved valid errors."""
+    latest_reviews = {}
+    for review in reviews or []:
+        if not isinstance(review, dict):
+            continue
+        key = (review.get("session_id"), review.get("question_id"))
+        if all(key):
+            latest_reviews[key] = review
+
+    st = load_state()
+    queued = 0
+    skipped_review = 0
+    for session_id, session in st.get("external_sessions", {}).items():
+        details = session.get("details")
+        if not isinstance(details, list):
+            continue
+        excluded = set()
+        for index in range(1, len(details) + 1):
+            review = latest_reviews.get((session_id, f"q{index}"))
+            if review and (
+                review.get("status") == "pending"
+                or review.get("revised_clean") is True
+            ):
+                excluded.add(f"q{index}")
+                skipped_review += 1
+        queued += enqueue_external_mistakes(
+            st, session.get("level"), session_id, session.get("topic"), details,
+            session_date=session.get("date"), excluded_questions=excluded,
+        )
+    save_state(st)
+    write_back(st)
+    return {
+        "queued": queued,
+        "active": len(st["wrong"]),
+        "skipped_review": skipped_review,
+    }
 
 
 def archive_wrong(st, wrong, exit_reason, add_reasons=None):
@@ -985,16 +1539,17 @@ def run_weak(reason, n, st, rng):
 
 # ---------------------------------------------------------------- 回写
 
-def _recent_score(hist):
-    if len(hist) >= PASS_WINDOW:
-        return f"{sum(hist[-PASS_WINDOW:])}/{PASS_WINDOW}"
-    return f"{len(hist)}/{PASS_WINDOW} 题" if hist else "—"
+def _recent_score(hist, window=PASS_WINDOW):
+    if len(hist) >= window:
+        return f"{sum(hist[-window:])}/{window}"
+    return f"{len(hist)}/{window} 题" if hist else "—"
 
 
-def _topic_status(state):
-    if score_ready(state) and state.get("teachback"):
+def _topic_status(state, topic):
+    ready = topic_score_ready(state, topic)
+    if ready and (topic in MIXED_TOPICS or state.get("teachback")):
         return "✅ 通过"
-    if score_ready(state):
+    if ready:
         return "🗣 待复述"
     return "🔸 在练" if state.get("hist") else "⬜ 未开"
 
@@ -1005,7 +1560,10 @@ def _level_status(st, level):
     if final_passed(state, level["id"]):
         return "✅ 过关"
     if waived:
-        return "⚠ 已完成·成绩遗失·不阻断"
+        if state.get("teachback"):
+            return "✅ 复述通过·成绩遗失·不阻断"
+        return ("⚠ 已豁免·不阻断" if state.get("hist")
+                else "⚠ 已完成·成绩遗失·不阻断")
     if practice_ready(state, level["id"]):
         return "🗣 待复述"
     return "🔸 在练" if state["hist"] else "⬜ 未开"
@@ -1016,8 +1574,15 @@ def _next_step(st):
         level_state = lv_state(st, lid)
         for topic in topics:
             state = topic_state(level_state, topic)
+            if (topic in MIXED_TOPICS and not state["hist"]
+                    and all(topic_passed(level_state, prerequisite)
+                            for prerequisite in MIXED_PREREQUISITES[topic])):
+                return (f"完成「{topic}」累计混合："
+                        f"`python3 tools/tutor.py --level {lid} --topic {topic}`")
             if state["hist"] and not topic_passed(level_state, topic):
-                if score_ready(state):
+                if topic_score_ready(state, topic):
+                    if topic in MIXED_TOPICS:
+                        continue
                     return f"完成「{topic}」白话复述验收。"
                 return (f"继续「{topic}」专项："
                         f"`python3 tools/tutor.py --level {lid} --topic {topic}`")
@@ -1032,7 +1597,7 @@ def _session_errors(row):
     if not isinstance(details, list):
         return "旧记录未保存"
     stage_names = {
-        "tianpan": "天地盘", "sike": "四课", "zeike": "贼克",
+        "tianpan": "天地盘", "sike": "四课", "zeike": "取用",
         "keshi": "课体", "chuan": "三传", "tianjiang": "天将",
     }
     errors = []
@@ -1053,13 +1618,13 @@ def write_back(st):
              "> 本文件由 `tools/tutor.py` 自动生成，不要手改。",
              f"> 最后更新：{datetime.now():%Y-%m-%d %H:%M}", "",
              "## 已学与当前", "",
-             "| 学习单元 | 训练范围 | 最近 12 题 | 白话复述 | 状态 |",
+             "| 学习单元 | 训练范围 | 最近成绩 | 白话复述 | 状态 |",
              "| :--- | :--- | :---: | :---: | :---: |"]
     l1 = lv_state(st, 1)
     for topic in LEVEL1_TOPICS:
         ts = topic_state(l1, topic)
-        lines.append(f"| {topic} | 关卡 1 单项 | {_recent_score(ts['hist'])} | "
-                     f"{'✅' if ts.get('teachback') else '—'} | {_topic_status(ts)} |")
+        lines.append(f"| {topic} | 关卡 1 单项 | {_recent_score(ts['hist'], TOPIC_WINDOW)} | "
+                     f"{'✅' if ts.get('teachback') else '—'} | {_topic_status(ts, topic)} |")
     mh = l1["mixed"]["hist"]
     lines.append(f"| 地基混合验收 | 关卡 1 综合 | {_recent_score(mh)} | — | "
                  f"{'✅ 达标' if score_ready(l1['mixed']) else '🔒 未开放' if not all(topic_passed(l1, t) for t in LEVEL1_TOPICS) else '🔸 待练'} |")
@@ -1076,8 +1641,11 @@ def write_back(st):
     l4 = lv_state(st, 4)
     for topic in LEVEL4_TOPICS:
         ts = topic_state(l4, topic)
-        lines.append(f"| {topic} | 关卡 4 前置单项 | {_recent_score(ts['hist'])} | "
-                     f"{'✅' if ts.get('teachback') else '—'} | {_topic_status(ts)} |")
+        kind = "累计混合" if topic in MIXED_TOPICS else "前置单项"
+        lines.append(f"| {topic} | 关卡 4 {kind} | "
+                     f"{_recent_score(ts['hist'], topic_window(topic))} | "
+                     f"{'—' if topic in MIXED_TOPICS else '✅' if ts.get('teachback') else '—'} | "
+                     f"{_topic_status(ts, topic)} |")
 
     lines += ["", "## 后续完整关卡", "",
               "> 单项成绩不冒充完整关卡成绩；未教学内容不提前开放。",
@@ -1092,7 +1660,8 @@ def write_back(st):
         ):
             note = "（已有前置分项记录）"
         lines.append(
-            f"| {level['id']} | {level['name']} | {_recent_score(state['hist'])} | "
+            f"| {level['id']} | {level['name']} | "
+            f"{_recent_score(state['hist'], TOPIC_WINDOW if level['id'] == 7 else PASS_WINDOW)} | "
             f"{_level_status(st, level)}{note} |"
         )
 
@@ -1172,9 +1741,9 @@ def show_status(st):
         waived = str(l["id"]) in st.get("progression_waivers", {})
         if l["id"] == 1:
             summary = "　".join(
-                f"{name}:{sum(topic_state(s, name)['hist'][-PASS_WINDOW:])}/12"
-                if len(topic_state(s, name)["hist"]) >= PASS_WINDOW
-                else f"{name}:{len(topic_state(s, name)['hist'])}/12题"
+                f"{name}:{sum(topic_state(s, name)['hist'][-TOPIC_WINDOW:])}/{TOPIC_WINDOW}"
+                if len(topic_state(s, name)["hist"]) >= TOPIC_WINDOW
+                else f"{name}:{len(topic_state(s, name)['hist'])}/{TOPIC_WINDOW}题"
                 for name in LEVEL1_TOPICS
             )
             print(f"  1. {pad(l['name'], 26)} 旧制{len(h)}题｜{summary}")
@@ -1182,7 +1751,7 @@ def show_status(st):
             bar = "█" * int(r * 10) + "·" * (10 - int(r * 10)) if h else "·" * 10
             print(f"  {l['id']}. {pad(l['name'], 26)} {bar} {r * 100:3.0f}%  "
                   f"{len(h):>3}题  "
-                  f"{'✅ 过关' if done else '⚠ 未计分完成·不阻断' if waived else '🗣 待复述' if ready else ''}")
+                  f"{'✅ 过关' if done else ('⚠ 已豁免·不阻断' if h else '⚠ 未计分完成·不阻断') if waived else '🗣 待复述' if ready else ''}")
     due = [w for w in st["wrong"] if w.get("due", "") <= date.today().isoformat()]
     print("─" * 62)
     print(f"  待复现错题 {len(due)} / {len(st['wrong'])} 条")
@@ -1203,9 +1772,9 @@ def main(argv=None):
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
     ap.add_argument("--topic", choices=TOPIC_CHOICES,
                     help="分项练习：关卡1寄宫/旬空/遁干，"
-                         "关卡4贼克/比用/贼克＋比用")
-    ap.add_argument("--n", type=int, default=PASS_WINDOW,
-                    help=f"本轮题量（默认 {PASS_WINDOW}，与达标窗口对齐：一轮跑完即可判定）")
+                         "关卡4各单项与累计混合")
+    ap.add_argument("--n", type=int,
+                    help="本轮题量（专项默认6题，累计混合/完整关卡默认12题）")
     ap.add_argument("--review", action="store_true", help="只做到期错题（跨关卡，重问原题）")
     ap.add_argument("--weak", choices=ERROR_REASONS,
                     help="按已归因的错误原因做 3-5 道变式训练")
@@ -1264,20 +1833,24 @@ def main(argv=None):
                 print("该关卡不支持这个 --topic。")
                 return 2
             ts = topic_state(s, a.topic)
-            if not score_ready(ts):
+            if not topic_score_ready(ts, a.topic):
+                need = topic_window(a.topic)
+                correct = PASS_CORRECT if a.topic in MIXED_TOPICS else TOPIC_CORRECT
                 print(f"关卡 {lid}「{a.topic}」专项尚未达到 "
-                      f"{PASS_CORRECT}/{PASS_WINDOW}，不能记录复述通过。")
+                      f"{correct}/{need}，不能记录复述通过。")
                 return 2
             ts["teachback"] = True
             ts["passed"] = True
             msg = f"关卡 {lid}「{a.topic}」：专项练习 + 白话复述通过。"
         else:
-            if not practice_ready(s, lid):
+            waived = str(lid) in st.get("progression_waivers", {})
+            if not practice_ready(s, lid) and not waived:
                 print(f"关卡 {lid} 的练习尚未达标，不能记录整关复述通过。")
                 return 2
             s["teachback"] = True
             s["passed"] = True
-            msg = f"关卡 {lid}：练习达标 + 白话复述验收通过，最终过关。"
+            msg = (f"关卡 {lid}：白话复述验收通过；"
+                   f"{'成绩遗失豁免继续有效。' if waived else '练习达标，最终过关。'}")
         save_state(st)
         write_back(st)
         print(msg)
@@ -1300,7 +1873,9 @@ def main(argv=None):
                             or (lid == 4 and a.topic in LEVEL4_TOPICS)):
             print("该关卡不支持这个 --topic。")
             return 2
-        r, n = run(lid, a.n or 10, st, rng, topic=a.topic,
+        default_n = (topic_window(a.topic) if a.topic
+                     else TOPIC_WINDOW if lid == 7 else PASS_WINDOW)
+        r, n = run(lid, a.n or default_n, st, rng, topic=a.topic,
                    assume_learned=a.yes)
 
     if n:
@@ -1311,9 +1886,13 @@ def main(argv=None):
             s = lv_state(st, lid)
             if a.topic:
                 ts = topic_state(s, a.topic)
-                if score_ready(ts):
-                    print(f"「{a.topic}」专项达标（至少 "
-                          f"{PASS_CORRECT}/{PASS_WINDOW}），回到 agent 做该专项白话复述。")
+                if topic_score_ready(ts, a.topic):
+                    if a.topic in MIXED_TOPICS:
+                        print(f"「{a.topic}」累计混合达标。")
+                    else:
+                        print(f"「{a.topic}」专项达标（"
+                              f"{TOPIC_CORRECT}/{TOPIC_WINDOW}），"
+                              "回到 agent 做该专项白话复述。")
                 else:
                     print(f"「{a.topic}」专项未达标；先回到 agent 讲解错题，"
                           "不要继续机械刷题。")

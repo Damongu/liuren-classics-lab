@@ -450,13 +450,21 @@ class Plate:
         if self.k == 6:
             self.chuan = self._fanyin()
             return
+        if self.jigong == self.zhi:                 # 八专：有克照常以克、比、涉取用
+            chu = self._from_ke_candidates()
+            if chu is not None:
+                inner_keshi, inner_sub = self.keshi, self.keshi_sub
+                detail = inner_sub if inner_keshi == "涉害" else inner_keshi
+                self.keshi, self.keshi_sub = "八专", f"有克·{detail}"
+                zhong = self.tian[chu]
+                self.chuan = (chu, zhong, self.tian[zhong])
+            else:
+                self.chuan = self._bazhuan()
+            return
         chu = self._from_ke_candidates()
         if chu is not None:
             zhong = self.tian[chu]
             self.chuan = (chu, zhong, self.tian[zhong])
-            return
-        if self.jigong == self.zhi:                 # 八专：论克不论遥
-            self.chuan = self._bazhuan()
             return
         chu = self._yaoke()
         if chu is not None:

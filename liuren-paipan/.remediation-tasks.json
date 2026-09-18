@@ -1,0 +1,2299 @@
+{
+  "tasks": {
+    "890d0994-2aa0-4708-a2e7-ad7045bbb5d2": {
+      "task_id": "890d0994-2aa0-4708-a2e7-ad7045bbb5d2",
+      "mode": "remediation",
+      "topic": "别责",
+      "reason_code": "中末误取寄宫本位",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-15T14:53:53",
+      "total": 3,
+      "cases": [
+        {
+          "day": "戊辰",
+          "shi": "子",
+          "jiang": "丑",
+          "daynight": "昼",
+          "gan": "戊",
+          "zhi": "辰",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "戊",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "辰",
+              "gong": "辰"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "辛未",
+          "shi": "子",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "丙辰",
+          "shi": "子",
+          "jiang": "丑",
+          "daynight": "昼",
+          "gan": "丙",
+          "zhi": "辰",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丙",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "辰",
+              "gong": "辰"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "890d0994-2aa0-4708-a2e7-ad7045bbb5d2",
+        "session_id": "357771a4-5126-4a1c-9053-7fda8e6fa687",
+        "mode": "remediation",
+        "topic": "别责",
+        "reason_code": "中末误取寄宫本位",
+        "scoring_version": "2026-09-14.1",
+        "score": 2,
+        "total": 3,
+        "completed": true,
+        "mastered": false,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "戊辰",
+            "shi": "子",
+            "jiang": "丑",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "辛未",
+            "shi": "子",
+            "jiang": "卯",
+            "daynight": "昼",
+            "clean": false,
+            "mistakes": [
+              {
+                "stage": "zeike",
+                "revealed": false,
+                "wrong": [
+                  {
+                    "key": "2",
+                    "actual": "亥",
+                    "expected": "寅"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "case_id": "q3",
+            "day": "丙辰",
+            "shi": "子",
+            "jiang": "丑",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-15T14:57:36"
+      }
+    },
+    "462dfc10-38c9-455a-9244-9d60174dcf4a": {
+      "task_id": "462dfc10-38c9-455a-9244-9d60174dcf4a",
+      "mode": "remediation",
+      "topic": "别责",
+      "reason_code": "柔日把三合目标宫误作初传",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-15T15:01:54",
+      "total": 3,
+      "cases": [
+        {
+          "day": "辛未",
+          "shi": "子",
+          "jiang": "酉",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "丁酉",
+          "shi": "子",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "酉",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "辛酉",
+          "shi": "子",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "酉",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "462dfc10-38c9-455a-9244-9d60174dcf4a",
+        "session_id": "f0e5b3cc-5fc4-499a-992d-9856226de1e0",
+        "mode": "remediation",
+        "topic": "别责",
+        "reason_code": "柔日把三合目标宫误作初传",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "辛未",
+            "shi": "子",
+            "jiang": "酉",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "丁酉",
+            "shi": "子",
+            "jiang": "戌",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q3",
+            "day": "辛酉",
+            "shi": "子",
+            "jiang": "亥",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-15T15:10:40"
+      }
+    },
+    "38ea34be-911c-4365-94eb-9c780c70ee52": {
+      "task_id": "38ea34be-911c-4365-94eb-9c780c70ee52",
+      "mode": "remediation",
+      "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+      "reason_code": "四课第三四课递推错误",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-15T17:38:08",
+      "total": 3,
+      "cases": [
+        {
+          "day": "癸丑",
+          "shi": "辰",
+          "jiang": "申",
+          "daynight": "昼",
+          "gan": "癸",
+          "zhi": "丑",
+          "jigong": "丑",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "癸",
+              "gong": "丑"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "丑",
+              "gong": "丑"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "mixed-q3"
+        },
+        {
+          "day": "甲午",
+          "shi": "申",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "甲",
+          "zhi": "午",
+          "jigong": "寅",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "甲",
+              "gong": "寅"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "午",
+              "gong": "午"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "mixed-q5"
+        },
+        {
+          "day": "丁丑",
+          "shi": "寅",
+          "jiang": "巳",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "丑",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "丑",
+              "gong": "丑"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "variant-q1"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "38ea34be-911c-4365-94eb-9c780c70ee52",
+        "session_id": "58c2040c-2d99-4ed4-97e4-72d26e1c16f2",
+        "mode": "remediation",
+        "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+        "reason_code": "四课第三四课递推错误",
+        "scoring_version": "2026-09-14.1",
+        "score": 2,
+        "total": 3,
+        "completed": true,
+        "mastered": false,
+        "records": [
+          {
+            "case_id": "mixed-q3",
+            "day": "癸丑",
+            "shi": "辰",
+            "jiang": "申",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "mixed-q5",
+            "day": "甲午",
+            "shi": "申",
+            "jiang": "戌",
+            "daynight": "昼",
+            "clean": false,
+            "mistakes": [
+              {
+                "stage": "sike",
+                "revealed": false,
+                "wrong": [
+                  {
+                    "key": "2",
+                    "actual": "酉",
+                    "expected": "申"
+                  },
+                  {
+                    "key": "3",
+                    "actual": "亥",
+                    "expected": "戌"
+                  }
+                ]
+              },
+              {
+                "stage": "zeike",
+                "revealed": false,
+                "wrong": [
+                  {
+                    "key": "2",
+                    "actual": "申",
+                    "expected": "辰"
+                  },
+                  {
+                    "key": "3",
+                    "actual": [
+                      "shehai.after_biyong",
+                      "shehai.max_depth",
+                      "shehai.meng_zhong_ji",
+                      "zeike.lower_over_upper",
+                      "zeike.upper_over_lower"
+                    ],
+                    "expected": [
+                      "shehai.after_biyong",
+                      "shehai.count_to_home",
+                      "shehai.max_depth",
+                      "shehai.meng_zhong_ji",
+                      "zeike.lower_over_upper"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "case_id": "variant-q1",
+            "day": "丁丑",
+            "shi": "寅",
+            "jiang": "巳",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-15T18:12:06"
+      }
+    },
+    "9fc1c3da-59e4-4576-bef3-ff69a3b39732": {
+      "task_id": "9fc1c3da-59e4-4576-bef3-ff69a3b39732",
+      "mode": "remediation",
+      "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+      "reason_code": "四课第三四课递推错误-续强",
+      "scoring_version": "2026-09-14.1",
+      "status": "open",
+      "created_at": "2026-09-15T18:12:42",
+      "total": 5,
+      "cases": [
+        {
+          "day": "己亥",
+          "shi": "亥",
+          "jiang": "未",
+          "daynight": "昼",
+          "gan": "己",
+          "zhi": "亥",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "己",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "戊辰",
+          "shi": "午",
+          "jiang": "未",
+          "daynight": "昼",
+          "gan": "戊",
+          "zhi": "辰",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "戊",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "辰",
+              "gong": "辰"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "辛未",
+          "shi": "丑",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        },
+        {
+          "day": "丁亥",
+          "shi": "戌",
+          "jiang": "申",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "亥",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q4"
+        },
+        {
+          "day": "辛亥",
+          "shi": "亥",
+          "jiang": "寅",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "亥",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q5"
+        }
+      ],
+      "counts_toward_formal_score": false
+    },
+    "ceb4ca7e-a7f0-46a7-a2fe-03f3ac91323c": {
+      "task_id": "ceb4ca7e-a7f0-46a7-a2fe-03f3ac91323c",
+      "mode": "remediation",
+      "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+      "reason_code": "四课第三四课递推错误-输入失误后重开",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-15T18:14:50",
+      "total": 5,
+      "cases": [
+        {
+          "day": "丁亥",
+          "shi": "子",
+          "jiang": "申",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "亥",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "辛酉",
+          "shi": "戌",
+          "jiang": "午",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "酉",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "辛丑",
+          "shi": "丑",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "丑",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "丑",
+              "gong": "丑"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        },
+        {
+          "day": "戊申",
+          "shi": "午",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "戊",
+          "zhi": "申",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "戊",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "申",
+              "gong": "申"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q4"
+        },
+        {
+          "day": "癸亥",
+          "shi": "午",
+          "jiang": "寅",
+          "daynight": "昼",
+          "gan": "癸",
+          "zhi": "亥",
+          "jigong": "丑",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "癸",
+              "gong": "丑"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q5"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "ceb4ca7e-a7f0-46a7-a2fe-03f3ac91323c",
+        "session_id": "b960454d-37b8-47bf-86ae-c52c2f1c3798",
+        "mode": "remediation",
+        "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责",
+        "reason_code": "四课第三四课递推错误-输入失误后重开",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "丁亥",
+            "shi": "子",
+            "jiang": "申",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "辛酉",
+            "shi": "戌",
+            "jiang": "午",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q3",
+            "day": "辛丑",
+            "shi": "丑",
+            "jiang": "戌",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-15T18:19:39"
+      }
+    },
+    "0e0ed9dc-af12-4eb3-aa53-0a37223199f4": {
+      "task_id": "0e0ed9dc-af12-4eb3-aa53-0a37223199f4",
+      "mode": "remediation",
+      "topic": "别责",
+      "reason_code": "柔日三合定位宫再次误作初传",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-15T20:28:57",
+      "total": 5,
+      "cases": [
+        {
+          "day": "辛未",
+          "shi": "子",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "xinwei-k3"
+        },
+        {
+          "day": "辛未",
+          "shi": "子",
+          "jiang": "酉",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "xinwei-k9"
+        },
+        {
+          "day": "辛丑",
+          "shi": "子",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "丑",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "丑",
+              "gong": "丑"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "xinchou-k3"
+        },
+        {
+          "day": "辛丑",
+          "shi": "子",
+          "jiang": "酉",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "丑",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "丑",
+              "gong": "丑"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "xinchou-k9"
+        },
+        {
+          "day": "辛酉",
+          "shi": "子",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "酉",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "xinyou-k11"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "0e0ed9dc-af12-4eb3-aa53-0a37223199f4",
+        "session_id": "92ebb4de-fcc5-4a5e-ae33-7757a719e863",
+        "mode": "remediation",
+        "topic": "别责",
+        "reason_code": "柔日三合定位宫再次误作初传",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "xinwei-k3",
+            "day": "辛未",
+            "shi": "子",
+            "jiang": "卯",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "xinwei-k9",
+            "day": "辛未",
+            "shi": "子",
+            "jiang": "酉",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "xinchou-k3",
+            "day": "辛丑",
+            "shi": "子",
+            "jiang": "卯",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-15T20:34:23"
+      }
+    },
+    "5a45e97b-47ed-47f3-a46b-cf20ddb8c2f0": {
+      "task_id": "5a45e97b-47ed-47f3-a46b-cf20ddb8c2f0",
+      "mode": "remediation",
+      "topic": "别责",
+      "reason_code": "三课别责识别与定位宫取天盘上神",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-16T11:34:57",
+      "total": 5,
+      "cases": [
+        {
+          "day": "辛未",
+          "shi": "巳",
+          "jiang": "申",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "戊午",
+          "shi": "酉",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "戊",
+          "zhi": "午",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "戊",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "午",
+              "gong": "午"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "辛未",
+          "shi": "戌",
+          "jiang": "丑",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        },
+        {
+          "day": "辛未",
+          "shi": "辰",
+          "jiang": "丑",
+          "daynight": "昼",
+          "gan": "辛",
+          "zhi": "未",
+          "jigong": "戌",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "辛",
+              "gong": "戌"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q4"
+        },
+        {
+          "day": "丁酉",
+          "shi": "丑",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "酉",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q5"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "5a45e97b-47ed-47f3-a46b-cf20ddb8c2f0",
+        "session_id": "846ad2db-58ab-46ae-8788-2f782d0b6826",
+        "mode": "remediation",
+        "topic": "别责",
+        "reason_code": "三课别责识别与定位宫取天盘上神",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "辛未",
+            "shi": "巳",
+            "jiang": "申",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "戊午",
+            "shi": "酉",
+            "jiang": "戌",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q3",
+            "day": "辛未",
+            "shi": "戌",
+            "jiang": "丑",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-16T12:33:33"
+      }
+    },
+    "63cb2b61-2eab-431c-b4bd-05c0e8054f2b": {
+      "task_id": "63cb2b61-2eab-431c-b4bd-05c0e8054f2b",
+      "mode": "remediation",
+      "topic": "涉害",
+      "reason_code": "同向多候选须先列全并经比用后入涉害",
+      "scoring_version": "2026-09-14.1",
+      "status": "open",
+      "created_at": "2026-09-16T12:35:59",
+      "total": 5,
+      "cases": [
+        {
+          "day": "戊申",
+          "shi": "申",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "戊",
+          "zhi": "申",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "戊",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "申",
+              "gong": "申"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "己亥",
+          "shi": "寅",
+          "jiang": "午",
+          "daynight": "昼",
+          "gan": "己",
+          "zhi": "亥",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "己",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "亥",
+              "gong": "亥"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "癸未",
+          "shi": "未",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "癸",
+          "zhi": "未",
+          "jigong": "丑",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "癸",
+              "gong": "丑"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        },
+        {
+          "day": "己卯",
+          "shi": "卯",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "己",
+          "zhi": "卯",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "己",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "卯",
+              "gong": "卯"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q4"
+        },
+        {
+          "day": "甲申",
+          "shi": "未",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "甲",
+          "zhi": "申",
+          "jigong": "寅",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "甲",
+              "gong": "寅"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "申",
+              "gong": "申"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q5"
+        }
+      ],
+      "counts_toward_formal_score": false
+    },
+    "9d31f26b-c018-407e-ba4b-9d1d3a14d42d": {
+      "task_id": "9d31f26b-c018-407e-ba4b-9d1d3a14d42d",
+      "mode": "remediation",
+      "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专",
+      "reason_code": "七法混合中识别同向多候选并经比用转涉害",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-16T12:37:19",
+      "total": 5,
+      "cases": [
+        {
+          "day": "甲辰",
+          "shi": "辰",
+          "jiang": "酉",
+          "daynight": "昼",
+          "gan": "甲",
+          "zhi": "辰",
+          "jigong": "寅",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "甲",
+              "gong": "寅"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "辰",
+              "gong": "辰"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "丁未",
+          "shi": "丑",
+          "jiang": "辰",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "未",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "未",
+              "gong": "未"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "己酉",
+          "shi": "亥",
+          "jiang": "辰",
+          "daynight": "昼",
+          "gan": "己",
+          "zhi": "酉",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "己",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        },
+        {
+          "day": "癸酉",
+          "shi": "辰",
+          "jiang": "卯",
+          "daynight": "昼",
+          "gan": "癸",
+          "zhi": "酉",
+          "jigong": "丑",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "癸",
+              "gong": "丑"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "酉",
+              "gong": "酉"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q4"
+        },
+        {
+          "day": "丁巳",
+          "shi": "卯",
+          "jiang": "戌",
+          "daynight": "昼",
+          "gan": "丁",
+          "zhi": "巳",
+          "jigong": "未",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丁",
+              "gong": "未"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "巳",
+              "gong": "巳"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q5"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "9d31f26b-c018-407e-ba4b-9d1d3a14d42d",
+        "session_id": "892522bb-2c5c-4c2f-b559-98dd49fef15f",
+        "mode": "remediation",
+        "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专",
+        "reason_code": "七法混合中识别同向多候选并经比用转涉害",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "甲辰",
+            "shi": "辰",
+            "jiang": "酉",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "丁未",
+            "shi": "丑",
+            "jiang": "辰",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q3",
+            "day": "己酉",
+            "shi": "亥",
+            "jiang": "辰",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-16T12:57:27"
+      }
+    },
+    "24f49ddd-96c5-43f6-b218-6fe3205d3db4": {
+      "task_id": "24f49ddd-96c5-43f6-b218-6fe3205d3db4",
+      "mode": "remediation",
+      "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟",
+      "reason_code": "九法累计混合：支侧四课链＋涉害同重孟仲季",
+      "scoring_version": "2026-09-14.1",
+      "status": "completed",
+      "created_at": "2026-09-16T22:19:20",
+      "total": 3,
+      "cases": [
+        {
+          "day": "丙子",
+          "shi": "卯",
+          "jiang": "亥",
+          "daynight": "昼",
+          "gan": "丙",
+          "zhi": "子",
+          "jigong": "巳",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "丙",
+              "gong": "巳"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "子",
+              "gong": "子"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q1"
+        },
+        {
+          "day": "庚午",
+          "shi": "酉",
+          "jiang": "丑",
+          "daynight": "昼",
+          "gan": "庚",
+          "zhi": "午",
+          "jigong": "申",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "庚",
+              "gong": "申"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "午",
+              "gong": "午"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q2"
+        },
+        {
+          "day": "庚戌",
+          "shi": "辰",
+          "jiang": "申",
+          "daynight": "昼",
+          "gan": "庚",
+          "zhi": "戌",
+          "jigong": "申",
+          "earth": [
+            "子",
+            "丑",
+            "寅",
+            "卯",
+            "辰",
+            "巳",
+            "午",
+            "未",
+            "申",
+            "酉",
+            "戌",
+            "亥"
+          ],
+          "sike_lows": [
+            {
+              "label": "庚",
+              "gong": "申"
+            },
+            {
+              "label": "一课上神",
+              "gong": null
+            },
+            {
+              "label": "戌",
+              "gong": "戌"
+            },
+            {
+              "label": "三课上神",
+              "gong": null
+            }
+          ],
+          "case_id": "q3"
+        }
+      ],
+      "counts_toward_formal_score": false,
+      "result": {
+        "task_id": "24f49ddd-96c5-43f6-b218-6fe3205d3db4",
+        "session_id": "a433fd70-2ebd-4f0e-9d3b-b76c0c851487",
+        "mode": "remediation",
+        "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟",
+        "reason_code": "九法累计混合：支侧四课链＋涉害同重孟仲季",
+        "scoring_version": "2026-09-14.1",
+        "score": 3,
+        "total": 3,
+        "completed": true,
+        "mastered": true,
+        "records": [
+          {
+            "case_id": "q1",
+            "day": "丙子",
+            "shi": "卯",
+            "jiang": "亥",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q2",
+            "day": "庚午",
+            "shi": "酉",
+            "jiang": "丑",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          },
+          {
+            "case_id": "q3",
+            "day": "庚戌",
+            "shi": "辰",
+            "jiang": "申",
+            "daynight": "昼",
+            "clean": true,
+            "mistakes": []
+          }
+        ],
+        "counts_toward_formal_score": false,
+        "recorded_at": "2026-09-16T22:24:29"
+      }
+    }
+  }
+}

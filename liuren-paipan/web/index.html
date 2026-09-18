@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>六壬排盘训练台</title>
-  <link rel="stylesheet" href="/styles.css?v=20260912-missing-hint">
+  <link rel="stylesheet" href="/styles.css?v=20260917-reference-layout">
 </head>
 <body>
 <main class="app-shell">
@@ -27,6 +27,20 @@
         <option value="贼克＋比用">贼克＋比用</option>
         <option value="涉害">涉害·涉归本家计重</option>
         <option value="贼克＋比用＋涉害">贼克＋比用＋涉害</option>
+        <option value="遥克">遥克</option>
+        <option value="贼克＋比用＋涉害＋遥克">贼克＋比用＋涉害＋遥克</option>
+        <option value="昴星">昴星</option>
+        <option value="贼克＋比用＋涉害＋遥克＋昴星">贼克＋比用＋涉害＋遥克＋昴星</option>
+        <option value="别责">别责</option>
+        <option value="贼克＋比用＋涉害＋遥克＋昴星＋别责">贼克＋比用＋涉害＋遥克＋昴星＋别责</option>
+        <option value="八专">八专</option>
+        <option value="贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专">贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专</option>
+        <option value="伏吟">伏吟</option>
+        <option value="贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟">贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟</option>
+        <option value="返吟">返吟</option>
+        <option value="贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟">九法累计混合</option>
+        <option value="三传">关卡5·三传</option>
+        <option value="十二天将与贵人">关卡6·十二天将与贵人</option>
         <option value="四课">四课</option>
       </select>
     </label>
@@ -53,7 +67,7 @@
       <h2 id="question-text">戊戌日，卯时，未将：先排天地盘，再立四课。</h2>
     </div>
     <button id="session-button" class="primary" type="button">
-      <span class="button-symbol" aria-hidden="true">&#9654;</span><span>开始12题</span>
+      <span class="button-symbol" aria-hidden="true">&#9654;</span><span>开始训练</span>
     </button>
     <button id="next-button" class="primary hidden" type="button">
       <span>下一题</span><span class="button-symbol" aria-hidden="true">&#8594;</span>
@@ -127,12 +141,20 @@
         </section>
         <div class="zeike-grid">
           <article class="zeike-card" data-key="0">
-            <label>课名<select id="zeike-keshi" data-stage="zeike" data-key="0"></select></label>
+            <label>宗门<select id="zeike-method" data-stage="zeike" data-key="0"></select></label>
           </article>
           <article class="zeike-card" data-key="1">
-            <label>初传<select id="zeike-chu" data-stage="zeike" data-key="1"></select></label>
+            <label>课名<select id="zeike-keshi" data-stage="zeike" data-key="1"></select></label>
           </article>
-          <article class="zeike-card" data-key="2">
+          <article class="zeike-card hidden" data-key="4" id="yaoke-candidates-card">
+            <fieldset id="yaoke-candidates" class="reason-options">
+              <legend>全部同向遥克候选（可多选）</legend>
+            </fieldset>
+          </article>
+          <article class="zeike-card hidden" data-key="2" id="zeike-chu-card">
+            <label>初传<select id="zeike-chu" data-stage="zeike" data-key="2"></select></label>
+          </article>
+          <article class="zeike-card hidden" data-key="3" id="zeike-reason-card">
             <fieldset id="zeike-reason" class="reason-options">
               <legend>判断依据（可多选）</legend>
             </fieldset>
@@ -144,6 +166,10 @@
         <div class="section-heading compact">
           <div><p>第四步</p><h2>填写三传</h2></div>
         </div>
+        <section class="sike-reference" aria-label="已确认四课">
+          <h3>已确认四课</h3>
+          <div id="chuan-sike-grid" class="sike-reference-grid"></div>
+        </section>
         <div class="chuan-grid"></div>
       </div>
 
@@ -183,6 +209,6 @@
   </section>
 </main>
 
-<script src="/app.js?v=20260912-missing-hint"></script>
+<script src="/app.js?v=20260917-reference-layout"></script>
 </body>
 </html>

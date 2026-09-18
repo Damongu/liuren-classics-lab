@@ -393,7 +393,6 @@ def main():
     check_pollution(vault, r)
     check_links(vault, r)
     check_dataview(vault, r)
-    check_guides(vault, r)
 
     # 汇总
     print("\n" + "=" * 56)

@@ -177,7 +177,7 @@ def test_book_counts():
     assert len(rows) == 720
     assert len(filter_courses(rows, keshi="别责")) == 9
     assert sorted({r.day_gz for r in filter_courses(rows, keshi="八专")}) == \
-        sorted(["丁未", "己未", "庚申", "甲寅"])
+        sorted(["丁未", "己未", "庚申", "甲寅", "癸丑"])
     dz = [r for r in rows if r.day_gz == "己未" and r.keshi == "八专"
           and len(set(r.chuan)) == 1]
     assert len(dz) == 1
@@ -247,7 +247,7 @@ def test_shehai_direct_distribution_and_two_meng_tie():
     """720课中直取法不发用季；两个孟复等时按四课次序取先举者。"""
     rows = enumerate720(Options(shehai_method="direct"))
     subs = Counter(r.sub for r in rows if r.keshi == "涉害")
-    assert subs == {"临孟": 53, "临仲": 23}, subs
+    assert subs == {"临孟": 52, "临仲": 23}, subs
 
     p = from_ganzhi("戊辰", "子", "未", opts=Options(shehai_method="direct"))
     assert p.chuan[0] == "子", p.chuan
