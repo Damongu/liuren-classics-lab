@@ -532,471 +532,6 @@
   },
   "wrong": [
     {
-      "key": "四课|甲子|丑|申",
-      "spec": [
-        "四课",
-        "甲子",
-        "丑",
-        "申"
-      ],
-      "level": 4,
-      "q": "甲子日　丑时　申将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
-      "ans": "酉辰未寅",
-      "given": "[亥午]",
-      "first": "2026-09-10",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "e247f28e-c137-4128-8679-d2fed853fb56",
-          "question_id": "q11",
-          "stage": "sike",
-          "topic": "比用"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "贼克|戊午|未|亥",
-      "spec": [
-        "贼克",
-        "戊午",
-        "未",
-        "亥"
-      ],
-      "level": 4,
-      "q": "戊午日　未时　亥将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   寅天后    戌六合    丑贵人",
-      "ans": "元首寅无下贼取上克",
-      "given": "[重审戌[有下贼取下贼]]",
-      "first": "2026-09-10",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "7732dfd2-978d-4fa9-8da2-767aba977cc3",
-          "question_id": "q5",
-          "stage": "zeike",
-          "topic": "贼克＋比用"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "涉害|癸亥|戌|寅",
-      "spec": [
-        "涉害",
-        "癸亥",
-        "戌",
-        "寅"
-      ],
-      "level": 7,
-      "q": "癸亥日　戌时　寅将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未朱雀    卯太阴    酉勾陈",
-      "ans": "酉2重",
-      "given": "[卯[俱比或俱不比入涉害取受克重数最多者",
-      "first": "2026-09-11",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "66d9a382-4275-48a9-a509-51ed109eba00",
-          "question_id": "q5",
-          "stage": "zeike",
-          "topic": null
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "涉害|庚午|戌|子",
-      "spec": [
-        "涉害",
-        "庚午",
-        "戌",
-        "子"
-      ],
-      "level": 7,
-      "q": "庚午日　戌时　子将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   戌玄武    申白虎    子天后",
-      "ans": "申1重",
-      "given": "[戌[俱比或俱不比入涉害取涉害重数最多者",
-      "first": "2026-09-11",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "66d9a382-4275-48a9-a509-51ed109eba00",
-          "question_id": "q10",
-          "stage": "zeike",
-          "topic": null
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "遥克|癸酉|子|戌",
-      "spec": [
-        "遥克",
-        "癸酉",
-        "子",
-        "戌"
-      ],
-      "level": 4,
-      "q": "癸酉日　子时　戌将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   巳贵人    未太阴    酉太常",
-      "ans": "未蒿矢未神克日优先",
-      "given": "[[神克日优先]]",
-      "first": "2026-09-14",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "243ec392-c217-4b34-a741-3805b76d0b9e",
-          "question_id": "q3",
-          "stage": "zeike",
-          "topic": "遥克"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "比用|辛卯|巳|丑",
-      "spec": [
-        "比用",
-        "辛卯",
-        "巳",
-        "丑"
-      ],
-      "level": 4,
-      "q": "辛卯日　巳时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未天后    亥白虎    寅勾陈",
-      "ans": "未阴日取阴神",
-      "given": "[涉害涉害[俱比或俱不比入涉害取涉害重数",
-      "first": "2026-09-14",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "2a29d640-1e4c-4f2d-8609-f23ceeed8e61",
-          "question_id": "q2",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "遥克|己巳|午|申",
-      "spec": [
-        "遥克",
-        "己巳",
-        "午",
-        "申"
-      ],
-      "level": 4,
-      "q": "己巳日　午时　申将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   酉六合    未青龙    亥螣蛇",
-      "ans": "亥弹射亥无神克日取日克神",
-      "given": "[昴星昴星未[四课上下无克无遥克阴俯酉下",
-      "first": "2026-09-14",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "16cd1177-f743-4e32-8d00-b9ce02441312",
-          "question_id": "q8",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "比用|丁酉|卯|辰",
-      "spec": [
-        "比用",
-        "丁酉",
-        "卯",
-        "辰"
-      ],
-      "level": 4,
-      "q": "丁酉日　卯时　辰将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   亥贵人    戌螣蛇    酉朱雀",
-      "ans": "亥阴日取阴神",
-      "given": "[贼克重审申[zeikelower_ov",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "de011c79-0b09-493a-8088-492193c6965e",
-          "question_id": "q12",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "三传|戊午|戌|亥",
-      "spec": [
-        "三传",
-        "戊午",
-        "戌",
-        "亥"
-      ],
-      "level": 4,
-      "q": "戊午日　戌时　亥将 ⏎ 问：三传是什么？（三个字，初→中→末）",
-      "ans": "寅午午",
-      "given": "[巳巳]",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "065ae369-0654-4781-ac41-4dbed745a2b3",
-          "question_id": "q1",
-          "stage": "chuan",
-          "topic": "别责"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "四课|癸丑|辰|申",
-      "spec": [
-        "四课",
-        "癸丑",
-        "辰",
-        "申"
-      ],
-      "level": 4,
-      "q": "癸丑日　辰时　申将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
-      "ans": "巳酉巳酉",
-      "given": "[酉丑]",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "811114bd-d83c-4eb0-a81e-0f60e888d318",
-          "question_id": "q3",
-          "stage": "sike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "四课|甲午|申|戌",
-      "spec": [
-        "四课",
-        "甲午",
-        "申",
-        "戌"
-      ],
-      "level": 4,
-      "q": "甲午日　申时　戌将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
-      "ans": "辰午申戌",
-      "given": "[酉亥]",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "811114bd-d83c-4eb0-a81e-0f60e888d318",
-          "question_id": "q5",
-          "stage": "sike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "别责|丁酉|子|戌",
-      "spec": [
-        "别责",
-        "丁酉",
-        "子",
-        "戌"
-      ],
-      "level": 4,
-      "q": "丁酉日　子时　戌将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   巳天空    未太常    卯勾陈",
-      "ans": "亥巳巳柔日取支前三合宫上神",
-      "given": "[丑]",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "4bdc7ffe-c1bb-45bf-b75b-14c213bd9fb4",
-          "question_id": "q3",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "八专|丁未|戌|丑",
-      "spec": [
-        "八专",
-        "丁未",
-        "戌",
-        "丑"
-      ],
-      "level": 4,
-      "q": "丁未日　戌时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   丑太阴    戌螣蛇    丑太阴",
-      "ans": "亥戌戌柔日辰阴逆三",
-      "given": "[申]",
-      "first": "2026-09-15",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "a2b6a51b-18fc-419b-ac04-f22673b69627",
-          "question_id": "q1",
-          "stage": "zeike",
-          "topic": "八专"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "别责|辛丑|午|酉",
-      "spec": [
-        "别责",
-        "辛丑",
-        "午",
-        "酉"
-      ],
-      "level": 4,
-      "q": "辛丑日　午时　酉将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未螣蛇    辰太阴    辰太阴",
-      "ans": "申丑丑柔日取支前三合宫上神",
-      "given": "[昴星昴星午[maoxingyin_be",
-      "first": "2026-09-16",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "01b44689-5987-45fd-9f93-9c0c0fc328dc",
-          "question_id": "q2",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "涉害|乙卯|申|亥",
-      "spec": [
-        "涉害",
-        "乙卯",
-        "申",
-        "亥"
-      ],
-      "level": 4,
-      "q": "乙卯日　申时　亥将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   酉六合    午天空    戌朱雀",
-      "ans": "酉1重",
-      "given": "[贼克重审未[zeikelower_ov",
-      "first": "2026-09-16",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "01b44689-5987-45fd-9f93-9c0c0fc328dc",
-          "question_id": "q7",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
       "key": "别责|辛丑|巳|申",
       "spec": [
         "别责",
@@ -1009,8 +544,8 @@
       "ans": "申丑丑柔日取支前三合宫上神",
       "given": "[寅]",
       "first": "2026-09-16",
-      "streak": 0,
-      "due": "2026-09-18",
+      "streak": 1,
+      "due": "2026-09-24",
       "reasons": [
         "待归因"
       ],
@@ -1023,99 +558,6 @@
           "question_id": "q12",
           "stage": "zeike",
           "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "遥克|辛巳|丑|寅",
-      "spec": [
-        "遥克",
-        "辛巳",
-        "丑",
-        "寅"
-      ],
-      "level": 4,
-      "q": "辛巳日　丑时　寅将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未天后    午贵人    子天空",
-      "ans": "午蒿矢午神克日优先",
-      "given": "[昴星昴星申[maoxingyin_be",
-      "first": "2026-09-16",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "待归因"
-      ],
-      "diagnosis": "",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "661c2035-0bb3-4556-b50e-3ad87069fc70",
-          "question_id": "q9",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "四课|丙子|卯|亥",
-      "spec": [
-        "四课",
-        "丙子",
-        "卯",
-        "亥"
-      ],
-      "level": 4,
-      "q": "丙子日　卯时　亥将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
-      "ans": "丑酉申辰",
-      "given": "[巳丑]",
-      "first": "2026-09-16",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "步骤遗漏"
-      ],
-      "diagnosis": "丙子日第三、四课上神误填，支侧四课链读取中断。",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "894024e2-7b78-495b-a3c1-b1fc928a32ba",
-          "question_id": "q8",
-          "stage": "sike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟"
-        }
-      ],
-      "source": "web-trainer"
-    },
-    {
-      "key": "涉害|庚午|酉|丑",
-      "spec": [
-        "涉害",
-        "庚午",
-        "酉",
-        "丑"
-      ],
-      "level": 4,
-      "q": "庚午日　酉时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   寅天后    戌六合    辰玄武",
-      "ans": "辰1重",
-      "given": "[寅[shehaiafter_biyon",
-      "first": "2026-09-16",
-      "streak": 1,
-      "due": "2026-09-20",
-      "reasons": [
-        "步骤遗漏"
-      ],
-      "diagnosis": "庚午日涉害候选辰、寅同为1重，漏做同重后的孟仲季裁决，误取寅/子而非临仲之辰。",
-      "baseline_pending": false,
-      "sources": [
-        {
-          "source": "web-trainer",
-          "session_id": "894024e2-7b78-495b-a3c1-b1fc928a32ba",
-          "question_id": "q9",
-          "stage": "zeike",
-          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟"
         }
       ],
       "source": "web-trainer"
@@ -3969,6 +3411,24 @@
       "source": "web-trainer",
       "session_id": "a02a6e36-cb35-473c-acc3-48113bbc806a",
       "topic": "到期错题复现"
+    },
+    {
+      "date": "2026-09-21",
+      "level": "review",
+      "right": 10,
+      "n": 10,
+      "source": "web-trainer",
+      "session_id": "ae08e209-f624-47c8-aab2-94b5139854b9",
+      "topic": "到期错题复现"
+    },
+    {
+      "date": "2026-09-21",
+      "level": "review",
+      "right": 9,
+      "n": 9,
+      "source": "web-trainer",
+      "session_id": "fc13a93a-c29a-47f1-92a6-9d6fef419a97",
+      "topic": "到期错题复现"
     }
   ],
   "wrong_archive": [
@@ -4127,6 +3587,600 @@
       "source": "web-trainer",
       "archived": "2026-09-17",
       "exit_reason": "人工归档"
+    },
+    {
+      "key": "四课|甲子|丑|申",
+      "spec": [
+        "四课",
+        "甲子",
+        "丑",
+        "申"
+      ],
+      "level": 4,
+      "q": "甲子日　丑时　申将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
+      "ans": "酉辰未寅",
+      "given": "[亥午]",
+      "first": "2026-09-10",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "e247f28e-c137-4128-8679-d2fed853fb56",
+          "question_id": "q11",
+          "stage": "sike",
+          "topic": "比用"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "贼克|戊午|未|亥",
+      "spec": [
+        "贼克",
+        "戊午",
+        "未",
+        "亥"
+      ],
+      "level": 4,
+      "q": "戊午日　未时　亥将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   寅天后    戌六合    丑贵人",
+      "ans": "元首寅无下贼取上克",
+      "given": "[重审戌[有下贼取下贼]]",
+      "first": "2026-09-10",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "7732dfd2-978d-4fa9-8da2-767aba977cc3",
+          "question_id": "q5",
+          "stage": "zeike",
+          "topic": "贼克＋比用"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "涉害|癸亥|戌|寅",
+      "spec": [
+        "涉害",
+        "癸亥",
+        "戌",
+        "寅"
+      ],
+      "level": 7,
+      "q": "癸亥日　戌时　寅将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未朱雀    卯太阴    酉勾陈",
+      "ans": "酉2重",
+      "given": "[卯[俱比或俱不比入涉害取受克重数最多者",
+      "first": "2026-09-11",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "66d9a382-4275-48a9-a509-51ed109eba00",
+          "question_id": "q5",
+          "stage": "zeike",
+          "topic": null
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "涉害|庚午|戌|子",
+      "spec": [
+        "涉害",
+        "庚午",
+        "戌",
+        "子"
+      ],
+      "level": 7,
+      "q": "庚午日　戌时　子将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   戌玄武    申白虎    子天后",
+      "ans": "申1重",
+      "given": "[戌[俱比或俱不比入涉害取涉害重数最多者",
+      "first": "2026-09-11",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "66d9a382-4275-48a9-a509-51ed109eba00",
+          "question_id": "q10",
+          "stage": "zeike",
+          "topic": null
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "遥克|癸酉|子|戌",
+      "spec": [
+        "遥克",
+        "癸酉",
+        "子",
+        "戌"
+      ],
+      "level": 4,
+      "q": "癸酉日　子时　戌将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   巳贵人    未太阴    酉太常",
+      "ans": "未蒿矢未神克日优先",
+      "given": "[[神克日优先]]",
+      "first": "2026-09-14",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "243ec392-c217-4b34-a741-3805b76d0b9e",
+          "question_id": "q3",
+          "stage": "zeike",
+          "topic": "遥克"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "比用|辛卯|巳|丑",
+      "spec": [
+        "比用",
+        "辛卯",
+        "巳",
+        "丑"
+      ],
+      "level": 4,
+      "q": "辛卯日　巳时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未天后    亥白虎    寅勾陈",
+      "ans": "未阴日取阴神",
+      "given": "[涉害涉害[俱比或俱不比入涉害取涉害重数",
+      "first": "2026-09-14",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "2a29d640-1e4c-4f2d-8609-f23ceeed8e61",
+          "question_id": "q2",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "遥克|己巳|午|申",
+      "spec": [
+        "遥克",
+        "己巳",
+        "午",
+        "申"
+      ],
+      "level": 4,
+      "q": "己巳日　午时　申将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   酉六合    未青龙    亥螣蛇",
+      "ans": "亥弹射亥无神克日取日克神",
+      "given": "[昴星昴星未[四课上下无克无遥克阴俯酉下",
+      "first": "2026-09-14",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "16cd1177-f743-4e32-8d00-b9ce02441312",
+          "question_id": "q8",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "比用|丁酉|卯|辰",
+      "spec": [
+        "比用",
+        "丁酉",
+        "卯",
+        "辰"
+      ],
+      "level": 4,
+      "q": "丁酉日　卯时　辰将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   亥贵人    戌螣蛇    酉朱雀",
+      "ans": "亥阴日取阴神",
+      "given": "[贼克重审申[zeikelower_ov",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "de011c79-0b09-493a-8088-492193c6965e",
+          "question_id": "q12",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "三传|戊午|戌|亥",
+      "spec": [
+        "三传",
+        "戊午",
+        "戌",
+        "亥"
+      ],
+      "level": 4,
+      "q": "戊午日　戌时　亥将 ⏎ 问：三传是什么？（三个字，初→中→末）",
+      "ans": "寅午午",
+      "given": "[巳巳]",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "065ae369-0654-4781-ac41-4dbed745a2b3",
+          "question_id": "q1",
+          "stage": "chuan",
+          "topic": "别责"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "四课|癸丑|辰|申",
+      "spec": [
+        "四课",
+        "癸丑",
+        "辰",
+        "申"
+      ],
+      "level": 4,
+      "q": "癸丑日　辰时　申将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
+      "ans": "巳酉巳酉",
+      "given": "[酉丑]",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "811114bd-d83c-4eb0-a81e-0f60e888d318",
+          "question_id": "q3",
+          "stage": "sike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "四课|甲午|申|戌",
+      "spec": [
+        "四课",
+        "甲午",
+        "申",
+        "戌"
+      ],
+      "level": 4,
+      "q": "甲午日　申时　戌将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
+      "ans": "辰午申戌",
+      "given": "[酉亥]",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "811114bd-d83c-4eb0-a81e-0f60e888d318",
+          "question_id": "q5",
+          "stage": "sike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "别责|丁酉|子|戌",
+      "spec": [
+        "别责",
+        "丁酉",
+        "子",
+        "戌"
+      ],
+      "level": 4,
+      "q": "丁酉日　子时　戌将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   巳天空    未太常    卯勾陈",
+      "ans": "亥巳巳柔日取支前三合宫上神",
+      "given": "[丑]",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "4bdc7ffe-c1bb-45bf-b75b-14c213bd9fb4",
+          "question_id": "q3",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "八专|丁未|戌|丑",
+      "spec": [
+        "八专",
+        "丁未",
+        "戌",
+        "丑"
+      ],
+      "level": 4,
+      "q": "丁未日　戌时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   丑太阴    戌螣蛇    丑太阴",
+      "ans": "亥戌戌柔日辰阴逆三",
+      "given": "[申]",
+      "first": "2026-09-15",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "a2b6a51b-18fc-419b-ac04-f22673b69627",
+          "question_id": "q1",
+          "stage": "zeike",
+          "topic": "八专"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "别责|辛丑|午|酉",
+      "spec": [
+        "别责",
+        "辛丑",
+        "午",
+        "酉"
+      ],
+      "level": 4,
+      "q": "辛丑日　午时　酉将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未螣蛇    辰太阴    辰太阴",
+      "ans": "申丑丑柔日取支前三合宫上神",
+      "given": "[昴星昴星午[maoxingyin_be",
+      "first": "2026-09-16",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "01b44689-5987-45fd-9f93-9c0c0fc328dc",
+          "question_id": "q2",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "涉害|乙卯|申|亥",
+      "spec": [
+        "涉害",
+        "乙卯",
+        "申",
+        "亥"
+      ],
+      "level": 4,
+      "q": "乙卯日　申时　亥将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   酉六合    午天空    戌朱雀",
+      "ans": "酉1重",
+      "given": "[贼克重审未[zeikelower_ov",
+      "first": "2026-09-16",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "01b44689-5987-45fd-9f93-9c0c0fc328dc",
+          "question_id": "q7",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "遥克|辛巳|丑|寅",
+      "spec": [
+        "遥克",
+        "辛巳",
+        "丑",
+        "寅"
+      ],
+      "level": 4,
+      "q": "辛巳日　丑时　寅将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   未天后    午贵人    子天空",
+      "ans": "午蒿矢午神克日优先",
+      "given": "[昴星昴星申[maoxingyin_be",
+      "first": "2026-09-16",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "待归因"
+      ],
+      "diagnosis": "",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "661c2035-0bb3-4556-b50e-3ad87069fc70",
+          "question_id": "q9",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "四课|丙子|卯|亥",
+      "spec": [
+        "四课",
+        "丙子",
+        "卯",
+        "亥"
+      ],
+      "level": 4,
+      "q": "丙子日　卯时　亥将 ⏎ 问：写出一至四课的上神（四个字，按课序）",
+      "ans": "丑酉申辰",
+      "given": "[巳丑]",
+      "first": "2026-09-16",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "步骤遗漏"
+      ],
+      "diagnosis": "丙子日第三、四课上神误填，支侧四课链读取中断。",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "894024e2-7b78-495b-a3c1-b1fc928a32ba",
+          "question_id": "q8",
+          "stage": "sike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
+    },
+    {
+      "key": "涉害|庚午|酉|丑",
+      "spec": [
+        "涉害",
+        "庚午",
+        "酉",
+        "丑"
+      ],
+      "level": 4,
+      "q": "庚午日　酉时　丑将 ⏎ 四课（右起第一课） ⏎   四课      三课      二课      一课       ⏎   寅天后    戌六合    辰玄武",
+      "ans": "辰1重",
+      "given": "[寅[shehaiafter_biyon",
+      "first": "2026-09-16",
+      "streak": 2,
+      "due": "2026-09-20",
+      "reasons": [
+        "步骤遗漏"
+      ],
+      "diagnosis": "庚午日涉害候选辰、寅同为1重，漏做同重后的孟仲季裁决，误取寅/子而非临仲之辰。",
+      "baseline_pending": false,
+      "sources": [
+        {
+          "source": "web-trainer",
+          "session_id": "894024e2-7b78-495b-a3c1-b1fc928a32ba",
+          "question_id": "q9",
+          "stage": "zeike",
+          "topic": "贼克＋比用＋涉害＋遥克＋昴星＋别责＋八专＋伏吟＋返吟"
+        }
+      ],
+      "source": "web-trainer",
+      "archived": "2026-09-21",
+      "exit_reason": "连续两次答对，完成复现"
     }
   ],
   "weak_groups": {},
@@ -6938,6 +6992,119 @@
       "n": 9,
       "source": "web-trainer",
       "date": "2026-09-17"
+    },
+    "ae08e209-f624-47c8-aab2-94b5139854b9": {
+      "recorded": true,
+      "right": 10,
+      "n": 10,
+      "source": "web-trainer",
+      "date": "2026-09-21",
+      "results": [
+        {
+          "key": "别责|辛丑|巳|申",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "四课|甲子|丑|申",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "贼克|戊午|未|亥",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "涉害|癸亥|戌|寅",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "涉害|庚午|戌|子",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "遥克|癸酉|子|戌",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "比用|辛卯|巳|丑",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "遥克|己巳|午|申",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "比用|丁酉|卯|辰",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "三传|戊午|戌|亥",
+          "correct": true,
+          "mistakes": []
+        }
+      ]
+    },
+    "fc13a93a-c29a-47f1-92a6-9d6fef419a97": {
+      "recorded": true,
+      "right": 9,
+      "n": 9,
+      "source": "web-trainer",
+      "date": "2026-09-21",
+      "results": [
+        {
+          "key": "四课|癸丑|辰|申",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "四课|甲午|申|戌",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "别责|丁酉|子|戌",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "八专|丁未|戌|丑",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "别责|辛丑|午|酉",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "涉害|乙卯|申|亥",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "遥克|辛巳|丑|寅",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "四课|丙子|卯|亥",
+          "correct": true,
+          "mistakes": []
+        },
+        {
+          "key": "涉害|庚午|酉|丑",
+          "correct": true,
+          "mistakes": []
+        }
+      ]
     }
   }
 }
