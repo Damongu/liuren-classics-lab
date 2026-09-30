@@ -136,6 +136,7 @@ def check_file(path: Path) -> list[Issue]:
 def check_vault(root: Path) -> list[Issue]:
     """遍历 vault 下 SCAN_ROOTS 所指目录内所有 md，返回全部 Issue。"""
     issues: list[Issue] = []
+    seen_anchors = {}
     for sub in SCAN_ROOTS:
         d = root / sub
         if not d.is_dir():
@@ -145,6 +146,18 @@ def check_vault(root: Path) -> list[Issue]:
             if p.name.startswith("00-") or p.name.startswith("_"):
                 continue
             issues.extend(check_file(p))
+            fm_text, _ = split_fm(p.read_text(encoding="utf-8"))
+            try:
+                data = yaml.safe_load(fm_text) if fm_text else {}
+            except yaml.YAMLError:
+                continue
+            if isinstance(data, dict) and isinstance(data.get("anchor_id"), str):
+                anchor = data["anchor_id"]
+                if anchor in seen_anchors:
+                    issues.append(Issue(str(p), "anchor_id", "error",
+                                        f"全局锚点重复，另一条在 {seen_anchors[anchor]}"))
+                else:
+                    seen_anchors[anchor] = str(p)
     return issues
 
 

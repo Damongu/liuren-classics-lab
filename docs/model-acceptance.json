@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-30T13:53:23.951501+00:00",
+  "readiness": {
+    "status": "not_ready",
+    "provider": "deepseek",
+    "reason": "credentials_not_configured"
+  },
+  "cases_prepared": 24,
+  "cases": [],
+  "semantic_review": "待用户人工核阅",
+  "boundary": "不认证长会话稳定性，不写学生成绩，不搜索替代凭据",
+  "status": "blocked",
+  "reason": "credentials_not_configured"
+}

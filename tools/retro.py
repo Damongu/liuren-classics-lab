@@ -605,6 +605,7 @@ def show_proposals(d):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="教学复盘引擎（只起草，不自动改流程）")
+    ap.add_argument("--curriculum", choices=("legacy", "v3"), default="legacy")
     ap.add_argument("--brief", action="store_true", help="开场简报")
     ap.add_argument("--close", action="store_true", help="收尾复盘并起草提案")
     ap.add_argument("--check", action="store_true", help="只跑规则，不写盘")
@@ -617,7 +618,7 @@ def main(argv=None):
     ap.add_argument("--rules", action="store_true", help="列规则与阈值")
     args = ap.parse_args(argv)
 
-    ts = tutor.load_state()
+    ts = tutor.load_state() if args.curriculum == "legacy" else {}
     sig = load_signals()
     d = load_retro()
 
@@ -654,13 +655,21 @@ def main(argv=None):
         return 0
 
     if args.brief:
-        show_brief(ts, sig, d)
+        if args.curriculum == "v3":
+            import retro_v3
+            retro_v3.show_brief(sys.modules[__name__], sig, d)
+        else:
+            show_brief(ts, sig, d)
         d["last_brief"] = datetime.now().strftime("%Y-%m-%d %H:%M")
         save_retro(d)
         return 0
 
     if args.check or args.close:
-        found = run_rules(ts, sig)
+        if args.curriculum == "v3":
+            import retro_v3
+            found = retro_v3.run_rules(sys.modules[__name__], sig)
+        else:
+            found = run_rules(ts, sig)
         if args.check:
             show_close(found, [], d, dry=True)
             return 0

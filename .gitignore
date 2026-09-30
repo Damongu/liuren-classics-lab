@@ -5,6 +5,7 @@ __pycache__/
 venv/
 .conda/
 .pytest_cache/
+artifacts/qa/
 liuren-paipan/.training-results.jsonl
 
 # Obsidian：多端同步的主要冲突源，本地界面状态不必入库

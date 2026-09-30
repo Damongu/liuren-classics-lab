@@ -533,6 +533,14 @@ def h_rengui(path: Path):
 # ---------------------------------------------------------------- 书目登记
 
 BOOKS = {
+    "中黄经": dict(
+        file="大六壬五變中黃經_閱讀整理版.docx",
+        handler=None,
+        dating="题宋郭凝神；补完直解及释义层断代待核",
+        evidence="待核·按文本层取证",
+        reason="★★★", risk="待查",
+        note="保留经文、释文、眉批、异本校记和课盘表格；专用 OOXML 导入器。",
+    ),
     "太白阴经": dict(
         file="神机制敌太白阴经.pdf",
         handler=h_taibai,
@@ -784,6 +792,12 @@ def build_one(name: str, dry: bool, force: bool):
     if not src.exists():
         print(f"✗ {name}：源文件缺失 sources/{meta['file']}")
         return None
+
+    if name == "中黄经":
+        from import_zhonghuang import import_book
+        result = import_book(src, VAULT, dry=dry, force=force)
+        print(f"✓ 中黄经：{result['n']} 条，{result['chars']} 字（原字形分层保留）")
+        return {k: result[k] for k in ("book", "n", "chars")}
 
     try:
         entries, version = meta["handler"](src)

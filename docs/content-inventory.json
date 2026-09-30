@@ -1,0 +1,446 @@
+{
+  "profiles": {
+    "凝神子": [
+      {
+        "anchor_id": "凝神子-補完直解六壬五變中黃經正文-卷之一-002",
+        "quote": "日為己身最要明，三傳無擊克無刑。",
+        "path": "10-底本\\唐宋层\\中黄经\\中黄经-003 補完直解六壬五變中黃經正文-卷之一.md",
+        "note_sha256": "65f52eba92d7dddfb437571c7584c6d5a0e2a1afa6eaf5ae0d39ae01f321871f",
+        "author": "凝神子",
+        "pending": true,
+        "polluted": false,
+        "layer": "经文"
+      },
+      {
+        "anchor_id": "凝神子-補完直解六壬五變中黃經正文-卷之一-006",
+        "quote": "莫執行年本命親，建合干下地支分。",
+        "path": "10-底本\\唐宋层\\中黄经\\中黄经-003 補完直解六壬五變中黃經正文-卷之一.md",
+        "note_sha256": "65f52eba92d7dddfb437571c7584c6d5a0e2a1afa6eaf5ae0d39ae01f321871f",
+        "author": "凝神子",
+        "pending": true,
+        "polluted": false,
+        "layer": "经文"
+      }
+    ],
+    "略决": [
+      {
+        "anchor_id": "略决-第10章-所胜法-001",
+        "quote": "王气所胜，法忧县官。",
+        "path": "10-底本\\唐宋层\\占事略决\\占事略决-第10章 所胜法.md",
+        "note_sha256": "ce57d28a2f6b41fa52e59607fcce9e29bb38391467069bb147057e29c1249b2a",
+        "author": "略决",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "略决-第11章-五行相生相克法-001",
+        "quote": "木生火，火生土，土生金，金生水，水生木。",
+        "path": "10-底本\\唐宋层\\占事略决\\占事略决-第11章 五行相生相克法.md",
+        "note_sha256": "b73472c948f63b00733ed0fcba2e23b9e26deea5bc3243609dc60c1167df49be",
+        "author": "略决",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "太白": [
+      {
+        "anchor_id": "太白-玄女式-001",
+        "quote": "玄女式者，一名六壬式，玄女所造，主北方万物之始。",
+        "path": "10-底本\\唐宋层\\太白阴经\\太白阴经-玄女式.md",
+        "note_sha256": "67e812cf8b8be02bc02ca16dd24f40af7fc3cfbab4858a8b53a14ff16fcd0774",
+        "author": "太白",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "太白-推伏吟反吟法-001",
+        "quote": "诸神自临其冲曰反吟，诸神自临曰\n伏吟。",
+        "path": "10-底本\\唐宋层\\太白阴经\\太白阴经-推伏吟反吟法.md",
+        "note_sha256": "5a2e40cf95794afb3d11be619215a473864efd13af70d565263a6a3cf1bf1715",
+        "author": "太白",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "心镜": [
+      {
+        "anchor_id": "心镜-卷一-宗首九科门-元首卦-001",
+        "quote": "四课阴阳一克下，卦名元首是初神。",
+        "path": "10-底本\\唐宋层\\六壬心镜\\六壬心镜-卷一 宗首九科门 元首卦.md",
+        "note_sha256": "50a36ff9b15609128d94a1f97e66c77a7f3e93ea3809c3589351fa2d8ec0bdef",
+        "author": "心镜",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "心镜-卷一-宗首九科门-信任卦-001",
+        "quote": "信任伏吟神，行人立至门。",
+        "path": "10-底本\\唐宋层\\六壬心镜\\六壬心镜-卷一 宗首九科门 信任卦.md",
+        "note_sha256": "72fd20eccbcaaac875eb62ea8fdec4a4f7fef13c4ea56398a045cebba5fa451b",
+        "author": "心镜",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "景祐": [
+      {
+        "anchor_id": "景祐-下卷-释天乙第二十八-001",
+        "quote": "天乙常背天门向地户而行。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释天乙第二十八.md",
+        "note_sha256": "892a1bb744661d4fd12d7b1c63afeeed6e045822c7592edddd8e0f7ab52725d1",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "景祐-下卷-释行年第三十五-001",
+        "quote": "女一岁，从壬申逆行，一岁移一辰，一岁壬申，十一岁壬午。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释行年第三十五.md",
+        "note_sha256": "46775342b409e5c5ecacb075e4c18ebf86d641d5702269b53f3f3f113b0069ac",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "武经": [
+      {
+        "anchor_id": "武经-后集卷二十-占候五-入式课加临永用例-001",
+        "quote": "四课之中以下克上为用如无下克上始以上克下为用",
+        "path": "10-底本\\唐宋层\\武经总要\\武经总要-后集卷二十 占候五 入式课加临永用例.md",
+        "note_sha256": "8edb6b93f7c35fef0f59f102e0f868d78d64e59eedc7a53aaec6aa4d6436e1a0",
+        "author": "武经",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "武经-后集卷二十-占候五-六壬-001",
+        "quote": "夫临戎对敌洞究术数辨休王而去拘忌则天人之际有以相助欤",
+        "path": "10-底本\\唐宋层\\武经总要\\武经总要-后集卷二十 占候五 六壬.md",
+        "note_sha256": "015e3248cf595183960ed9a594f409f0964f3f133cc5a85451486446bba8a7d7",
+        "author": "武经",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "邵彦和": [
+      {
+        "anchor_id": "邵彦和-01-韩太守占祈雪-第一章-天时-002",
+        "quote": "数日来，天气和暖，宛如三九月。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-01 韩太守占祈雪（第一章 天时）.md",
+        "note_sha256": "89ccfce3e9f4c99acbaf8305e4ec30b5d76aa712d86d1a1f227a4ee6010dede1",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      },
+      {
+        "anchor_id": "邵彦和-02-某占晴雨-第一章-天时-002",
+        "quote": "润下课，玄临子作用，中传龙又乘申，末又是夜青龙。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-02 某占晴雨（第一章 天时）.md",
+        "note_sha256": "81d8cd0b155b17f052292da2fa5043992092a08327f41977e8d4b1cf4148d4e0",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "阿甲": [
+      {
+        "anchor_id": "阿甲-01-韩太守占祈雪-第一章-天时-001",
+        "quote": "爱函按：盖此课，火伏于下，水升乎上，不拘占雪占雨，皆当日有。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-01 韩太守占祈雪（第一章 天时）.md",
+        "note_sha256": "89ccfce3e9f4c99acbaf8305e4ec30b5d76aa712d86d1a1f227a4ee6010dede1",
+        "author": "阿甲",
+        "pending": true,
+        "polluted": false,
+        "layer": "清人爱函按·显式首句"
+      },
+      {
+        "anchor_id": "阿甲-03-浙江大旱州官占雨-第一章-天时-001",
+        "quote": "爱函按：盖丑在癸上，即癸丑为初传，而中戌末未，叠叠刑开，使癸水下注。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-03 浙江大旱州官占雨（第一章 天时）.md",
+        "note_sha256": "82c3f27ac72e917a1eaee5d83c7201490363e736ed158efd762d44e4cbb68cfb",
+        "author": "阿甲",
+        "pending": true,
+        "polluted": false,
+        "layer": "清人爱函按·显式首句"
+      }
+    ],
+    "林景行": [
+      {
+        "anchor_id": "林景行-01-韩太守占祈雪-第一章-天时-001",
+        "quote": "己酉年乙亥月己卯日，十月初四。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-01 韩太守占祈雪（第一章 天时）.md",
+        "note_sha256": "89ccfce3e9f4c99acbaf8305e4ec30b5d76aa712d86d1a1f227a4ee6010dede1",
+        "author": "林景行",
+        "pending": true,
+        "polluted": false,
+        "layer": "现代缘生谛·显式首句"
+      },
+      {
+        "anchor_id": "林景行-03-浙江大旱州官占雨-第一章-天时-001",
+        "quote": "乙巳年乙酉月癸丑日，八月十五。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-03 浙江大旱州官占雨（第一章 天时）.md",
+        "note_sha256": "82c3f27ac72e917a1eaee5d83c7201490363e736ed158efd762d44e4cbb68cfb",
+        "author": "林景行",
+        "pending": true,
+        "polluted": false,
+        "layer": "现代缘生谛·显式首句"
+      }
+    ],
+    "壬归": [
+      {
+        "anchor_id": "壬归-卷之一-提纲例约-明三传之始终第三-001",
+        "quote": "凡初传吉，末传凶，事主先易后难。初传凶，末传吉，事主先难后易。",
+        "path": "10-底本\\唐宋层\\壬归\\壬归-卷之一 提纲例约 明三传之始终第三.md",
+        "note_sha256": "3ec725f69d89a6082c089cd955c71324180b416eae4a5ca44d74ea02819b5c30",
+        "author": "壬归",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "壬归-卷之一-提纲例约-定贵神之吉凶第四-001",
+        "quote": "然此特其大略也，触类而长之，则有不可胜言者在焉。",
+        "path": "10-底本\\唐宋层\\壬归\\壬归-卷之一 提纲例约 定贵神之吉凶第四.md",
+        "note_sha256": "3efbc308c44e14f62df72e2b6ba7aa39cd73f1ebae273f1d32b92a5507f8161c",
+        "author": "壬归",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "卜筮残": [
+      {
+        "anchor_id": "卜筮残-残卷正文-课用法第三起-001",
+        "quote": "经曰：始之与终，传自相穷，进退轻重，何喜何恐。",
+        "path": "10-底本\\唐宋层\\卜筮书残卷\\卜筮书残卷-正文.md",
+        "note_sha256": "ff05a49f8cf32ac8f89eb448cf50b0a5c673eb3963a3875a6bbc99e029661b33",
+        "author": "卜筮残",
+        "pending": true,
+        "polluted": true,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "卜筮残-底本说明-001",
+        "quote": "方括号内的《景祐六壬神定经》",
+        "path": "10-底本\\唐宋层\\卜筮书残卷\\卜筮书残卷-底本说明.md",
+        "note_sha256": "4ba7cf81462678af6cc38c2780cc3f6f42a5e61062a94d278c1919e169a59755",
+        "author": "卜筮残",
+        "pending": true,
+        "polluted": true,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "大全查手": [
+      {
+        "anchor_id": "大全查手-十干寄宫-001",
+        "quote": "甲课寅兮乙课辰，丙戊课巳不须论。",
+        "path": "10-底本\\六壬大全\\01-第一册 起例\\002-十干寄宫.md",
+        "note_sha256": "f0b0a3ac13b0a23467889646a0ff2b808ef369eacd25ec691be61cdb43cd58d1",
+        "author": "大全查手",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "大全查手-贼克法-001",
+        "quote": "一下克上曰重审，一上克下曰元首。",
+        "path": "10-底本\\六壬大全\\01-第一册 起例\\003-贼克法.md",
+        "note_sha256": "82c750842d6a1d33fdc09a0657dc16d2fb9f8b1f040f3d6ec68c8becec4b67bb",
+        "author": "大全查手",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ]
+  },
+  "cards": {
+    "本命": [
+      {
+        "anchor_id": "景祐-下卷-释次客第三十三-001",
+        "quote": "第九客用月将加本命，第十客用月将加行年",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释次客第三十三.md",
+        "note_sha256": "888635f394b0ad75c5c2a9c826f870430980c844185285dfc32f9925952ff381",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "邵彦和-105-袁知镇癸酉生三十六岁占终身-第四章-终身-002",
+        "quote": "末传酉为日败，又是本命，而加于亥，主自身自败坏矣。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-105 袁知镇癸酉生三十六岁占终身（第四章 终身）.md",
+        "note_sha256": "ef55ae1053397c074b853c9ba466db9f3ff754fe3b567ac98a65aec3c42e93f9",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "行年": [
+      {
+        "anchor_id": "景祐-下卷-释行年第三十五-001",
+        "quote": "男一岁从丙寅顺行，从一岁移一辰，十一岁丙子，二十一岁丙戌。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释行年第三十五.md",
+        "note_sha256": "46775342b409e5c5ecacb075e4c18ebf86d641d5702269b53f3f3f113b0069ac",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "邵彦和-115-丁丑人二十五岁占终身-第四章-终身-003",
+        "quote": "占人二十五岁，行年在寅见午，午 为日之禄神，并干支旺相，故无恙。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-115 丁丑人二十五岁占终身（第四章 终身）.md",
+        "note_sha256": "329c418458b081891e24cd350d8dc562f347d2e59d9a0a5342ab3619f768da73",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "年命上神": [
+      {
+        "anchor_id": "凝神子-大六壬五變中黃經釋義-卷之一-釋五行正形第五-023",
+        "quote": "本命甲午人，命上見卯",
+        "path": "10-底本\\唐宋层\\中黄经\\中黄经-032 大六壬五變中黃經釋義-卷之一-釋五行正形第五.md",
+        "note_sha256": "f01746162a003341a4889e5257a508f9ce0db036de28c265350b3989c0831ca9",
+        "author": "凝神子",
+        "pending": true,
+        "polluted": false,
+        "layer": "释文／序文（署名待核）"
+      },
+      {
+        "anchor_id": "邵彦和-115-丁丑人二十五岁占终身-第四章-终身-003",
+        "quote": "占人二十五岁，行年在寅见午，午 为日之禄神，并干支旺相，故无恙。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-115 丁丑人二十五岁占终身（第四章 终身）.md",
+        "note_sha256": "329c418458b081891e24cd350d8dc562f347d2e59d9a0a5342ab3619f768da73",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "禄": [
+      {
+        "anchor_id": "邵彦和-115-丁丑人二十五岁占终身-第四章-终身-003",
+        "quote": "午 为日之禄神，并干支旺相，故无恙。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-115 丁丑人二十五岁占终身（第四章 终身）.md",
+        "note_sha256": "329c418458b081891e24cd350d8dc562f347d2e59d9a0a5342ab3619f768da73",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      },
+      {
+        "anchor_id": "邵彦和-21-林丞务丙辰生五十四岁占宅-第二章-宅墓-002",
+        "quote": "末传禄神，又加空上，禄神既空，前程不 永。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-21 林丞务丙辰生五十四岁占宅（第二章 宅墓）.md",
+        "note_sha256": "c847c5ad81a113e880bb6eca07b3cc1070e6c0c2e13f5b8eee724280673a4812",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "马": [
+      {
+        "anchor_id": "邵彦和-93-童巡检丁卯生四十三岁占前程-第三章-前程仕进-002",
+        "quote": "初驿马动，便见起程。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-93 童巡检丁卯生四十三岁占前程（第三章 前程仕进）.md",
+        "note_sha256": "fa44dbe53aae7430b44042f3467907f38f9d467079b2e2f746dd513f1077a4c8",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      },
+      {
+        "anchor_id": "邵彦和-48-徐教授丙子生三十一岁占前程-第三章-前程仕进-002",
+        "quote": "十一月天马天在寅",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-48 徐教授丙子生三十一岁占前程（第三章 前程仕进）.md",
+        "note_sha256": "bfa2fef809f18c8e3bebd4ed20827166a77e0214108a5bf80b612ebc478c580c",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ],
+    "贵人": [
+      {
+        "anchor_id": "景祐-下卷-释天乙第二十八-001",
+        "quote": "天乙常以甲戊庚日，旦治大吉，暮治小吉。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释天乙第二十八.md",
+        "note_sha256": "892a1bb744661d4fd12d7b1c63afeeed6e045822c7592edddd8e0f7ab52725d1",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "景祐-下卷-释天官第二十九-001",
+        "quote": "天乙居中贵神主，帝王之象，家在己丑，土神。临行年日辰利",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释天官第二十九.md",
+        "note_sha256": "aa82ba08241e9c5cb18a572e7fea050cadd0274e230e3c8d342d2e12a30a4718",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "天乙": [
+      {
+        "anchor_id": "景祐-下卷-释天乙第二十八-001",
+        "quote": "天乙常背天门向地户而行。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释天乙第二十八.md",
+        "note_sha256": "892a1bb744661d4fd12d7b1c63afeeed6e045822c7592edddd8e0f7ab52725d1",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      },
+      {
+        "anchor_id": "景祐-下卷-释天官第二十九-001",
+        "quote": "天乙居中贵神主，帝王之象，家在己丑，土神。",
+        "path": "10-底本\\唐宋层\\景祐六壬神定经\\景祐六壬神定经-下卷 释天官第二十九.md",
+        "note_sha256": "aa82ba08241e9c5cb18a572e7fea050cadd0274e230e3c8d342d2e12a30a4718",
+        "author": "景祐",
+        "pending": true,
+        "polluted": false,
+        "layer": "整条（原注混排待核）"
+      }
+    ],
+    "驿马": [
+      {
+        "anchor_id": "邵彦和-163-僧占举请长老望州中文字到否-第十二章-行人书信-002",
+        "quote": "盖初传驿马乘后为恩泽神",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-163 僧占举请长老望州中文字到否（第十二章 行人书信）.md",
+        "note_sha256": "2bb37edcb182bcb25f57f98f08fecd74f5c78547c6105d7666d236a4ab7539b3",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      },
+      {
+        "anchor_id": "邵彦和-93-童巡检丁卯生四十三岁占前程-第三章-前程仕进-002",
+        "quote": "初驿马动，便见起程。",
+        "path": "10-底本\\唐宋层\\六壬断案\\六壬断案-93 童巡检丁卯生四十三岁占前程（第三章 前程仕进）.md",
+        "note_sha256": "fa44dbe53aae7430b44042f3467907f38f9d467079b2e2f746dd513f1077a4c8",
+        "author": "邵彦和",
+        "pending": true,
+        "polluted": false,
+        "layer": "显式署名原辞段"
+      }
+    ]
+  }
+}

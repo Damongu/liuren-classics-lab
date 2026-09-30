@@ -24,6 +24,9 @@ sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 from tutor import (MIXED_TOPICS, TOPIC_CORRECT, TOPIC_WINDOW, due_items,  # noqa: E402
                    load_state, practice_ready, record_external_review,
                    record_external_session, topic_score_ready)
+import curriculum_v3  # noqa: E402
+import vault_sources  # noqa: E402
+import catalogue  # noqa: E402
 
 
 WEB_ROOT = ROOT / "web"
@@ -1011,6 +1014,24 @@ class TrainerHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path.startswith("/api/v3/"):
+            query = parse_qs(parsed.query)
+            try:
+                if parsed.path == "/api/v3/status":
+                    result = curriculum_v3.status()
+                elif parsed.path == "/api/v3/catalogue":
+                    result = catalogue.catalogue()
+                elif parsed.path == "/api/v3/session":
+                    result = curriculum_v3.get_session(query.get("id", [""])[0])
+                elif parsed.path == "/api/v3/sources":
+                    result = {"sources": vault_sources.training_search(query.get("q", [""])[0])}
+                else:
+                    self._json({"error": "接口不存在"}, HTTPStatus.NOT_FOUND)
+                    return
+                self._json(result)
+            except ValueError as exc:
+                self._json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
         if parsed.path == "/api/meta":
             self._json({
                 "days": [gz_name(i) for i in range(60)],
@@ -1061,6 +1082,7 @@ class TrainerHandler(SimpleHTTPRequestHandler):
         if path not in (
             "/api/check", "/api/result", "/api/remediation/task",
             "/api/remediation/result", "/api/review", "/api/review/result",
+            "/api/v3/start", "/api/v3/submit", "/api/v3/human-review", "/api/v3/teachback",
         ):
             self._json({"error": "接口不存在"}, HTTPStatus.NOT_FOUND)
             return
@@ -1069,7 +1091,13 @@ class TrainerHandler(SimpleHTTPRequestHandler):
             if size > 100_000:
                 raise ValueError("请求过大")
             payload = json.loads(self.rfile.read(size) or b"{}")
+            if not isinstance(payload, dict):
+                raise ValueError("请求须为 JSON 对象")
             handlers = {
+                "/api/v3/start": curriculum_v3.start_session,
+                "/api/v3/submit": curriculum_v3.submit,
+                "/api/v3/human-review": curriculum_v3.human_review,
+                "/api/v3/teachback": curriculum_v3.teachback,
                 "/api/check": check_answers,
                 "/api/result": return_training_result,
                 "/api/remediation/task": create_remediation_task,

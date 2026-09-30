@@ -1769,6 +1769,8 @@ def show_wrong_list(st):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="六壬交互式训练器（先教学，后练习）")
+    ap.add_argument("--curriculum", choices=("legacy", "v3"), default="legacy",
+                    help="v3 为独立六关体系，旧成绩保留")
     ap.add_argument("--level", "-l", type=int, help="指定关卡 1-9")
     ap.add_argument("--topic", choices=TOPIC_CHOICES,
                     help="分项练习：关卡1寄宫/旬空/遁干，"
@@ -1795,6 +1797,22 @@ def main(argv=None):
     ap.add_argument("--yes", action="store_true",
                     help="确认已完成教学，跳过训练前交互确认")
     a = ap.parse_args(argv)
+
+    if a.curriculum == "v3":
+        import curriculum_v3
+        if a.teachback_pass is not None:
+            try:
+                result = curriculum_v3.teachback({"level": a.teachback_pass, "note": a.note})
+                print(json.dumps(result, ensure_ascii=False))
+                return 0
+            except ValueError as exc:
+                print(exc)
+                return 2
+        if a.status or a.list:
+            print(json.dumps(curriculum_v3.status() if a.status else curriculum_v3.LEVELS,
+                             ensure_ascii=False, indent=2))
+        print("v3 正式作答：http://127.0.0.1:8765/curriculum.html")
+        return 0
 
     st = load_state()
     if a.list:

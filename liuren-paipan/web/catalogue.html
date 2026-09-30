@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>六壬带读 · 统一验收</title><link rel="stylesheet" href="/curriculum.css">
+<style>.reading{overflow-wrap:anywhere;line-height:1.8}.reading h2{font-size:1.25rem;margin-top:1.8rem}.reading h3{font-size:1.1rem}.reading blockquote{margin:1rem 0;padding:.75rem 1rem;border-left:3px solid #9aaca0;background:#f3f5f0}.reading p{white-space:pre-wrap}code{overflow-wrap:anywhere}.toolbar label{min-width:0}#command{display:block;padding:1rem;background:#f1eee7}#error{color:#9d3020}</style></head>
+<body><main>
+<header><p class="eyebrow">原文先行 · 按书取证</p><h1>六壬带读 · 统一验收</h1>
+<p>逐书查看身份、术语、引用范围与原文示例，再用六关训练检查操作和断辞。</p><a href="/curriculum.html">进入六关训练</a></header>
+<section class="panel"><h2>验证状态</h2><p id="verification">读取中…</p><p>在仓库根目录运行 <code>.\验收.ps1</code> 重做本机检查。配置 Pi 的 DeepSeek 凭据后，<code>.\验收.ps1 -Model</code> 才会调用模型；课堂文义仍需你核阅。</p><p id="error" role="status"></p></section>
+<section class="panel"><h2>十二份书魂</h2><label>选择书魂<select id="book"></select></label>
+<p id="source-count"></p><code id="command"></code><p><button id="copy-command" type="button" class="secondary">复制启动命令</button></p>
+<div id="profile" class="reading"></div></section>
+<section class="panel"><h2>八张辅助卡</h2><p>卡片已填完；原刻待核与义项分歧在卡内保留。同名不能直接证明两家含义相同。</p>
+<label>选择卡片<select id="card"></select></label><div id="card-text" class="reading"></div></section>
+</main><script src="/catalogue.js" defer></script></body></html>

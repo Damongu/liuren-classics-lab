@@ -1,0 +1,14 @@
+:root{font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;color:#223b38;background:#f4f3ed;font-size:16px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0}main{max-width:1080px;margin:auto;padding:32px 20px 70px}header{margin-bottom:28px}
+h1{font-size:36px;letter-spacing:.05em;margin:4px 0 10px}h2{font-size:22px;margin-top:0}h3{font-size:18px}.eyebrow{color:#788779;font-size:13px;letter-spacing:.09em}
+.panel{background:#fffdf8;border:1px solid #dce2d8;border-radius:14px;padding:24px;margin-bottom:20px}.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:22px}
+.level{border-left:3px solid #a6bbae;padding:10px 14px;background:#f2f6f0}.level strong{display:block}.level small{color:#66766b}
+.toolbar{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}label{display:block;margin:12px 0;color:#3e5149}input,select,textarea{display:block;font:inherit;padding:10px;border:1px solid #bccdc1;border-radius:7px;background:white;width:100%;color:#213831}textarea{resize:vertical}
+.toolbar label{flex:1;min-width:220px}.toolbar button{white-space:nowrap}
+.sike-group{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+button{font:inherit;border:0;border-radius:7px;padding:10px 18px;background:#285849;color:white;cursor:pointer}button.secondary{background:#e7eee7;color:#285849}button:disabled{opacity:.5;cursor:default}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.citation{padding:14px;border:1px solid #dce2d8;margin:12px 0;border-radius:8px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4ed;padding:14px;border-radius:7px;font:inherit;font-size:14px}a{color:#285849}.error{color:#a33a2e}.feedback{border-left:3px solid #6b9173;padding-left:18px;margin:20px 0}
+#rubric label{display:flex;gap:10px}#rubric input{width:auto}.source-hit{padding:12px;border-bottom:1px solid #dce2d8}.source-hit code{overflow-wrap:anywhere}table{border-collapse:collapse;margin:15px 0}td,th{padding:10px;border:1px solid #ccd7cc}
+[hidden]{display:none!important}@media(max-width:600px){main{padding:20px 12px}.panel{padding:17px}h1{font-size:30px}.toolbar button{flex:1}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.toolbar label{flex-basis:100%;min-width:0}.toolbar button{min-width:120px}.sike-group{gap:6px}.sike-group label{font-size:13px}.sike-group select{padding:8px 3px}}

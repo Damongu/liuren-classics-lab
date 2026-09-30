@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>六壬带读 六关训练</title>
+  <link rel="stylesheet" href="/curriculum.css">
+</head>
+<body>
+<main>
+  <header><p class="eyebrow">宋本带读 · 原文与操作相互核验</p><h1>六关训练</h1>
+    <p>先做一次排盘体检，再练课体、年命与断辞。结构由排盘器判分；开放断辞另作人工文义验收。</p>
+    <a href="/catalogue.html">书魂与辅助卡</a> · <a href="/">原排盘训练台</a></header>
+  <section class="panel"><h2>学习进度</h2><div id="levels" class="levels"></div>
+    <div class="toolbar"><label>本轮关卡<select id="level"></select></label>
+      <button id="start" type="button">开始12题</button><button id="review" class="secondary" type="button">到期复现</button>
+      <button id="exam" class="secondary" type="button">结课测5题</button></div>
+    <p id="status" role="status" aria-live="polite"></p>
+    <label>恢复最近会话<select id="recent"><option value="">选择会话</option></select></label>
+    <button id="resume" class="secondary" type="button">继续</button>
+  </section>
+  <section id="exercise" class="panel" hidden>
+    <p id="progress" class="eyebrow"></p><h2 id="prompt"></h2>
+    <label>切换本轮题目<select id="question-nav"></select></label>
+    <form id="answer-form"><div id="fields" class="fields"></div>
+      <div id="open-fields" hidden>
+        <label>独立断辞<textarea id="prose" rows="5"></textarea></label>
+        <label>逐步判断理由<textarea id="reasoning" rows="4"></textarea></label>
+        <label>证据边界与反例<textarea id="boundary" rows="3"></textarea></label>
+        <h3>每步锚回原文</h3><p>至少三条依据，每条保留原句和它支持的判断。未核原刻的录文只作待核出处。</p>
+        <div class="toolbar"><label>原文关键词<input id="source-query" placeholder="例如 行年、己身、发用"></label>
+          <button id="source-search" type="button" class="secondary">检索原文</button></div>
+        <div id="source-results"></div><div id="citations"></div>
+        <button id="add-citation" type="button" class="secondary">添加依据</button>
+      </div>
+      <p><button id="submit" type="submit">提交首答并核验</button></p>
+    </form>
+    <div id="feedback" aria-live="polite"></div>
+    <div id="human" hidden><h3>断辞人工文义验收</h3>
+      <p>以下由用户验收，不能由 AI 点击代判。逐项检查后留下具体评语。</p>
+      <div id="rubric"></div><label>验收说明<textarea id="human-note" rows="3"></textarea></label>
+      <button id="human-submit" type="button">记录人工验收</button>
+    </div>
+    <button id="next" type="button" class="secondary" hidden>下一题</button>
+  </section>
+  <section class="panel"><h2>白话复述验收</h2><p>练习达到11/12后，脱离原文讲清操作与边界，再由伴读核对。填写本次复述通过的具体依据。</p>
+    <label>验收说明<textarea id="teachback-note" rows="3"></textarea></label>
+    <button id="teachback" type="button">记录当前关复述通过</button>
+  </section>
+</main>
+<script src="/curriculum.js"></script>
+</body>
+</html>

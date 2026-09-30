@@ -43,6 +43,7 @@ EXPECTED_DIRS = [
 
 # 期望的八部书及其最少条数（低于此数说明构建不完整）
 EXPECTED_BOOKS = {
+    "中黄经": 60,
     "太白阴经": 15,
     "占事略决": 30,
     "景祐六壬神定经": 35,
@@ -437,6 +438,12 @@ def main():
     check_pollution(vault, r)
     check_links(vault, r)
     check_dataview(vault, r)
+    from import_zhonghuang import verify_import
+    source_errors = verify_import(vault)
+    for error in source_errors:
+        r.err(error)
+    if not source_errors:
+        r.ok("中黄经条目、原文 hash 与段锚点完整")
     if args.v3:
         check_v3(vault, r)
 
