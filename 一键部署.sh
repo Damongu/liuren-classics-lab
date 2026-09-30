@@ -65,7 +65,13 @@ ok "$PY ($($PY -V 2>&1))"
 if [ "$ONLY_CHECK" -eq 1 ]; then
   step "自检"
   $PY tools/selfcheck.py
-  exit $?
+  rc_base=$?
+  step "自检（v3 frontmatter）"
+  $PY tools/selfcheck.py --v3 --quiet
+  rc_v3=$?
+  # 任一非零则整体非零；优先返回 base 的错误码
+  if [ "$rc_base" -ne 0 ]; then exit "$rc_base"; fi
+  exit "$rc_v3"
 fi
 
 # ---------------------------------------------------------------- 2. 依赖

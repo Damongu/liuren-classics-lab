@@ -372,10 +372,54 @@ def check_guides(vault: Path, r: Report):
         r.ok(f"{len(cards)} 张导读卡：底本齐、占位已填、与底本同步")
 
 
+def check_v3(vault: Path, r: Report):
+    """v3 frontmatter 层检查：调用 tools/check_v3_frontmatter.check_vault。
+
+    只在 `--v3` 开关打开时运行；输出一行汇总 + 有 error 时列出前几条。
+    v3 的 error 计入 selfcheck 的错误退出码；warn 计入 warn 退出码；info
+    （stub 骨架）不计入任何计数（骨架不算问题）。
+    """
+    if not r.quiet:
+        print("\n[9/8] v3 frontmatter（anchor_id / 作者 / 与六壬关系）")
+    # 延迟 import，避免默认路径无 PyYAML 时把整个 selfcheck 拖崩
+    try:
+        from check_v3_frontmatter import check_vault as v3_check_vault
+    except ImportError as e:
+        r.err(f"v3 frontmatter 检查器不可用：{e}（请确认 tools/check_v3_frontmatter.py 存在）")
+        return
+    issues = v3_check_vault(vault)
+    n_err = sum(1 for i in issues if i.severity == "error")
+    n_warn = sum(1 for i in issues if i.severity == "warn")
+    n_info = sum(1 for i in issues if i.severity == "info")
+    summary = f"v3 frontmatter 检查：{n_err} 条 error, {n_warn} 条 warn, {n_info} 条 info"
+    # 汇总行总是打出到 stdout，方便 --quiet 模式下也能被外部 parse
+    print(summary)
+    if n_err:
+        r.err(summary)
+        if not r.quiet:
+            # 打印前 5 条 error，方便直接定位
+            shown = 0
+            for i in issues:
+                if i.severity != "error":
+                    continue
+                print(f"      · {i.path}  ·  {i.field}: {i.message}")
+                shown += 1
+                if shown >= 5:
+                    break
+            if n_err > 5:
+                print(f"      … 其余 {n_err - 5} 条 error")
+    elif n_warn:
+        r.warn(summary)
+    else:
+        r.ok(summary)
+
+
 def main():
     ap = argparse.ArgumentParser(description="六壬 vault 自检")
     ap.add_argument("--vault", default="六壬vault")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--v3", action="store_true",
+                    help="额外跑 v3 frontmatter 检查（anchor_id / 作者 / 与六壬关系）")
     args = ap.parse_args()
 
     vault = Path(args.vault)
@@ -393,6 +437,8 @@ def main():
     check_pollution(vault, r)
     check_links(vault, r)
     check_dataview(vault, r)
+    if args.v3:
+        check_v3(vault, r)
 
     # 汇总
     print("\n" + "=" * 56)
