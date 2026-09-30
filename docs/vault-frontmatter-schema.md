@@ -34,9 +34,9 @@
 
 | 字段 | 类型 | required | 说明 |
 |---|---|---|---|
-| `anchor_id` | str | required（底本条目） | 格式 `<花名>-<卷篇 slugified>-<段序 3 位>`；正则 `^[^-]+-[^-]+-\d{3}$` |
+| `anchor_id` | str | required（底本条目） | 格式 `<花名>-<卷篇 slugified>-<段序 3 位>`；正则 `^.+-.+-\d{3}$`（允许卷篇内含 `-`，如断案 `01-韩太守占祈雪`） |
 | `作者` | str | required（底本条目） | 书魂花名，取自下方枚举 |
-| `与六壬关系` | str | required（底本条目） | 取值 `主体 / 旁证 / 遁甲 / 太乙 / 占候旁证 / N/A / 字典`；缺失时 checker 判 warn |
+| `与六壬关系` | str | required（底本条目） | **开放集**（甲方案），沿用上游 `build_vault.py` 已写入的细粒度分类，同时接受 v3 补充的粗粒度值。checker 只判「缺失」为 warn，不做 enum 校验。常见取值（供参考，非白名单）：<br>· 上游细粒度：`兵占背景 / 同源三式 / 同源三式·共用神名 / 同源三式·穷举立成表 / 本体规则 / 术语共享·干支分野 / 术语共享·德刑杀墓纳音 / 编纂背景·同编者杨维德 / 配套表·用禽法`<br>· v3 粗粒度：`主体 / 旁证 / 遁甲 / 太乙 / 占候旁证 / N/A / 字典`<br>Task 4 只补齐缺失字段，不修改已存在值。 |
 
 `作者` 枚举（12 位书魂花名）：
 
@@ -102,7 +102,7 @@
 | 无 YAML frontmatter | error | `frontmatter` |
 | YAML 解析失败 | error | `frontmatter` |
 | 缺 `anchor_id` | error（stub→info） | `anchor_id` |
-| `anchor_id` 不匹配 `^[^-]+-[^-]+-\d{3}$` | error（stub→info） | `anchor_id` |
+| `anchor_id` 不匹配 `^.+-.+-\d{3}$` | error（stub→info） | `anchor_id` |
 | 缺 `作者` | error（stub→info） | `作者` |
 | `作者` 不在花名枚举 | error（stub→info） | `作者` |
 | 缺 `与六壬关系` | warn（stub→info） | `与六壬关系` |

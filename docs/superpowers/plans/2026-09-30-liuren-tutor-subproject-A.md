@@ -28,7 +28,7 @@
 | 已有 frontmatter 中 `anchor_id` 已存在但格式不符 v3 规约 | 检查器识别为 error，报出但不擅自覆盖 | Task 2 |
 | 单文件多段原文（同书同章多小节） | anchor_id 生成器逐段生成不重复的 id | Task 3a |
 | 断案 md 内「爱函按：」「缘生谛：」段边界识别错误（漏切、错切） | Task 3b selftest 覆盖 4–6 条典型模式（段首、段中出现、伪匹配） | Task 3b |
-| 武经/太白按每条实际标注 `与六壬关系`，不能默认全部主体 | Task 4 规则表按 chapter 名精确打表（玄女式=主体；推五帝法=占候旁证；遁甲相关=遁甲；等） | Task 4 |
+| 武经/太白按每条实际标注 `与六壬关系`——**开放集，保留上游已写入的细粒度值**（如 `本体规则 / 兵占背景 / 同源三式·共用神名`），仅补齐缺失字段 | Task 4 只补齐缺失，不改写既有；未标注的按规则表 fallback | Task 4 |
 | `90-禄命辅助/` 骨架文件在子项目 D 未落地前被检查器扫到 | 检查器识别为 stub（frontmatter 里 `状态: stub`），不判 fail | Task 5 |
 | 上游 `--check` 因 anchor_id 缺失全部条目而红 | 集成必须在补齐后，先跑 Task 3a/3b 再跑 Task 6 | Task 6 依赖顺序 |
 
@@ -86,7 +86,7 @@ liuren-classics-lab/
 2. v3 新增字段：
    - `anchor_id` 格式为 `<花名>-<卷篇 slugified>-<段序 3 位>`（例 `太白-玄女式-001`、`邵彦和-01-韩太守占祈雪-001`、`阿甲-40-郑三公占坟地-001`）
    - `作者`：书魂花名字符串，取值枚举 `凝神子/略决/太白/心镜/景祐/武经/邵彦和/阿甲/林景行/壬归/卜筮残/大全查手`
-   - `与六壬关系` 取值域完整保留：`主体 / 旁证 / 遁甲 / 太乙 / 占候旁证 / N/A / 字典`
+   - `与六壬关系` 取值域**开放集**（甲方案）：沿用上游 `build_vault.py` 已写入的细粒度分类，同时接受 v3 粗粒度值 `主体 / 旁证 / 遁甲 / 太乙 / 占候旁证 / N/A / 字典`。checker 只判缺失，不做 enum 校验；Task 4 只补齐缺失字段，不改写既有值
    - `含内嵌注家`：可选，仅《大六壬断案》主 md 使用，值为花名列表 `[阿甲, 林景行]` 之类
 3. 每字段 required / optional 标记
 4. 三层语料的必须字段差异（宋本硬本 vs 唐本佐证 vs 大全字典）
@@ -161,7 +161,7 @@ Expected: `ModuleNotFoundError: No module named 'check_v3_frontmatter'`
 - [ ] **Step 5: 跑测试确认通过**
 
 Run: `python3 tools/check_v3_frontmatter_selftest.py -v`
-Expected: `Ran 4 tests ... OK`
+Expected: `Ran 7 tests ... OK`
 
 - [ ] **Step 6: Commit**
 
@@ -427,40 +427,42 @@ git commit -m "feat(vault): backfill anchor_id to all corpus entries"
 **Interfaces:**
 - Consumes: `.aime/vault-v3-gap.json` 的 `missing_liuren_relation` 列表；`liuren_relation_rules.RULES`
 - Produces:
-  - `backfill_liuren_relation.default_relation(book: str, chapter: str) -> str`——按规则表返回七取值之一
+  - `backfill_liuren_relation.default_relation(book: str, chapter: str) -> str`——按规则表返回 fallback 值
   - `liuren_relation_rules.RULES` 结构：`dict[book_penname, dict[chapter_pattern, relation]]`
+  - **幂等性**：只在 frontmatter **缺** `与六壬关系` 时写入；已存在任何非空值都跳过（哪怕值不在 v3 枚举里）
   - CLI: `python3 tools/backfill_liuren_relation.py [--vault 六壬vault] [--apply]`
 
-**规则表（写入 `liuren_relation_rules.py`）**：
+**规则表（写入 `liuren_relation_rules.py`）**：只作为**缺字段时的 fallback**，不覆盖上游 `build_vault.py` 已写入的细粒度值（如 `本体规则 / 兵占背景 / 同源三式·共用神名` 等）。
 
 ```python
+# fallback 规则,只在 frontmatter 缺 与六壬关系 时使用
 RULES = {
-    # 宋本主线六部：所有条目默认 主体
+    # 宋本主线六部:所有条目默认 主体
     "凝神子": {"*": "主体"},
     "心镜": {"*": "主体"},
     "景祐": {"*": "主体"},
     "壬归": {"*": "主体"},
 
-    # 断案三魂：全部 主体
+    # 断案三魂:全部 主体
     "邵彦和": {"*": "主体"},
     "阿甲": {"*": "主体"},
     "林景行": {"*": "主体"},
 
-    # 武经总要·后集卷二十一「六壬占法」= 主体；
-    # 其余「后集卷十六~二十占候五卷」按篇实际：
+    # 武经总要·后集卷二十一「六壬占法」= 主体;其余卷十六~二十占候五卷按篇实际
+    # (上游 build_vault.py 已给多数条目写了细粒度值,这里只 fallback 未写入的)
     "武经": {
-        "六壬占法": "主体",              # 卷二十一
+        "六壬占法": "主体",
         "占候·天文": "占候旁证",
         "占候·气候": "占候旁证",
         "遁甲": "遁甲",
         "太乙": "太乙",
-        "*": "占候旁证",                 # 未列明的默认作占候旁证
+        "*": "占候旁证",
     },
 
-    # 太白阴经·卷十元女式 = 主体；卷十其余篇按实际：
+    # 太白阴经
     "太白": {
         "玄女式": "主体",
-        "推伏吟反吟法": "主体",         # 六壬用
+        "推伏吟反吟法": "主体",
         "推月将加时法": "主体",
         "推三十六禽法": "占候旁证",
         "推五帝法": "占候旁证",
