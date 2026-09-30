@@ -2,7 +2,7 @@
 
 - **文档类型**：Design Spec（Architectural）
 - **日期**：2026-09-30
-- **状态**：待审阅（awaiting user review）
+- **状态**：子项目 A（语料工程）已完成 2026-09-30；spec 主体锁定，后续子项目 B–E 增量补记
 - **上游 conversational design**：飞书文档 `E0J0dmckUo6minxHz6SmOaCCyBd`
 - **决策类型**：[two-way]——vault 结构与 AGENTS.md 稳定后其它组件可替换
 
@@ -247,13 +247,13 @@ agents/
 
 ### 10.1 子项目切分
 
-| 子项目 | 交付物 | 范围 | 周期 |
-|---|---|---|---|
-| A. 语料工程 | 可用 vault | OCR 收敛、三层分区 frontmatter、`--check` 全绿 | 2 周 |
-| B. Agent 骨架 | 系统 prompt + 首个书魂 | AGENTS.md + 六条红线 + 四拍 + 打点 + 《中黄经》书魂档 | 2 周 |
-| C. 训练闭环 | tutor.py 定制 | 关卡重排、半对判定实现、错题回归 | 2 周 |
-| D. 禄命辅助 | 6–8 张卡 | `90-禄命辅助/` 内容工程 | 1–2 周 |
-| E. 其余书魂 | 5 部宋本 + 3 部唐本佐证 | 每档五段 | 3 周 |
+| 子项目 | 交付物 | 范围 | 周期 | 状态 |
+|---|---|---|---|---|
+| A. 语料工程 | 可用 vault | OCR 收敛、三层分区 frontmatter、`--check` 全绿 | 2 周 | **✅ 已完成 2026-09-30**（Task 1–7，v3 checker 0/0/27info 全绿） |
+| B. Agent 骨架 | 系统 prompt + 首个书魂 | AGENTS.md + 六条红线 + 四拍 + 打点 + 《凝神子》书魂档 | 2 周 | 待启动 |
+| C. 训练闭环 | tutor.py 定制 | 关卡重排、半对判定实现、错题回归 | 2 周 | 待启动 |
+| D. 禄命辅助 | 6–8 张卡（seed 已建）→ 逐步扩充 | `90-禄命辅助/` 内容工程；`tools/add_lulu_stub.py` 支持随时增补 | 1–2 周 | seed + 增补工具 ✅（Task 5）；内容工程待启动 |
+| E. 其余书魂 | 11 部书魂档 | 每档五段（含断案三魂：邵彦和/阿甲/林景行；段级 anchor_id 数据基础已就绪） | 3 周 | 待启动 |
 
 ### 10.2 MVP（A + B，4 周）
 
@@ -261,6 +261,26 @@ agents/
 - 在 5–10 条子平诱导测试用例上第六条红线全部 reject
 - 书魂 profile 切换机制可稳定复现
 - P0 后作者做一次全对基线体检，>5% 错则回补
+
+### 10.3 子项目 A 交付摘要（2026-09-30）
+
+<!-- 完成快照，供后续子项目参照 -->
+
+| 交付项 | 产物 | 说明 |
+|---|---|---|
+| **v3 frontmatter 检查器** | `tools/check_v3_frontmatter.py` + selftest 7/7 | 校验 `anchor_id / 作者 / 与六壬关系`；`状态: stub` 时降级为 info |
+| **schema 文档** | `docs/vault-frontmatter-schema.md` | 上游沿用字段 + v3 新增字段规约；甲方案（`与六壬关系` 开放集） |
+| **gap 报告** | `docs/vault-v3-gap-report-2026-09-30.md` + `.aime/vault-v3-gap.json` | 872 md 初始状态；1680 error / 802 warn |
+| **anchor_id 回填（除断案）** | `tools/generate_anchor_ids.py` + selftest 9/9 | 618 条精确回填；幂等 0 二次改动 |
+| **断案段级拆分** | `tools/split_duanan_by_author.py` + selftest 11/11 | **764 段**（邵彦和 222 / 阿甲 223 / 林景行 319）；209/222 md 含内嵌注家 |
+| **`与六壬关系` 回填** | `tools/backfill_liuren_relation.py` + `liuren_relation_rules.py` + selftest 8/8 | 甲方案：changed=802 skip=38；上游细粒度值全部保留 |
+| **`90-禄命辅助/` seed** | 8 张 stub + `README.md` | `本命/行年/年命上神/禄/马/贵人/天乙/驿马`；内容留待子项目 D 填 |
+| **增补工具** | `tools/add_lulu_stub.py` + selftest 3/3 | 学习中随时说「加一张 XX」即可 |
+| **selfcheck 集成** | `tools/selfcheck.py --v3` + selftest 2/2 + `一键部署.sh --check` | 检查器嵌入一键部署；默认行为向后兼容 |
+
+**最终 v3 checker 状态**：`0 error / 0 warn / 27 info`（27 info 全部来自 `90-禄命辅助/` 的 9 张 stub × 3 v3 字段）。
+
+**已知语义 concern**（子项目 C/E 阶段处理）：断案段边界为 loose 匹配，短 gloss（如 `缘生谛：申，象鹅。`）后续的原辞会被合并进注家段直到下一个 marker；需要短句级精度可在 tutor.py 训练阶段或书魂档「可引证范围」段中约束。
 
 ### 10.3 回滚
 
