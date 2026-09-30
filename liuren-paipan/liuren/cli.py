@@ -68,9 +68,13 @@ def cmd_pan(a) -> int:
         d = vault / "30-课例" if (vault / "30-课例").exists() else vault
         d.mkdir(parents=True, exist_ok=True)
         name = f"{p.day_gz}日{p.shi}时{p.jiang}将-{p.keshi}{p.keshi_sub}.md"
-        (d / name).write_text(render_card(p, question=a.question or ""),
+        target = d / name
+        if target.exists():
+            print(f"\n课例卡已存在，跳过：{target}")
+        else:
+            target.write_text(render_card(p, question=a.question or ""),
                               encoding="utf-8")
-        print(f"\n课例卡已写入：{d / name}")
+            print(f"\n课例卡已写入：{target}")
     return 0
 
 

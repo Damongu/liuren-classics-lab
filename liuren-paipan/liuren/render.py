@@ -145,12 +145,20 @@ def to_json(p: Plate) -> str:
     return json.dumps(to_dict(p), ensure_ascii=False, indent=2)
 
 
+def card_anchor_id(p: Plate) -> str:
+    """课例卡 v3 anchor_id：排盘守卫-<课式><日干支><占时><月将>-001。"""
+    return f"排盘守卫-{p.keshi}{p.day_gz}{p.shi}{p.jiang}-001"
+
+
 def render_card(p: Plate, *, title: str | None = None, tags: str = "",
                 question: str = "", stage: str = "3") -> str:
     """Obsidian 课例卡（可直接落到 30-课例/）。"""
     t = title or f"{p.day_gz}日{p.shi}时{p.jiang}将 {p.keshi}"
     fm = [
         "---",
+        f"anchor_id: {card_anchor_id(p)}",
+        "作者: 排盘守卫",
+        "与六壬关系: 主体",
         f"课式: {p.keshi}", f"细分: {p.keshi_sub}", f"日干支: {p.day_gz}",
         f"占时: {p.shi}", f"月将: {p.jiang}", f"局: {p.jiang}加{p.shi}",
         f"昼夜: {p.daynight}", f"三传: [{', '.join(p.chuan)}]",

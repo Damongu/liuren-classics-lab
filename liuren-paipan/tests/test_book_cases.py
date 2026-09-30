@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from liuren import Options, from_ganzhi, from_jia, from_time  # noqa: E402
 from liuren.ganzhi import SHEHAI_ITEMS  # noqa: E402
+from liuren.render import card_anchor_id, render_card  # noqa: E402
 from liuren.search import enumerate720, filter_courses  # noqa: E402
 
 DAQUAN = Options(shehai_method="count", shehai_bihe=True)
@@ -342,6 +343,19 @@ def test_fuyin_wuke_unchanged():
         p = from_ganzhi(gz, "子", "子")
         assert p.chuan == want, f"{gz} 三传应 {want}，实为 {p.chuan}"
         assert sub in p.keshi_sub, f"{gz} 应为{sub}，实为 {p.keshi_sub}"
+
+
+import re
+def test_card_frontmatter_has_v3_fields():
+    """--card 落卡必须带 v3 frontmatter：anchor_id + 作者。"""
+    p = from_ganzhi("丁卯", "丑", "亥", opts=DAQUAN)
+    text = render_card(p)
+    # anchor_id 格式：排盘守卫-<课式><日干支><占时><月将>-001
+    assert card_anchor_id(p) == f"排盘守卫-{p.keshi}丁卯丑亥-001"
+    assert f"anchor_id: {card_anchor_id(p)}" in text, text.split("---")[1]
+    assert "作者: 排盘守卫" in text, text.split("---")[1]
+    # 结尾三位数字，符合 v3 anchor_id 正则 ^.+-.+-\d{3}$
+    assert re.match(r"^.+-.+-\d{3}$", card_anchor_id(p))
 
 
 def main() -> int:

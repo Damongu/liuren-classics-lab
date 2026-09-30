@@ -32,6 +32,8 @@ Issue = namedtuple("Issue", "path field severity message")
 VALID_AUTHORS = {
     "凝神子", "略决", "太白", "心镜", "景祐", "武经",
     "邵彦和", "阿甲", "林景行", "壬归", "卜筮残", "大全查手",
+    # 系统角色作者（排盘器 --card 落卡、导读/复盘产物）
+    "排盘守卫", "导读官", "复盘官",
 }
 
 # `与六壬关系` 采用开放集（甲方案）：沿用上游 build_vault.py 已写入的
@@ -49,7 +51,7 @@ VALID_AUTHORS = {
 ANCHOR_ID_RE = re.compile(r"^.+-.+-\d{3}$")
 
 # 扫描根目录（相对 vault）
-SCAN_ROOTS = ["10-底本", "90-禄命辅助"]
+SCAN_ROOTS = ["10-底本", "30-课例", "90-禄命辅助"]
 
 
 def split_fm(raw: str):
